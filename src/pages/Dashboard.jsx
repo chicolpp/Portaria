@@ -10,25 +10,11 @@ export default function Dashboard() {
   };
 
   return (
-    <div style={{ padding: 50, fontFamily: "sans-serif" }}>
+    <div>
       <h1>Bem-vindo!</h1>
       <p>Login realizado com sucesso. Você está autenticado.</p>
       
-      <button
-        onClick={handleLogout}
-        style={{
-          marginTop: 20,
-          padding: "10px 20px",
-          backgroundColor: "#ff4d4f",
-          color: "white",
-          border: "none",
-          borderRadius: 5,
-          cursor: "pointer",
-          fontSize: 16
-        }}
-      >
-        Logout
-      </button>
+      <button onClick={handleLogout}>Logout</button>
     </div>
   );
 }
