@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import PrivateRoute from "./routes/PrivateRoute";
+import Header from "./pages/Header";
 
 function App() {
   return (
@@ -13,12 +14,15 @@ function App() {
         {/* Rota pública */}
         <Route path="/login" element={<Login />} />
 
-        {/* Rota protegida */}
+        {/* Rotas protegidas */}
         <Route
           path="/dashboard"
           element={
             <PrivateRoute>
-              <Dashboard /> {/* pode trocar para <Home /> se quiser página leve */}
+              <>
+                <Header />
+                <Dashboard />
+              </>
             </PrivateRoute>
           }
         />
