@@ -5,80 +5,137 @@
   padding: 0;
 }
 
-/* Header principal */
+/* Header principal - agora como sidebar fixa à esquerda */
 header {
   position: fixed;
   top: 0;
   left: 0;
-
-  width: 100%;
-  height: 64px;
-
-  background-color: #1e1e2f;
+  width: 240px;
+  height: 100vh;
+  background: linear-gradient(180deg, #1e1e2f 0%, #151521 100%);
   color: #ffffff;
-
   display: flex;
-  align-items: center;
-
-  padding: 0 24px;
-  z-index: 1000;
-}
-
-/* Nav container */
-nav {
-  width: 100%;
-  display: flex;
-  align-items: center;
+  flex-direction: column;
   justify-content: space-between;
+  padding: 20px;
+  z-index: 1000;
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* ---------- ESQUERDA ---------- */
-.nav-left a {
-  color: #ffffff;
-  font-size: 20px;
-  font-weight: 600;
-  text-decoration: none;
-}
-
-.nav-left a:hover {
-  opacity: 0.85;
-}
-
-/* ---------- CENTRO ---------- */
-.nav-center {
+/* Sidebar esquerda */
+.header-sidebar {
   display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+/* Logo e nome do sistema */
+.header-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.header-logo {
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.header-logo img {
+  width: 70px;
+  height: 70px;
+  object-fit: contain;
+}
+
+.header-system-name {
+  font-size: 22px;
+  font-weight: 700;
+  background: linear-gradient(135deg, #3b82f6, #60a5fa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Pesquisa */
+.header-search {
+  display: flex;
+  gap: 0;
+  width: 100%;
+}
+
+.header-search input {
+  flex: 1;
+  min-width: 0;
+  padding: 10px 14px;
+  border-radius: 8px 0 0 8px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-right: none;
+  background: rgba(15, 23, 42, 0.8);
+  color: white;
+  font-size: 14px;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.header-search input::placeholder {
+  color: #64748b;
+}
+
+.header-search input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
+}
+
+.header-search button {
+  padding: 10px 14px;
+  border-radius: 0 8px 8px 0;
+  border: none;
+  cursor: pointer;
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: #fff;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.header-search button:hover {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+}
+
+/* Links rápidos */
+.header-quick-links {
+  display: flex;
+  flex-direction: column;
   gap: 8px;
 }
 
-.nav-center input {
-  padding: 8px 12px;
-  border-radius: 6px;
-  border: none;
-  outline: none;
-  width: 220px;
+.quick-link {
+  padding: 12px 16px;
+  color: #94a3b8;
+  text-decoration: none;
   font-size: 14px;
-}
-
-.nav-center button {
-  padding: 8px 14px;
-  border-radius: 6px;
-  border: none;
-  cursor: pointer;
-  background-color: #4a90e2;
-  color: #fff;
   font-weight: 500;
-  font-size: 14px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
 }
 
-.nav-center button:hover {
-  background-color: #357abd;
+.quick-link:hover {
+  background: rgba(59, 130, 246, 0.15);
+  color: #60a5fa;
 }
 
-/* ---------- DIREITA ---------- */
-.nav-right {
+/* Área direita - Perfil (agora na parte inferior) */
+.header-right {
   display: flex;
-  align-items: center;
-  gap: 20px;
+  flex-direction: column;
+  gap: 15px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 /* Perfil do usuário */
@@ -89,60 +146,113 @@ nav {
   cursor: pointer;
 }
 
-.user-profile img {
-  width: 36px;
-  height: 36px;
+.user-profile img,
+.user-avatar-placeholder {
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   object-fit: cover;
+  border: 3px solid transparent;
+  background: 
+    linear-gradient(#1e1e2f, #1e1e2f) padding-box,
+    linear-gradient(135deg, #3b82f6, #8b5cf6, #ec4899) border-box;
+  box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
+  transition: all 0.3s ease;
+}
+
+.user-avatar-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  background: 
+    linear-gradient(rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.2)) padding-box,
+    linear-gradient(135deg, #3b82f6, #8b5cf6, #ec4899) border-box;
+}
+
+.user-profile img:hover,
+.user-avatar-placeholder:hover {
+  transform: scale(1.08);
+  box-shadow: 0 6px 20px rgba(139, 92, 246, 0.6);
 }
 
 .user-profile span {
   font-size: 14px;
   font-weight: 500;
+  color: #e2e8f0;
 }
 
-/* ---------- DROPDOWN ---------- */
+/* Dropdown */
 .dropdown {
   position: relative;
 }
 
 .dropdown button {
-  background: none;
-  border: none;
+  width: 100%;
+  padding: 10px 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
   color: #ffffff;
   cursor: pointer;
   font-size: 14px;
   font-weight: 500;
+  text-align: left;
+  transition: all 0.3s ease;
 }
 
-/* Menu escondido */
+.dropdown button:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Menu dropdown */
 .dropdown-menu {
   position: absolute;
-  right: 0;
-  top: 110%;
-  background-color: #ffffff;
-  color: #333;
-  min-width: 180px;
-  border-radius: 8px;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+  left: 0;
+  bottom: 110%;
+  background: rgba(30, 41, 59, 0.98);
+  color: #e2e8f0;
+  width: 100%;
+  border-radius: 10px;
+  box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.4);
   list-style: none;
   padding: 8px 0;
-  display: none;
   z-index: 1001;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px) scale(0.95);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: bottom center;
 }
 
-/* Mostrar ao passar mouse */
 .dropdown:hover .dropdown-menu {
-  display: block;
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
 }
 
 .dropdown-menu li {
-  padding: 10px 16px;
+  padding: 0;
+  opacity: 0;
+  transform: translateX(-10px);
+  transition: all 0.2s ease;
 }
+
+.dropdown:hover .dropdown-menu li {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.dropdown:hover .dropdown-menu li:nth-child(1) { transition-delay: 0.05s; }
+.dropdown:hover .dropdown-menu li:nth-child(2) { transition-delay: 0.1s; }
+.dropdown:hover .dropdown-menu li:nth-child(3) { transition-delay: 0.15s; }
 
 .dropdown-menu li a,
 .dropdown-menu li button {
-  color: #333;
+  display: block;
+  padding: 12px 16px;
+  color: #e2e8f0;
   text-decoration: none;
   background: none;
   border: none;
@@ -150,30 +260,57 @@ nav {
   text-align: left;
   cursor: pointer;
   font-size: 14px;
+  transition: all 0.2s ease;
+  border-left: 3px solid transparent;
 }
 
-.dropdown-menu li:hover {
-  background-color: #f2f2f2;
+.dropdown-menu li a:hover,
+.dropdown-menu li button:hover {
+  background: rgba(59, 130, 246, 0.15);
+  color: #60a5fa;
+  border-left-color: #3b82f6;
+  padding-left: 20px;
 }
 
-/* ---------- RESPONSIVO ---------- */
+/* Responsivo */
 @media (max-width: 768px) {
   header {
+    width: 100%;
     height: auto;
+    flex-direction: row;
     padding: 12px;
   }
 
-  nav {
-    flex-direction: column;
-    gap: 12px;
+  .header-sidebar {
+    flex-direction: row;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
   }
 
-  .nav-center input {
-    width: 160px;
+  .header-brand {
+    flex-direction: row;
+    padding-bottom: 0;
+    border-bottom: none;
   }
 
-  .nav-right {
-    width: 100%;
-    justify-content: space-between;
+  .header-logo img {
+    width: 40px;
+    height: 40px;
+  }
+
+  .header-system-name {
+    font-size: 18px;
+  }
+
+  .header-quick-links {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .header-right {
+    flex-direction: row;
+    padding-top: 0;
+    border-top: none;
   }
 }

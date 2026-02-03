@@ -1,0 +1,62 @@
+.ocorrencias-container {
+  padding: 20px 40px;
+  padding-top: 40px;
+  padding-left: 280px;
+  color: white;
+}
+
+.ocorrencias-container .tab-content {
+  max-width: 900px;
+}
+
+.ocorrencias-container .tabs {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.ocorrencias-container .tabs button {
+  padding: 16px 40px;
+  background: #3a3a3a;
+  border: none;
+  color: #ddd;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.ocorrencias-container .tabs button:hover {
+  background: #4a4a4a;
+  color: white;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+  transform: translateY(-2px);
+}
+
+.ocorrencias-container .tabs button.active {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: white;
+}
+
+.ocorrencias-container .cadastro-form,
+.ocorrencias-container .visualizacao {
+  margin-top: 20px;
+}
+
+.ocorrencias-container .ocorrencias-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.ocorrencias-container .ocorrencias-table th,
+.ocorrencias-container .ocorrencias-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+}
+
+.ocorrencias-container .ocorrencias-table th {
+  background-color: #f2f2f2;
+}
+

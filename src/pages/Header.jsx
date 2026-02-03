@@ -1,56 +1,77 @@
 import { Link, useNavigate } from "react-router-dom";
-import { logout } from "../services/auth";
+import { logout, getUser } from "../services/auth";
 import "./Header.css";
 
-
-
-export default function Header({ user }) {
+export default function Header() {
   const navigate = useNavigate();
+  const user = getUser();
 
   const handleLogout = () => {
     logout();
     navigate("/login");
   };
 
+  const quickLinks = [
+    { path: "/encomendas", label: "Encomendas" },
+    { path: "/portaria", label: "Portaria" },
+    { path: "/livroocorrencias", label: "Livro de Ocorrências" },
+    { path: "/espacosservicos", label: "Espaços e Serviços" },
+  ];
+
   return (
     <header>
-      <nav>
-        {/* Esquerda: Logo ou nome do sistema */}
-        <div className="nav-left">
-          <Link to="/dashboard">Meu Sistema</Link>
+      {/* Sidebar esquerda */}
+      <div className="header-sidebar">
+        {/* Logo e nome do sistema */}
+        <div className="header-brand">
+          <Link to="/dashboard" className="header-logo">
+            <img src="/icons/logo.png" alt="Logo" />
+          </Link>
+          <span className="header-system-name">Protheus</span>
         </div>
 
-        {/* Centro: Pesquisa */}
-        <div className="nav-center">
+        {/* Pesquisa */}
+        <div className="header-search">
           <input type="text" placeholder="Pesquisar..." />
-          <button>Buscar</button>
+          <button>🔍</button>
         </div>
 
-        {/* Direita: Perfil + Menu suspenso */}
-        <div className="nav-right">
-          {/* Foto e nome do usuário */}
-          <div className="user-profile">
-            <img src={user?.avatar || "/default-avatar.png"} alt="Avatar" />
-            <span>{user?.name || "Usuário"}</span>
-          </div>
+        {/* Links rápidos */}
+        <nav className="header-quick-links">
+          {quickLinks.map((link) => (
+            <Link key={link.path} to={link.path} className="quick-link">
+              {link.label}
+            </Link>
+          ))}
+        </nav>
+      </div>
 
-          {/* Botão suspenso */}
-          <div className="dropdown">
-            <button>Menu ▾</button>
-            <ul className="dropdown-menu">
-              <li>
-                <Link to="/cadastro-usuarios">Cadastro de Usuários</Link>
-              </li>
-              <li>
-                <Link to="/monitoramento">Monitoração</Link>
-              </li>
-              <li>
-                <button onClick={handleLogout}>Sair</button>
-              </li>
-            </ul>
-          </div>
+      {/* Área direita - Perfil */}
+      <div className="header-right">
+        <div className="user-profile">
+          {user?.foto ? (
+            <img src={`${import.meta.env.VITE_API_URL || "http://127.0.0.1:5000"}/uploads/${user.foto}`} alt="Avatar" />
+          ) : (
+            <div className="user-avatar-placeholder">👤</div>
+          )}
+          <span>{user?.nome || "Usuário"}</span>
         </div>
-      </nav>
+
+        <div className="dropdown">
+          <button>Menu ▾</button>
+          <ul className="dropdown-menu">
+            <li>
+              <Link to="/cadastro-usuarios">Cadastro de Usuários</Link>
+            </li>
+            <li>
+              <Link to="/monitoramento">Monitoração</Link>
+            </li>
+            <li>
+              <button onClick={handleLogout}>Sair</button>
+            </li>
+          </ul>
+        </div>
+      </div>
     </header>
   );
 }

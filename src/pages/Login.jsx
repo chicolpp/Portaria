@@ -16,13 +16,14 @@ export default function Login() {
     try {
       const response = await api.post("/login", { email, password });
 
-      // Salva o token no localStorage
+      // Salva o token e dados do usuário no localStorage
       localStorage.setItem("token", response.data.token);
+      localStorage.setItem("user", JSON.stringify(response.data.user));
 
       // Redireciona para dashboard após login
       navigate("/dashboard");
     } catch (err) {
-      setError("Email ou senha inválidos");
+      setError(err.response?.data?.error || "Email ou senha inválidos");
     }
   }
 

@@ -4,7 +4,7 @@ body, html {
   padding: 0;
   height: 100%;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -13,22 +13,28 @@ body, html {
 /* Container centralizado */
 .login-container {
   width: 100%;
-  max-width: 400px;
-  padding: 40px;
-  background: #ffffff;
-  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
-  border-radius: 15px;
+  max-width: 420px;
+  padding: 50px 40px;
+  background: rgba(30, 41, 59, 0.95);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5), 0 0 100px rgba(59, 130, 246, 0.1);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
   box-sizing: border-box;
   text-align: center;
-  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
 }
 
 /* Título do login */
 .login-container h2 {
-  margin-bottom: 30px;
-  color: #333;
-  font-size: 28px;
-  font-weight: 600;
+  margin-bottom: 35px;
+  color: #fff;
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  background: linear-gradient(135deg, #3b82f6, #60a5fa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 /* Formulário */
@@ -40,59 +46,80 @@ body, html {
 
 /* Inputs */
 .login-container input {
-  padding: 14px 16px;
+  padding: 16px 20px;
   font-size: 16px;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  transition: border 0.3s, box-shadow 0.3s;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  background: rgba(15, 23, 42, 0.8);
+  color: #fff;
+  transition: all 0.3s ease;
+}
+
+.login-container input::placeholder {
+  color: #64748b;
 }
 
 .login-container input:focus {
-  border-color: #4a90e2;
-  box-shadow: 0 0 8px rgba(74, 144, 226, 0.3);
+  border-color: #3b82f6;
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
   outline: none;
+  background: rgba(15, 23, 42, 1);
 }
 
 /* Botão */
 .login-container button {
-  padding: 14px;
+  margin-top: 10px;
+  padding: 16px 40px;
   font-size: 18px;
-  background-color: #4a90e2;
+  font-weight: 600;
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
   color: #fff;
   border: none;
-  border-radius: 10px;
+  border-radius: 12px;
   cursor: pointer;
-  transition: background-color 0.3s, transform 0.2s;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 20px rgba(37, 99, 235, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .login-container button:hover {
-  background-color: #357abd;
-  transform: translateY(-2px);
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  box-shadow: 0 8px 30px rgba(37, 99, 235, 0.6);
+  transform: translateY(-3px);
+}
+
+.login-container button:active {
+  transform: translateY(-1px);
 }
 
 /* Mensagem de erro */
 .login-container .error-message {
-  color: #ff4d4f;
-  font-weight: bold;
-  margin-top: 10px;
+  color: #f87171;
+  font-weight: 600;
+  margin-top: 15px;
+  padding: 12px;
+  background: rgba(248, 113, 113, 0.1);
+  border-radius: 8px;
+  border: 1px solid rgba(248, 113, 113, 0.3);
 }
 
 /* Responsividade */
 @media (max-width: 480px) {
   .login-container {
-    padding: 30px 20px;
+    padding: 40px 25px;
     margin: 20px;
-    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+    border-radius: 16px;
   }
 
   .login-container h2 {
-    font-size: 24px;
+    font-size: 26px;
   }
 
   .login-container input,
   .login-container button {
     font-size: 16px;
-    padding: 12px 14px;
+    padding: 14px 18px;
   }
 }
 
@@ -104,6 +131,6 @@ body, html {
   .login-container input,
   .login-container button {
     font-size: 15px;
-    padding: 10px 12px;
+    padding: 12px 14px;
   }
 }

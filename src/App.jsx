@@ -3,6 +3,10 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import PrivateRoute from "./routes/PrivateRoute";
 import Header from "./pages/Header";
+import Encomendas from "./pages/Encomendas";
+import Portaria from "./pages/Portaria";
+import CadastroUsuarios from "./pages/CadastroUsuarios";
+import Ocorrencias from "./pages/Ocorrencias";
 
 function App() {
   return (
@@ -26,6 +30,51 @@ function App() {
             </PrivateRoute>
           }
         />
+
+        <Route path="/encomendas"
+          element={
+            <PrivateRoute>
+              <>
+                <Header />
+                <Encomendas />
+              </>
+            </PrivateRoute>
+          }
+        />
+
+        <Route path="/portaria"
+          element={
+            <PrivateRoute>
+              <>
+                <Header />
+                <Portaria />
+              </>
+            </PrivateRoute>
+          }
+        />
+
+        <Route path="/cadastro-usuarios"
+          element={
+            <PrivateRoute>
+              <>
+                <Header />
+                <CadastroUsuarios />
+              </>
+            </PrivateRoute>
+          }
+        />
+        <Route path="/Ocorrencias" 
+          element={
+            <PrivateRoute >
+              <>
+                <Header />
+                <Ocorrencias />
+              </>
+
+            </PrivateRoute>
+            }
+        />
+
       </Routes>
     </BrowserRouter>
   );

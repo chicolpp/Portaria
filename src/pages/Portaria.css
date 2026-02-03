@@ -1,0 +1,248 @@
+.portaria-container {
+  padding: 20px 40px;
+  padding-top: 40px;
+  padding-left: 280px;
+  color: white;
+}
+
+.portaria-container:has(.cadastro-form) .tab-content {
+  max-width: 900px;
+}
+
+.portaria-container:has(.visualizacao) .tab-content {
+  max-width: 100%;
+}
+
+/* TABS NAVIGATION - BEM VISÍVEL */
+.portaria-tabs {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 15px;
+  background: transparent;
+  padding: 5px 0;
+  position: sticky;
+  top: 70px;
+  z-index: 100;
+}
+
+.portaria-tab-btn {
+  padding: 16px 40px;
+  background: #3a3a3a;
+  border: none;
+  color: #ddd;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.portaria-tab-btn:hover {
+  background: #4a4a4a;
+  color: white;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+  transform: translateY(-2px);
+}
+
+.portaria-tab-btn.active {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: white;
+  box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4);
+}
+
+/* TAB CONTENT */
+.portaria-container .tab-content {
+  background: rgba(30, 41, 59, 0.95);
+  border-radius: 20px;
+  padding: 40px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+}
+
+.portaria-container .cadastro-form h2,
+.portaria-container .visualizacao h2,
+.portaria-container .liberacao h2 {
+  margin-bottom: 30px;
+  font-size: 28px;
+  font-weight: 700;
+  background: linear-gradient(135deg, #3b82f6, #60a5fa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.portaria-container .form-group {
+  margin-bottom: 20px;
+}
+
+.portaria-container .cadastro-form {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.portaria-container .cadastro-form h2 {
+  grid-column: 1 / -1;
+}
+
+.portaria-container .cadastro-form .form-group:last-of-type,
+.portaria-container .cadastro-form .submit-btn {
+  grid-column: 1 / -1;
+}
+
+.portaria-container .form-group label {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: 600;
+  color: #94a3b8;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.portaria-container .form-group input {
+  width: 100%;
+  max-width: 100%;
+  padding: 14px 18px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  background: rgba(15, 23, 42, 0.8);
+  color: white;
+  font-size: 15px;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+.portaria-container .form-group input::placeholder {
+  color: #64748b;
+}
+
+.portaria-container .form-group input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+  background: rgba(15, 23, 42, 1);
+}
+
+.portaria-container .submit-btn {
+  margin-top: 10px;
+  padding: 16px 40px;
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 20px rgba(37, 99, 235, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  width: fit-content;
+}
+
+.portaria-container .submit-btn:hover {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  box-shadow: 0 8px 30px rgba(37, 99, 235, 0.6);
+  transform: translateY(-3px);
+}
+
+.portaria-container .submit-btn:active {
+  transform: translateY(-1px);
+}
+
+.portaria-container .submit-btn:disabled {
+  background: linear-gradient(135deg, #475569, #334155);
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+.portaria-container .visualizacao {
+  min-width: 100%;
+}
+
+.portaria-container .visualizacao p,
+.portaria-container .liberacao p {
+  color: #94a3b8;
+  font-size: 16px;
+}
+
+/* TABLE */
+.acessos-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 25px;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.acessos-table th,
+.acessos-table td {
+  padding: 16px 20px;
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  white-space: nowrap;
+}
+
+.acessos-table th {
+  background: rgba(59, 130, 246, 0.2);
+  color: #60a5fa;
+  font-weight: 600;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.acessos-table td {
+  color: #e2e8f0;
+  font-size: 15px;
+  background: transparent;
+}
+
+.acessos-table tbody tr {
+  background: transparent;
+  transition: all 0.2s ease;
+}
+
+.acessos-table tbody tr:hover {
+  background: rgba(59, 130, 246, 0.1);
+}
+
+/* STATUS SAÍDA */
+.status-saida-registrada {
+  color: #10b981;
+  font-weight: 600;
+}
+
+.status-presente {
+  color: #f59e0b;
+  font-weight: 600;
+}
+
+/* BOTÃO REGISTRAR SAÍDA */
+.registrar-saida-btn {
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+}
+
+.registrar-saida-btn:hover {
+  background: linear-gradient(135deg, #d97706, #b45309);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
+}
+
+/* ÍCONE TRANCADO */
+.saida-trancada {
+  font-size: 20px;
+  opacity: 0.7;
+}
