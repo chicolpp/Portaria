@@ -7,6 +7,18 @@ import Encomendas from "./pages/Encomendas";
 import Portaria from "./pages/Portaria";
 import CadastroUsuarios from "./pages/CadastroUsuarios";
 import Ocorrencias from "./pages/Ocorrencias";
+import "./App.css";
+
+function Layout({ children }) {
+  return (
+    <div className="app-layout">
+      <Header />
+      <main className="main-content">
+        {children}
+      </main>
+    </div>
+  );
+}
 
 function App() {
   return (
@@ -23,10 +35,7 @@ function App() {
           path="/dashboard"
           element={
             <PrivateRoute>
-              <>
-                <Header />
-                <Dashboard />
-              </>
+              <Layout><Dashboard /></Layout>
             </PrivateRoute>
           }
         />
@@ -34,10 +43,7 @@ function App() {
         <Route path="/encomendas"
           element={
             <PrivateRoute>
-              <>
-                <Header />
-                <Encomendas />
-              </>
+              <Layout><Encomendas /></Layout>
             </PrivateRoute>
           }
         />
@@ -45,10 +51,7 @@ function App() {
         <Route path="/portaria"
           element={
             <PrivateRoute>
-              <>
-                <Header />
-                <Portaria />
-              </>
+              <Layout><Portaria /></Layout>
             </PrivateRoute>
           }
         />
@@ -56,23 +59,17 @@ function App() {
         <Route path="/cadastro-usuarios"
           element={
             <PrivateRoute>
-              <>
-                <Header />
-                <CadastroUsuarios />
-              </>
+              <Layout><CadastroUsuarios /></Layout>
             </PrivateRoute>
           }
         />
+        
         <Route path="/Ocorrencias" 
           element={
-            <PrivateRoute >
-              <>
-                <Header />
-                <Ocorrencias />
-              </>
-
+            <PrivateRoute>
+              <Layout><Ocorrencias /></Layout>
             </PrivateRoute>
-            }
+          }
         />
 
       </Routes>

@@ -275,10 +275,7 @@ header {
 /* ========== MOBILE ========== */
 @media (max-width: 768px) {
   header {
-    position: relative;
-    top: 0;
-    left: 0;
-    right: 0;
+    position: static;
     width: 100%;
     height: auto;
     flex-direction: column;
