@@ -848,7 +848,7 @@
 @media (max-width: 768px) {
   .usuarios-container {
     padding: 16px;
-    padding-top: 220px;
+    padding-top: 20px;
     padding-left: 16px;
     padding-bottom: 100px;
     overflow-x: hidden;
@@ -949,7 +949,7 @@
 @media (max-width: 480px) {
   .usuarios-container {
     padding: 12px;
-    padding-top: 200px;
+    padding-top: 16px;
     padding-bottom: 100px;
   }
 
