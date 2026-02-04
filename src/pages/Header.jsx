@@ -29,6 +29,17 @@ export default function Header() {
           <Link to="/dashboard" className="header-logo">
             <img src="/icons/logo.png" alt="Logo" />
           </Link>
+          
+          {/* Perfil mobile - aparece só no celular */}
+          <div className="mobile-user-profile">
+            {user?.foto ? (
+              <img src={`/uploads/${user.foto}`} alt="Avatar" />
+            ) : (
+              <div className="mobile-avatar-placeholder">👤</div>
+            )}
+            <span>{user?.nome || "Usuário"}</span>
+          </div>
+          
           <span className="header-system-name">Protheus</span>
         </div>
 
