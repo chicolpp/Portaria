@@ -18,7 +18,9 @@ api.interceptors.request.use((config) => {
 // Helper para URL de uploads
 export const getUploadUrl = (filename) => {
   if (!filename) return null;
-  return `${API_URL}/uploads/${filename}`;
+  // Em produção API_URL é vazio, então usa path relativo
+  // Em dev, API_URL aponta para o backend
+  return API_URL ? `${API_URL}/uploads/${filename}` : `/uploads/${filename}`;
 };
 
 export default api;

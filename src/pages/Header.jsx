@@ -8,6 +8,9 @@ export default function Header() {
   const navigate = useNavigate();
   const user = getUser();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  
+  // Debug - remover depois
+  console.log("User foto:", user?.foto, "URL:", user?.foto ? getUploadUrl(user.foto) : "sem foto");
 
   const handleLogout = () => {
     logout();
@@ -34,10 +37,13 @@ export default function Header() {
           {/* Perfil mobile - aparece só no celular */}
           <div className="mobile-user-profile">
             {user?.foto ? (
-              <img src={getUploadUrl(user.foto)} alt="Avatar" />
-            ) : (
-              <div className="mobile-avatar-placeholder">👤</div>
-            )}
+              <img 
+                src={getUploadUrl(user.foto)} 
+                alt="Avatar" 
+                onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }}
+              />
+            ) : null}
+            <div className="mobile-avatar-placeholder" style={{ display: user?.foto ? 'none' : 'flex' }}>👤</div>
             <span>{user?.nome || "Usuário"}</span>
           </div>
           
@@ -64,10 +70,13 @@ export default function Header() {
       <div className="header-right">
         <div className="user-profile">
           {user?.foto ? (
-            <img src={getUploadUrl(user.foto)} alt="Avatar" />
-          ) : (
-            <div className="user-avatar-placeholder">👤</div>
-          )}
+            <img 
+              src={getUploadUrl(user.foto)} 
+              alt="Avatar"
+              onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }}
+            />
+          ) : null}
+          <div className="user-avatar-placeholder" style={{ display: user?.foto ? 'none' : 'flex' }}>👤</div>
           <span>{user?.nome || "Usuário"}</span>
         </div>
 
