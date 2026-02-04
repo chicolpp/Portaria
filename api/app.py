@@ -33,6 +33,22 @@ db.init_app(app)
 
 with app.app_context():
     db.create_all()
+    
+    # Criar admin padrão se não existir
+    admin_email = "admin@portaria.com"
+    if not User.query.filter_by(email=admin_email).first():
+        admin = User(
+            nome="Administrador",
+            sobrenome="Sistema",
+            email=admin_email,
+            cargo="administrador",
+            is_admin=True,
+            ativo=True
+        )
+        admin.set_password("admin123")
+        db.session.add(admin)
+        db.session.commit()
+        print("✅ Admin padrão criado: admin@portaria.com / admin123")
 
 
 @app.route("/register", methods=["POST"])
