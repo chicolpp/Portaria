@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { logout, getUser } from "../services/auth";
+import { getUploadUrl } from "../services/api";
 import "./Header.css";
 
 export default function Header() {
@@ -33,7 +34,7 @@ export default function Header() {
           {/* Perfil mobile - aparece só no celular */}
           <div className="mobile-user-profile">
             {user?.foto ? (
-              <img src={`/uploads/${user.foto}`} alt="Avatar" />
+              <img src={getUploadUrl(user.foto)} alt="Avatar" />
             ) : (
               <div className="mobile-avatar-placeholder">👤</div>
             )}
@@ -63,7 +64,7 @@ export default function Header() {
       <div className="header-right">
         <div className="user-profile">
           {user?.foto ? (
-            <img src={`/uploads/${user.foto}`} alt="Avatar" />
+            <img src={getUploadUrl(user.foto)} alt="Avatar" />
           ) : (
             <div className="user-avatar-placeholder">👤</div>
           )}
