@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { logout, getUser } from "../services/auth";
 import "./Header.css";
@@ -5,6 +6,7 @@ import "./Header.css";
 export default function Header() {
   const navigate = useNavigate();
   const user = getUser();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -71,6 +73,30 @@ export default function Header() {
             </li>
           </ul>
         </div>
+      </div>
+
+      {/* Botão hamburger mobile */}
+      <button 
+        className="mobile-menu-btn" 
+        onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+        aria-label="Menu"
+      >
+        <span className="hamburger-line"></span>
+        <span className="hamburger-line"></span>
+        <span className="hamburger-line"></span>
+      </button>
+
+      {/* Menu mobile dropdown */}
+      <div className={`mobile-dropdown ${mobileMenuOpen ? 'open' : ''}`}>
+        <Link to="/cadastro-usuarios" onClick={() => setMobileMenuOpen(false)}>
+          Cadastro de Usuários
+        </Link>
+        <Link to="/monitoramento" onClick={() => setMobileMenuOpen(false)}>
+          Monitoração
+        </Link>
+        <button onClick={() => { handleLogout(); setMobileMenuOpen(false); }}>
+          Sair
+        </button>
       </div>
     </header>
   );

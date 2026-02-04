@@ -353,6 +353,98 @@ header {
   }
 }
 
+/* Botão hamburger mobile */
+.mobile-menu-btn {
+  display: none;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  border: none;
+  cursor: pointer;
+  z-index: 1002;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  box-shadow: 0 4px 20px rgba(59, 130, 246, 0.5);
+  transition: all 0.3s ease;
+}
+
+.mobile-menu-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 25px rgba(59, 130, 246, 0.7);
+}
+
+.hamburger-line {
+  width: 22px;
+  height: 2px;
+  background: white;
+  border-radius: 2px;
+  transition: all 0.3s ease;
+}
+
+/* Menu dropdown mobile */
+.mobile-dropdown {
+  display: none;
+  position: fixed;
+  bottom: 90px;
+  right: 20px;
+  background: rgba(30, 41, 59, 0.98);
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  padding: 8px 0;
+  z-index: 1001;
+  min-width: 200px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px) scale(0.95);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.mobile-dropdown.open {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+}
+
+.mobile-dropdown a,
+.mobile-dropdown button {
+  display: block;
+  padding: 14px 20px;
+  color: #e2e8f0;
+  text-decoration: none;
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  font-size: 15px;
+  transition: all 0.2s ease;
+  border-left: 3px solid transparent;
+}
+
+.mobile-dropdown a:hover,
+.mobile-dropdown button:hover {
+  background: rgba(59, 130, 246, 0.15);
+  color: #60a5fa;
+  border-left-color: #3b82f6;
+}
+
+@media (max-width: 768px) {
+  .mobile-menu-btn {
+    display: flex;
+  }
+  
+  .mobile-dropdown {
+    display: block;
+  }
+}
+
 @media (max-width: 480px) {
   header {
     padding: 10px 12px;
@@ -365,5 +457,17 @@ header {
   .quick-link {
     padding: 8px 12px;
     font-size: 12px;
+  }
+  
+  .mobile-menu-btn {
+    bottom: 16px;
+    right: 16px;
+    width: 50px;
+    height: 50px;
+  }
+  
+  .mobile-dropdown {
+    bottom: 80px;
+    right: 16px;
   }
 }
