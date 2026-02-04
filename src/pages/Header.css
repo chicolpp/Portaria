@@ -1,12 +1,5 @@
-/* Reset básico */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-/* Header principal - agora como sidebar fixa à esquerda */
-header {
+/* Header principal - sidebar fixa à esquerda */
+.app-layout > header {
   position: fixed;
   top: 0;
   left: 0;
@@ -20,6 +13,7 @@ header {
   padding: 20px;
   z-index: 1000;
   border-right: 1px solid rgba(255, 255, 255, 0.1);
+  box-sizing: border-box;
 }
 
 /* Sidebar esquerda */
@@ -274,7 +268,7 @@ header {
 
 /* ========== MOBILE ========== */
 @media (max-width: 768px) {
-  header {
+  .app-layout > header {
     position: static;
     width: 100%;
     height: auto;

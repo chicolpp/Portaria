@@ -1,27 +1,39 @@
+:root {
+  --sidebar-width: 240px;
+}
+
 #root {
   width: 100%;
   min-height: 100vh;
 }
 
 .app-layout {
-  display: flex;
-  width: 100%;
   min-height: 100vh;
+  width: 100%;
 }
 
 .main-content {
-  flex: 1;
   min-height: 100vh;
   width: 100%;
+  margin-left: var(--sidebar-width);
+  display: flex;
+  justify-content: center;
+}
+
+.main-content > * {
+  width: 100%;
+  max-width: 1200px;
 }
 
 @media (max-width: 768px) {
   .app-layout {
+    display: flex;
     flex-direction: column;
     width: 100%;
   }
   
   .main-content {
+    margin-left: 0;
     min-height: auto;
     flex: 1;
   }
