@@ -24,10 +24,7 @@ services:
     staticPublishPath: dist
     envVars:
       - key: VITE_API_URL
-        fromService:
-          name: portaria-api
-          type: web
-          property: host
+        value: https://portaria-api.onrender.com
     routes:
       - type: rewrite
         source: /*
