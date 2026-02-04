@@ -246,3 +246,95 @@
   font-size: 20px;
   opacity: 0.7;
 }
+
+/* ========== RESPONSIVO MOBILE ========== */
+@media (max-width: 768px) {
+  .portaria-container {
+    padding: 15px;
+    padding-left: 15px;
+    padding-top: 80px;
+  }
+
+  .portaria-tabs {
+    flex-direction: column;
+    gap: 10px;
+    position: static;
+  }
+
+  .portaria-tab-btn {
+    padding: 14px 20px;
+    font-size: 16px;
+    width: 100%;
+  }
+
+  .portaria-container .tab-content {
+    padding: 20px;
+    border-radius: 12px;
+  }
+
+  .portaria-container .cadastro-form {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .portaria-container .cadastro-form h2,
+  .portaria-container .visualizacao h2,
+  .portaria-container .liberacao h2 {
+    font-size: 22px;
+    margin-bottom: 20px;
+  }
+
+  .portaria-container .form-group input {
+    padding: 12px 14px;
+    font-size: 16px;
+  }
+
+  .portaria-container .submit-btn {
+    width: 100%;
+    padding: 14px;
+  }
+
+  /* Tabela responsiva */
+  .acessos-table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .acessos-table th,
+  .acessos-table td {
+    padding: 12px 10px;
+    font-size: 13px;
+  }
+
+  .registrar-saida-btn {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .portaria-container {
+    padding: 10px;
+    padding-top: 70px;
+  }
+
+  .portaria-container .tab-content {
+    padding: 15px;
+  }
+
+  .portaria-container .cadastro-form h2,
+  .portaria-container .visualizacao h2 {
+    font-size: 18px;
+  }
+
+  .portaria-container .form-group label {
+    font-size: 12px;
+  }
+
+  .acessos-table th,
+  .acessos-table td {
+    padding: 10px 8px;
+    font-size: 12px;
+  }
+}
