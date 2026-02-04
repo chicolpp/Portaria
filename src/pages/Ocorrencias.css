@@ -60,3 +60,52 @@
   background-color: #f2f2f2;
 }
 
+/* ========== MOBILE ========== */
+@media (max-width: 768px) {
+  .ocorrencias-container {
+    padding: 16px;
+    padding-top: 220px;
+    padding-left: 16px;
+    padding-bottom: 100px;
+    overflow-x: hidden;
+  }
+
+  .ocorrencias-container .tabs {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: 10px;
+    padding-bottom: 8px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .ocorrencias-container .tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .ocorrencias-container .tabs button {
+    padding: 12px 20px;
+    font-size: 14px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .ocorrencias-container .ocorrencias-table {
+    display: block;
+    overflow-x: auto;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .ocorrencias-container {
+    padding: 12px;
+    padding-top: 200px;
+    padding-bottom: 100px;
+  }
+
+  .ocorrencias-container .tabs button {
+    padding: 10px 16px;
+    font-size: 13px;
+  }
+}
+

@@ -36,7 +36,8 @@ with app.app_context():
     
     # Criar admin padrão se não existir
     admin_email = "admin@portaria.com"
-    if not User.query.filter_by(email=admin_email).first():
+    admin = User.query.filter_by(email=admin_email).first()
+    if not admin:
         admin = User(
             nome="Administrador",
             sobrenome="Sistema",
@@ -49,6 +50,13 @@ with app.app_context():
         db.session.add(admin)
         db.session.commit()
         print("✅ Admin padrão criado: admin@portaria.com / admin123")
+    else:
+        # Se admin existe mas senha não funciona, resetar
+        if not admin.check_password("admin123"):
+            admin.set_password("admin123")
+            admin.ativo = True
+            db.session.commit()
+            print("🔄 Senha do admin resetada para: admin123")
 
 
 @app.route("/register", methods=["POST"])
@@ -140,10 +148,16 @@ def toggle_status_usuario(id):
 @app.route("/login", methods=["POST"])
 def login():
     data = request.json
+    print(f"🔐 Tentativa de login: {data.get('email')}")
 
     user = User.query.filter_by(email=data["email"]).first()
+    print(f"👤 Usuário encontrado: {user is not None}")
 
     if not user or not user.check_password(data["password"]):
+        if user:
+            print(f"❌ Senha incorreta para {user.email}")
+        else:
+            print(f"❌ Usuário não encontrado: {data.get('email')}")
         return {"error": "Credenciais inválidas"}, 401
 
     if not user.ativo:
