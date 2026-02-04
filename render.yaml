@@ -3,8 +3,8 @@ services:
   - type: web
     name: portaria-api
     runtime: python
-    buildCommand: npm install && npm run build && cd api && pip install -r requirements.txt
-    startCommand: cd api && gunicorn app:app --bind 0.0.0.0:$PORT
+    buildCommand: npm install && npm run build && pip install -r api/requirements.txt
+    startCommand: gunicorn api.app:app --bind 0.0.0.0:$PORT
     envVars:
       - key: DATABASE_URL
         fromDatabase:
