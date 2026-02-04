@@ -246,3 +246,92 @@
   font-size: 20px;
   opacity: 0.7;
 }
+
+/* ========== MOBILE ========== */
+@media (max-width: 768px) {
+  .portaria-container {
+    padding: 16px;
+    padding-top: 140px;
+    padding-left: 16px;
+    padding-bottom: 30px;
+  }
+
+  .portaria-tabs {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: 10px;
+    position: static;
+    padding-bottom: 8px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .portaria-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .portaria-tab-btn {
+    padding: 12px 20px;
+    font-size: 14px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .portaria-container .tab-content {
+    padding: 20px;
+    border-radius: 16px;
+  }
+
+  .portaria-container .cadastro-form {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .portaria-container .cadastro-form h2,
+  .portaria-container .visualizacao h2 {
+    font-size: 20px;
+  }
+
+  .portaria-container .form-group input {
+    padding: 14px 16px;
+    font-size: 16px;
+  }
+
+  .portaria-container .submit-btn {
+    width: 100%;
+    padding: 16px;
+    font-size: 16px;
+  }
+
+  .acessos-table {
+    display: block;
+    overflow-x: auto;
+    font-size: 13px;
+  }
+
+  .acessos-table th,
+  .acessos-table td {
+    padding: 12px 10px;
+    font-size: 13px;
+  }
+
+  .registrar-saida-btn {
+    padding: 10px 14px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .portaria-container {
+    padding: 12px;
+    padding-top: 130px;
+  }
+
+  .portaria-container .tab-content {
+    padding: 16px;
+  }
+
+  .portaria-tab-btn {
+    padding: 10px 16px;
+    font-size: 13px;
+  }
+}
