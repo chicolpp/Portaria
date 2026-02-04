@@ -8,6 +8,7 @@ import os
 from werkzeug.utils import secure_filename
 
 UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads')
+STATIC_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'dist')
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 if not os.path.exists(UPLOAD_FOLDER):
@@ -294,6 +295,15 @@ def registrar_saida(id):
     db.session.commit()
     
     return {"message": "Saída registrada com sucesso", "acesso": acesso.to_dict()}, 200
+
+
+# Servir frontend React
+@app.route('/')
+@app.route('/<path:path>')
+def serve_frontend(path=''):
+    if path and os.path.exists(os.path.join(STATIC_FOLDER, path)):
+        return send_from_directory(STATIC_FOLDER, path)
+    return send_from_directory(STATIC_FOLDER, 'index.html')
 
 
 if __name__ == "__main__":

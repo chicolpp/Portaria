@@ -106,7 +106,7 @@ export default function Encomendas() {
   };
 
   const openFotoModal = (fotoPath) => {
-    setModalFoto(`${import.meta.env.VITE_API_URL || "http://127.0.0.1:5000"}/uploads/${fotoPath}`);
+    setModalFoto(`/uploads/${fotoPath}`);
   };
 
   const closeFotoModal = () => {

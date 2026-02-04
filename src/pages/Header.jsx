@@ -50,7 +50,7 @@ export default function Header() {
       <div className="header-right">
         <div className="user-profile">
           {user?.foto ? (
-            <img src={`${import.meta.env.VITE_API_URL || "http://127.0.0.1:5000"}/uploads/${user.foto}`} alt="Avatar" />
+            <img src={`/uploads/${user.foto}`} alt="Avatar" />
           ) : (
             <div className="user-avatar-placeholder">👤</div>
           )}
