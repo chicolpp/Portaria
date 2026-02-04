@@ -1,17 +1,8 @@
 .encomendas-container {
-  padding: 16px;
-  padding-top: 72px;
-  padding-bottom: 85px;
+  padding: 20px 40px;
+  padding-top: 40px;
+  padding-left: 280px;
   color: white;
-  min-height: 100vh;
-}
-
-@media (min-width: 769px) {
-  .encomendas-container {
-    padding: 30px 40px;
-    padding-left: 260px;
-    padding-top: 40px;
-  }
 }
 
 .encomendas-container:has(.cadastro-form) .tab-content {
@@ -549,104 +540,4 @@
 
 .form-group input[type="file"]::file-selector-button:hover {
   background: linear-gradient(135deg, #2563eb, #1d4ed8);
-}
-
-/* ========== RESPONSIVO MOBILE ========== */
-@media (max-width: 768px) {
-  .encomendas-tabs {
-    display: flex;
-    gap: 8px;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    padding-bottom: 8px;
-    position: static;
-  }
-
-  .encomendas-tabs::-webkit-scrollbar {
-    display: none;
-  }
-
-  .encomendas-tab-btn {
-    padding: 12px 20px;
-    font-size: 14px;
-    white-space: nowrap;
-    flex-shrink: 0;
-  }
-
-  .tab-content {
-    padding: 16px;
-    border-radius: 16px;
-  }
-
-  .cadastro-form {
-    grid-template-columns: 1fr;
-    gap: 12px;
-  }
-
-  .cadastro-form h2,
-  .visualizacao h2 {
-    font-size: 20px;
-    margin-bottom: 16px;
-  }
-
-  .form-group input {
-    padding: 14px 16px;
-    font-size: 16px;
-    border-radius: 12px;
-  }
-
-  .form-group label {
-    font-size: 13px;
-    margin-bottom: 8px;
-  }
-
-  .submit-btn {
-    width: 100%;
-    padding: 16px;
-    font-size: 16px;
-    border-radius: 12px;
-  }
-
-  /* Cards em vez de tabela */
-  .encomendas-table {
-    display: none;
-  }
-
-  .ver-foto-btn,
-  .retirar-btn,
-  .editar-btn {
-    padding: 12px 16px;
-    font-size: 14px;
-    border-radius: 10px;
-    width: 100%;
-  }
-
-  /* Modal responsivo */
-  .foto-modal-overlay,
-  .retirada-modal-overlay,
-  .editar-modal-overlay {
-    padding: 0;
-    align-items: flex-end;
-  }
-
-  .foto-modal,
-  .retirada-modal,
-  .editar-modal {
-    width: 100%;
-    max-width: 100%;
-    padding: 24px;
-    border-radius: 20px 20px 0 0;
-    max-height: 90vh;
-  }
-
-  .retirada-modal h3,
-  .editar-modal h3 {
-    font-size: 20px;
-  }
-
-  .close-btn {
-    width: 40px;
-    height: 40px;
-    font-size: 20px;
-  }
 }
