@@ -27,6 +27,8 @@ export default function CadastroUsuarios() {
     is_admin: false,
     ativo: true,
   });
+  const [editFotoFile, setEditFotoFile] = useState(null);
+  const [editFotoPreview, setEditFotoPreview] = useState(null);
   const [cargoDropdownOpen, setCargoDropdownOpen] = useState(false);
 
   const cargos = [
@@ -138,17 +140,45 @@ export default function CadastroUsuarios() {
       is_admin: usuario.is_admin,
       ativo: usuario.ativo,
     });
+    setEditFotoFile(null);
+    setEditFotoPreview(usuario.foto ? `/uploads/${usuario.foto}` : null);
   };
 
   const closeEditarModal = () => {
     setModalEditar(null);
+    setEditFotoFile(null);
+    setEditFotoPreview(null);
+  };
+
+  const handleEditFotoChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      setEditFotoFile(file);
+      setEditFotoPreview(URL.createObjectURL(file));
+    }
   };
 
   const handleEditSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      await api.put(`/usuarios/${modalEditar.id}`, editFormData);
+      const data = new FormData();
+      data.append("nome", editFormData.nome);
+      data.append("sobrenome", editFormData.sobrenome);
+      data.append("email", editFormData.email);
+      data.append("cargo", editFormData.cargo);
+      data.append("is_admin", editFormData.is_admin.toString());
+      data.append("ativo", editFormData.ativo.toString());
+      if (editFormData.password) {
+        data.append("password", editFormData.password);
+      }
+      if (editFotoFile) {
+        data.append("foto", editFotoFile);
+      }
+
+      await api.put(`/usuarios/${modalEditar.id}`, data, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
       alert("Usuário atualizado com sucesso!");
       closeEditarModal();
       fetchUsuarios();
@@ -192,6 +222,27 @@ export default function CadastroUsuarios() {
             <button className="modal-close" onClick={closeEditarModal}>✕</button>
             <h3>Editar Usuário</h3>
             <form className="modal-form" onSubmit={handleEditSubmit}>
+              <div className="form-group foto-edit-group">
+                <label>Foto do Usuário:</label>
+                <div className="foto-edit-container">
+                  {editFotoPreview ? (
+                    <img src={editFotoPreview} alt="Preview" className="foto-edit-preview" />
+                  ) : (
+                    <div className="foto-edit-placeholder">👤</div>
+                  )}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleEditFotoChange}
+                    id="edit-foto-input"
+                    style={{ display: 'none' }}
+                  />
+                  <label htmlFor="edit-foto-input" className="foto-edit-btn">
+                    📷 Alterar Foto
+                  </label>
+                </div>
+              </div>
+
               <div className="form-row">
                 <div className="form-group">
                   <label>Nome:</label>

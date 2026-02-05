@@ -8,9 +8,6 @@ export default function Header() {
   const navigate = useNavigate();
   const user = getUser();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  
-  // Debug - remover depois
-  console.log("User foto:", user?.foto, "URL:", user?.foto ? getUploadUrl(user.foto) : "sem foto");
 
   const handleLogout = () => {
     logout();

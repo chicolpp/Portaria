@@ -112,17 +112,39 @@ def listar_usuarios():
 @app.route("/usuarios/<int:id>", methods=["PUT"])
 def editar_usuario(id):
     user = User.query.get_or_404(id)
-    data = request.json
+    
+    # Suporta JSON ou FormData
+    if request.content_type and 'multipart/form-data' in request.content_type:
+        user.nome = request.form.get("nome", user.nome)
+        user.sobrenome = request.form.get("sobrenome", user.sobrenome)
+        user.email = request.form.get("email", user.email)
+        user.cargo = request.form.get("cargo", user.cargo)
+        user.is_admin = request.form.get("is_admin", "false").lower() == "true"
+        user.ativo = request.form.get("ativo", "true").lower() == "true"
+        
+        if request.form.get("password"):
+            user.set_password(request.form.get("password"))
+        
+        # Atualiza foto se enviada
+        if 'foto' in request.files:
+            file = request.files['foto']
+            if file and file.filename and allowed_file(file.filename):
+                filename = secure_filename(
+                    f"user_{datetime.datetime.now().timestamp()}_{file.filename}"
+                )
+                file.save(os.path.join(UPLOAD_FOLDER, filename))
+                user.foto = filename
+    else:
+        data = request.json or {}
+        user.nome = data.get("nome", user.nome)
+        user.sobrenome = data.get("sobrenome", user.sobrenome)
+        user.email = data.get("email", user.email)
+        user.cargo = data.get("cargo", user.cargo)
+        user.is_admin = data.get("is_admin", user.is_admin)
+        user.ativo = data.get("ativo", user.ativo)
 
-    user.nome = data.get("nome", user.nome)
-    user.sobrenome = data.get("sobrenome", user.sobrenome)
-    user.email = data.get("email", user.email)
-    user.cargo = data.get("cargo", user.cargo)
-    user.is_admin = data.get("is_admin", user.is_admin)
-    user.ativo = data.get("ativo", user.ativo)
-
-    if data.get("password"):
-        user.set_password(data["password"])
+        if data.get("password"):
+            user.set_password(data["password"])
 
     db.session.commit()
 
