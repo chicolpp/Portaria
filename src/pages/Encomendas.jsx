@@ -426,7 +426,7 @@ export default function Encomendas() {
             </div>
 
             <div className="form-group">
-              <label>Documento (RG/CPF):</label>
+              <label>Código de Rastreamento:</label>
               <input
                 type="text"
                 name="documento"
