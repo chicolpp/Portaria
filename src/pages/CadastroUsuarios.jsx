@@ -556,6 +556,7 @@ export default function CadastroUsuarios() {
                           type="button"
                           className="btn-editar"
                           onClick={() => openEditarModal(u)}
+                          data-tooltip="Editar"
                         >
                           ✏️
                         </button>
@@ -563,7 +564,7 @@ export default function CadastroUsuarios() {
                           type="button"
                           className={`btn-toggle ${u.ativo ? "desativar" : "ativar"}`}
                           onClick={() => toggleStatus(u.id)}
-                          title={u.ativo ? "Desativar" : "Ativar"}
+                          data-tooltip={u.ativo ? "Desativar" : "Ativar"}
                         >
                           {u.ativo ? "🔒" : "🔓"}
                         </button>
@@ -571,6 +572,7 @@ export default function CadastroUsuarios() {
                           type="button"
                           className="btn-excluir"
                           onClick={() => deletarUsuario(u.id)}
+                          data-tooltip="Excluir"
                         >
                           🗑️
                         </button>

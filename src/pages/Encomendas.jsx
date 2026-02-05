@@ -520,6 +520,7 @@ export default function Encomendas() {
                             type="button"
                             className="ver-foto-btn"
                             onClick={() => openFotoModal(e.foto)}
+                            data-tooltip="Ver Foto"
                           >
                             📷 Ver Foto
                           </button>
@@ -544,6 +545,7 @@ export default function Encomendas() {
                                 type="button"
                                 className="ver-foto-btn"
                                 onClick={() => openFotoModal(e.assinatura)}
+                                data-tooltip="Ver Assinatura"
                               >
                                 ✍️ Ver Assinatura
                               </button>
@@ -554,6 +556,7 @@ export default function Encomendas() {
                             type="button"
                             className="retirar-btn"
                             onClick={() => openRetiradaModal(e)}
+                            data-tooltip="Retirar Encomenda"
                           >
                             📦 Retirar
                           </button>
@@ -564,6 +567,7 @@ export default function Encomendas() {
                           type="button"
                           className="editar-btn"
                           onClick={() => openEditarModal(e)}
+                          data-tooltip="Editar"
                         >
                           ✏️ Editar
                         </button>

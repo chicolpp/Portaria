@@ -227,12 +227,13 @@ export default function Portaria() {
                       </td>
                       <td>
                         {a.data_saida ? (
-                          <span className="saida-trancada">🔒</span>
+                          <span className="saida-trancada" data-tooltip="Saída registrada">🔒</span>
                         ) : (
                           <button
                             type="button"
                             className="registrar-saida-btn"
                             onClick={() => registrarSaida(a.id)}
+                            data-tooltip="Registrar Saída"
                           >
                             🚪 Registrar Saída
                           </button>

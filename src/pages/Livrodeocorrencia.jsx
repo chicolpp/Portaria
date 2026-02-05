@@ -464,6 +464,7 @@ export default function LivroDeOcorrencia() {
                           type="button"
                           className="ver-btn"
                           onClick={() => openVisualizarModal(o)}
+                          data-tooltip="Visualizar"
                         >
                           👁️ Ver
                         </button>
@@ -471,6 +472,7 @@ export default function LivroDeOcorrencia() {
                           type="button"
                           className="editar-btn"
                           onClick={() => openEditarModal(o)}
+                          data-tooltip="Editar"
                         >
                           ✏️ Editar
                         </button>
@@ -478,6 +480,7 @@ export default function LivroDeOcorrencia() {
                           type="button"
                           className="apagar-btn"
                           onClick={() => handleDelete(o.id)}
+                          data-tooltip="Apagar"
                         >
                           🗑️ Apagar
                         </button>
