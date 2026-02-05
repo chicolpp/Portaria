@@ -297,6 +297,7 @@
     align-items: center;
     padding-bottom: 0;
     border-bottom: none;
+    gap: 10px;
   }
 
   .header-logo img {
@@ -306,6 +307,7 @@
 
   .header-system-name {
     font-size: 18px;
+    flex: 1;
   }
 
   /* Perfil do usuário mobile */
@@ -313,6 +315,7 @@
     display: flex;
     align-items: center;
     gap: 8px;
+    order: 1;
   }
 
   .mobile-user-profile img,

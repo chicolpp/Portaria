@@ -34,8 +34,11 @@ export default function Header() {
             <img src="/icons/logo.png" alt="Logo" />
           </Link>
           
-          {/* Perfil mobile - aparece só no celular */}
+          <span className="header-system-name">Protheus</span>
+          
+          {/* Perfil mobile - aparece só no celular (à direita) */}
           <div className="mobile-user-profile">
+            <span>{user?.nome || "Usuário"}</span>
             {user?.foto ? (
               <img 
                 src={getUploadUrl(user.foto)} 
@@ -44,10 +47,7 @@ export default function Header() {
               />
             ) : null}
             <div className="mobile-avatar-placeholder" style={{ display: user?.foto ? 'none' : 'flex' }}>👤</div>
-            <span>{user?.nome || "Usuário"}</span>
           </div>
-          
-          <span className="header-system-name">Protheus</span>
         </div>
 
         {/* Pesquisa */}
