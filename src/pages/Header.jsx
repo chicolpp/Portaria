@@ -31,7 +31,7 @@ export default function Header() {
             <img src="/icons/logo.png" alt="Logo" />
           </Link>
           
-          <span className="header-system-name">Protheus</span>
+          <span className="header-system-name">Prothax</span>
           
           {/* Perfil mobile - aparece só no celular (à direita) */}
           <div className="mobile-user-profile">

@@ -3,8 +3,6 @@
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  box-sizing: border-box;
-  overflow-x: hidden;
   color: white;
 }
 
@@ -14,7 +12,6 @@
 
 .encomendas-container:has(.visualizacao) .tab-content {
   max-width: 100%;
-  overflow-x: auto;
 }
 
 /* TABS NAVIGATION - BEM VISÍVEL */
@@ -87,7 +84,7 @@
 }
 
 /* TAB CONTENT */
-.tab-content {
+.encomendas-container .tab-content {
   background: var(--bg-card);
   border-radius: 20px;
   padding: 40px;
@@ -96,8 +93,8 @@
   animation: fadeInUp 0.5s ease-out;
 }
 
-.cadastro-form h2,
-.visualizacao h2 {
+.encomendas-container .cadastro-form h2,
+.encomendas-container .visualizacao h2 {
   margin-bottom: 30px;
   font-size: 26px;
   font-weight: 700;
@@ -107,26 +104,26 @@
   background-clip: text;
 }
 
-.form-group {
+.encomendas-container .form-group {
   margin-bottom: 20px;
 }
 
-.cadastro-form {
+.encomendas-container .cadastro-form {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 20px;
 }
 
-.cadastro-form h2 {
+.encomendas-container .cadastro-form h2 {
   grid-column: 1 / -1;
 }
 
-.cadastro-form .form-group:last-of-type,
-.cadastro-form .submit-btn {
+.encomendas-container .cadastro-form .form-group:last-of-type,
+.encomendas-container .cadastro-form .submit-btn {
   grid-column: 1 / -1;
 }
 
-.form-group label {
+.encomendas-container .form-group label {
   display: block;
   margin-bottom: 10px;
   font-weight: 600;
@@ -136,7 +133,7 @@
   letter-spacing: 0.5px;
 }
 
-.form-group input {
+.encomendas-container .form-group input {
   width: 100%;
   max-width: 100%;
   padding: 14px 18px;
@@ -149,18 +146,18 @@
   box-sizing: border-box;
 }
 
-.form-group input::placeholder {
+.encomendas-container .form-group input::placeholder {
   color: #64748b;
 }
 
-.form-group input:focus {
+.encomendas-container .form-group input:focus {
   outline: none;
   border-color: var(--primary);
   box-shadow: 0 0 20px var(--glow-color);
   background: rgba(15, 23, 42, 1);
 }
 
-.submit-btn {
+.encomendas-container .submit-btn {
   margin-top: 10px;
   padding: 16px 40px;
   background: linear-gradient(135deg, var(--primary), var(--primary-dark));
@@ -179,7 +176,7 @@
   overflow: hidden;
 }
 
-.submit-btn::before {
+.encomendas-container .submit-btn::before {
   content: '';
   position: absolute;
   top: 0;
@@ -190,34 +187,32 @@
   transition: left 0.5s ease;
 }
 
-.submit-btn:hover::before {
+.encomendas-container .submit-btn:hover::before {
   left: 100%;
 }
 
-.submit-btn:hover {
+.encomendas-container .submit-btn:hover {
   background: linear-gradient(135deg, var(--primary-dark), var(--primary-darker));
   box-shadow: 0 8px 30px var(--glow-color);
   transform: translateY(-3px);
 }
 
-.submit-btn:active {
+.encomendas-container .submit-btn:active {
   transform: translateY(-1px);
 }
 
-.submit-btn:disabled {
+.encomendas-container .submit-btn:disabled {
   background: linear-gradient(135deg, #475569, #334155);
   cursor: not-allowed;
   box-shadow: none;
   transform: none;
 }
 
-.visualizacao {
-  width: 100%;
-  max-width: 100%;
-  overflow-x: auto;
+.encomendas-container .visualizacao {
+  min-width: 100%;
 }
 
-.visualizacao p {
+.encomendas-container .visualizacao p {
   color: #94a3b8;
   font-size: 16px;
 }
@@ -633,27 +628,27 @@
     flex-shrink: 0;
   }
 
-  .tab-content {
+  .encomendas-container .tab-content {
     padding: 20px;
     border-radius: 16px;
   }
 
-  .cadastro-form {
+  .encomendas-container .cadastro-form {
     grid-template-columns: 1fr;
     gap: 16px;
   }
 
-  .cadastro-form h2,
-  .visualizacao h2 {
+  .encomendas-container .cadastro-form h2,
+  .encomendas-container .visualizacao h2 {
     font-size: 20px;
   }
 
-  .form-group input {
+  .encomendas-container .form-group input {
     padding: 14px 16px;
     font-size: 16px;
   }
 
-  .submit-btn {
+  .encomendas-container .submit-btn {
     width: 100%;
     padding: 16px;
     font-size: 16px;
@@ -694,7 +689,7 @@
     padding-bottom: 100px;
   }
 
-  .tab-content {
+  .encomendas-container .tab-content {
     padding: 16px;
   }
 
