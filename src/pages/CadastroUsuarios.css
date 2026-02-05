@@ -1,11 +1,13 @@
 .usuarios-container {
   padding: 40px;
   width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
   color: white;
 }
 
 .usuarios-container:has(.cadastro-form) .tab-content {
-  max-width: 900px;
+  max-width: 800px;
 }
 
 .usuarios-container:has(.visualizacao) .tab-content {

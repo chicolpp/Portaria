@@ -1,14 +1,17 @@
 .portaria-container {
   padding: 40px;
   width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
   color: white;
 }
 
 .portaria-container:has(.cadastro-form) .tab-content {
-  max-width: 900px;
+  max-width: 800px;
 }
 
-.portaria-container:has(.visualizacao) .tab-content {
+.portaria-container:has(.visualizacao) .tab-content,
+.portaria-container:has(.liberacao) .tab-content {
   max-width: 100%;
 }
 

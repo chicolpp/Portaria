@@ -1,15 +1,20 @@
 .encomendas-container {
   padding: 40px;
   width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  box-sizing: border-box;
+  overflow-x: hidden;
   color: white;
 }
 
 .encomendas-container:has(.cadastro-form) .tab-content {
-  max-width: 900px;
+  max-width: 800px;
 }
 
 .encomendas-container:has(.visualizacao) .tab-content {
   max-width: 100%;
+  overflow-x: auto;
 }
 
 /* TABS NAVIGATION - BEM VISÍVEL */
@@ -158,7 +163,9 @@
 }
 
 .visualizacao {
-  min-width: 100%;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
 }
 
 .visualizacao p {
@@ -169,10 +176,12 @@
 /* TABLE */
 .encomendas-table {
   width: 100%;
+  max-width: 100%;
   border-collapse: collapse;
   margin-top: 25px;
   border-radius: 12px;
   overflow: hidden;
+  table-layout: auto;
 }
 
 .encomendas-table th,
@@ -180,7 +189,8 @@
   padding: 16px 20px;
   text-align: left;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  white-space: nowrap;
+  white-space: normal;
+  word-wrap: break-word;
 }
 
 .encomendas-table th {

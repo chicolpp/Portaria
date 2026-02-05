@@ -41,18 +41,31 @@
 }
 
 .header-logo img {
-  width: 70px;
-  height: 70px;
+  width: 90px;
+  height: 90px;
   object-fit: contain;
 }
 
 .header-system-name {
-  font-size: 22px;
-  font-weight: 700;
-  background: linear-gradient(135deg, #a855f7, #c084fc);
+  font-size: 28px;
+  font-weight: 800;
+  font-family: 'Georgia', 'Times New Roman', serif;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  background: linear-gradient(135deg, #a855f7 0%, #c084fc 25%, #f0abfc 50%, #c084fc 75%, #a855f7 100%);
+  background-size: 200% auto;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  animation: shimmer 3s ease-in-out infinite;
+  filter: drop-shadow(0 0 10px rgba(168, 85, 247, 0.4));
+  text-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
+}
+
+@keyframes shimmer {
+  0% { background-position: 0% center; }
+  50% { background-position: 100% center; }
+  100% { background-position: 0% center; }
 }
 
 /* Pesquisa */
@@ -60,16 +73,17 @@
   display: flex;
   gap: 0;
   width: 100%;
+  position: relative;
 }
 
 .header-search input {
   flex: 1;
   min-width: 0;
-  padding: 10px 14px;
-  border-radius: 8px 0 0 8px;
-  border: 2px solid rgba(255, 255, 255, 0.1);
+  padding: 12px 16px;
+  border-radius: 12px 0 0 12px;
+  border: 2px solid rgba(168, 85, 247, 0.3);
   border-right: none;
-  background: rgba(15, 23, 42, 0.8);
+  background: rgba(26, 22, 37, 0.9);
   color: white;
   font-size: 14px;
   outline: none;
@@ -77,28 +91,33 @@
 }
 
 .header-search input::placeholder {
-  color: #64748b;
+  color: #8b7aa8;
 }
 
 .header-search input:focus {
   border-color: #a855f7;
-  box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
+  box-shadow: 0 0 15px rgba(168, 85, 247, 0.3);
+  background: rgba(26, 22, 37, 1);
 }
 
 .header-search button {
-  padding: 10px 14px;
-  border-radius: 0 8px 8px 0;
-  border: none;
+  padding: 12px 16px;
+  border-radius: 0 12px 12px 0;
+  border: 2px solid rgba(168, 85, 247, 0.3);
+  border-left: none;
   cursor: pointer;
   background: linear-gradient(135deg, #a855f7, #9333ea);
   color: #fff;
-  font-size: 14px;
+  font-size: 16px;
   transition: all 0.3s ease;
   flex-shrink: 0;
+  box-shadow: 0 0 15px rgba(168, 85, 247, 0.3);
 }
 
 .header-search button:hover {
-  background: linear-gradient(135deg, #9333ea, #7c3aed);
+  background: linear-gradient(135deg, #c084fc, #a855f7);
+  box-shadow: 0 0 25px rgba(168, 85, 247, 0.5);
+  transform: scale(1.05);
 }
 
 /* Links rápidos */
@@ -188,37 +207,41 @@
 
 .dropdown button {
   width: 100%;
-  padding: 10px 16px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
-  color: #ffffff;
+  padding: 12px 20px;
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.15), rgba(147, 51, 234, 0.1));
+  border: 2px solid rgba(168, 85, 247, 0.3);
+  border-radius: 12px;
+  color: #c084fc;
   cursor: pointer;
   font-size: 14px;
-  font-weight: 500;
-  text-align: left;
+  font-weight: 600;
+  text-align: center;
   transition: all 0.3s ease;
+  box-shadow: 0 0 15px rgba(168, 85, 247, 0.2);
 }
 
 .dropdown button:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.25), rgba(147, 51, 234, 0.2));
+  border-color: #a855f7;
+  box-shadow: 0 0 25px rgba(168, 85, 247, 0.4);
+  transform: translateY(-2px);
 }
 
 /* Menu dropdown */
 .dropdown-menu {
   position: absolute;
   left: 0;
-  bottom: 50px;
-  background: rgba(30, 41, 59, 0.98);
+  bottom: 55px;
+  background: linear-gradient(180deg, #1e1e2f 0%, #151521 100%);
   color: #e2e8f0;
   width: 100%;
-  min-width: 180px;
-  border-radius: 10px;
-  box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.4);
+  min-width: 200px;
+  border-radius: 14px;
+  box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.5), 0 0 30px rgba(168, 85, 247, 0.15);
   list-style: none;
-  padding: 8px 0;
+  padding: 12px 0;
   z-index: 1001;
-  border: 1px solid rgba(59, 130, 246, 0.3);
+  border: 2px solid rgba(168, 85, 247, 0.3);
   opacity: 0;
   visibility: hidden;
   transform: translateY(10px) scale(0.95);
@@ -251,14 +274,15 @@
 .dropdown-menu li a,
 .dropdown-menu li button {
   display: block;
-  padding: 12px 16px;
-  color: #e2e8f0;
+  padding: 14px 20px;
+  color: #c084fc;
   text-decoration: none;
   background: none;
   border: none;
   width: 100%;
   text-align: left;
   cursor: pointer;
+  font-weight: 500;
   font-size: 14px;
   transition: all 0.2s ease;
   border-left: 3px solid transparent;
@@ -266,10 +290,10 @@
 
 .dropdown-menu li a:hover,
 .dropdown-menu li button:hover {
-  background: rgba(59, 130, 246, 0.15);
-  color: #c084fc;
+  background: linear-gradient(90deg, rgba(168, 85, 247, 0.2), transparent);
+  color: #f0abfc;
   border-left-color: #a855f7;
-  padding-left: 20px;
+  padding-left: 24px;
 }
 
 /* ========== MOBILE ========== */

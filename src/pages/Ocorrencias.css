@@ -1,11 +1,13 @@
 .ocorrencias-container {
   padding: 40px;
   width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
   color: white;
 }
 
 .ocorrencias-container .tab-content {
-  max-width: 900px;
+  max-width: 800px;
 }
 
 .ocorrencias-container .tabs {
