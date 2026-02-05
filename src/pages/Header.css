@@ -49,7 +49,7 @@
 .header-system-name {
   font-size: 22px;
   font-weight: 700;
-  background: linear-gradient(135deg, #3b82f6, #60a5fa);
+  background: linear-gradient(135deg, #a855f7, #c084fc);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -81,7 +81,7 @@
 }
 
 .header-search input:focus {
-  border-color: #3b82f6;
+  border-color: #a855f7;
   box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
 }
 
@@ -90,7 +90,7 @@
   border-radius: 0 8px 8px 0;
   border: none;
   cursor: pointer;
-  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  background: linear-gradient(135deg, #a855f7, #9333ea);
   color: #fff;
   font-size: 14px;
   transition: all 0.3s ease;
@@ -98,7 +98,7 @@
 }
 
 .header-search button:hover {
-  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  background: linear-gradient(135deg, #9333ea, #7c3aed);
 }
 
 /* Links rápidos */
@@ -120,7 +120,7 @@
 
 .quick-link:hover {
   background: rgba(59, 130, 246, 0.15);
-  color: #60a5fa;
+  color: #c084fc;
 }
 
 /* Área direita - Perfil (agora na parte inferior) */
@@ -149,7 +149,7 @@
   border: 3px solid transparent;
   background: 
     linear-gradient(#1e1e2f, #1e1e2f) padding-box,
-    linear-gradient(135deg, #3b82f6, #8b5cf6, #ec4899) border-box;
+    linear-gradient(135deg, #a855f7, #8b5cf6, #ec4899) border-box;
   box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
   transition: all 0.3s ease;
 }
@@ -161,7 +161,7 @@
   font-size: 20px;
   background: 
     linear-gradient(rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.2)) padding-box,
-    linear-gradient(135deg, #3b82f6, #8b5cf6, #ec4899) border-box;
+    linear-gradient(135deg, #a855f7, #8b5cf6, #ec4899) border-box;
 }
 
 .user-profile img:hover,
@@ -267,8 +267,8 @@
 .dropdown-menu li a:hover,
 .dropdown-menu li button:hover {
   background: rgba(59, 130, 246, 0.15);
-  color: #60a5fa;
-  border-left-color: #3b82f6;
+  color: #c084fc;
+  border-left-color: #a855f7;
   padding-left: 20px;
 }
 
@@ -328,7 +328,7 @@
     border: 2px solid transparent;
     background: 
       linear-gradient(#1e1e2f, #1e1e2f) padding-box,
-      linear-gradient(135deg, #3b82f6, #8b5cf6, #ec4899) border-box;
+      linear-gradient(135deg, #a855f7, #8b5cf6, #ec4899) border-box;
   }
 
   .mobile-avatar-placeholder {
@@ -338,7 +338,7 @@
     font-size: 14px;
     background: 
       linear-gradient(rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.2)) padding-box,
-      linear-gradient(135deg, #3b82f6, #8b5cf6, #ec4899) border-box;
+      linear-gradient(135deg, #a855f7, #8b5cf6, #ec4899) border-box;
   }
 
   .mobile-user-profile span {
@@ -401,7 +401,7 @@
   width: 56px;
   height: 56px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  background: linear-gradient(135deg, #a855f7, #9333ea);
   border: none;
   cursor: pointer;
   z-index: 1002;
@@ -470,8 +470,8 @@
 .mobile-dropdown a:hover,
 .mobile-dropdown button:hover {
   background: rgba(59, 130, 246, 0.15);
-  color: #60a5fa;
-  border-left-color: #3b82f6;
+  color: #c084fc;
+  border-left-color: #a855f7;
 }
 
 @media (max-width: 768px) {

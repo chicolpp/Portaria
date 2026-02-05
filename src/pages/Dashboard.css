@@ -41,7 +41,7 @@
   border-radius: 12px;
   border: none;
   cursor: pointer;
-  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  background: linear-gradient(135deg, #a855f7, #9333ea);
   font-size: 16px;
   font-weight: 600;
   color: white;
@@ -50,7 +50,7 @@
 }
 
 .action-card:hover {
-  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  background: linear-gradient(135deg, #9333ea, #7c3aed);
   box-shadow: 0 6px 20px rgba(37, 99, 235, 0.5);
   transform: translateY(-2px);
 }

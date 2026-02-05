@@ -45,7 +45,7 @@
 }
 
 .encomendas-tab-btn.active {
-  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  background: linear-gradient(135deg, #a855f7, #9333ea);
   color: white;
   box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4);
 }
@@ -64,7 +64,7 @@
   margin-bottom: 30px;
   font-size: 28px;
   font-weight: 700;
-  background: linear-gradient(135deg, #3b82f6, #60a5fa);
+  background: linear-gradient(135deg, #a855f7, #c084fc);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -118,7 +118,7 @@
 
 .form-group input:focus {
   outline: none;
-  border-color: #3b82f6;
+  border-color: #a855f7;
   box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
   background: rgba(15, 23, 42, 1);
 }
@@ -126,7 +126,7 @@
 .submit-btn {
   margin-top: 10px;
   padding: 16px 40px;
-  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  background: linear-gradient(135deg, #a855f7, #9333ea);
   color: white;
   border: none;
   border-radius: 10px;
@@ -141,7 +141,7 @@
 }
 
 .submit-btn:hover {
-  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  background: linear-gradient(135deg, #9333ea, #7c3aed);
   box-shadow: 0 8px 30px rgba(37, 99, 235, 0.6);
   transform: translateY(-3px);
 }
@@ -185,7 +185,7 @@
 
 .encomendas-table th {
   background: rgba(59, 130, 246, 0.2);
-  color: #60a5fa;
+  color: #c084fc;
   font-weight: 600;
   font-size: 14px;
   text-transform: uppercase;
@@ -210,7 +210,7 @@
 /* BOTÃO VER FOTO */
 .ver-foto-btn {
   padding: 8px 16px;
-  background: #3b82f6;
+  background: #a855f7;
   color: white;
   border: none;
   border-radius: 6px;
@@ -220,7 +220,7 @@
 }
 
 .ver-foto-btn:hover {
-  background: #2563eb;
+  background: #9333ea;
 }
 
 /* MODAL FOTO */
@@ -288,7 +288,7 @@
   margin: 0 0 10px 0;
   font-size: 24px;
   color: #fff;
-  background: linear-gradient(135deg, #3b82f6, #60a5fa);
+  background: linear-gradient(135deg, #a855f7, #c084fc);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -325,7 +325,7 @@
 
 .retirada-form-group input:focus {
   outline: none;
-  border-color: #3b82f6;
+  border-color: #a855f7;
 }
 
 .assinatura-canvas {
@@ -431,7 +431,7 @@
   margin: 0 0 25px 0;
   font-size: 24px;
   color: #fff;
-  background: linear-gradient(135deg, #3b82f6, #60a5fa);
+  background: linear-gradient(135deg, #a855f7, #c084fc);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -468,13 +468,13 @@
 
 .editar-form-group input:focus {
   outline: none;
-  border-color: #3b82f6;
+  border-color: #a855f7;
 }
 
 .salvar-edicao-btn {
   margin-top: 10px;
   padding: 14px;
-  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  background: linear-gradient(135deg, #a855f7, #9333ea);
   color: white;
   border: none;
   border-radius: 10px;
@@ -486,7 +486,7 @@
 }
 
 .salvar-edicao-btn:hover {
-  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  background: linear-gradient(135deg, #9333ea, #7c3aed);
   box-shadow: 0 6px 20px rgba(37, 99, 235, 0.5);
 }
 
@@ -521,14 +521,14 @@
 }
 
 .form-group input[type="file"]:hover {
-  border-color: #3b82f6;
+  border-color: #a855f7;
   background: rgba(59, 130, 246, 0.1);
 }
 
 .form-group input[type="file"]::file-selector-button {
   padding: 10px 20px;
   margin-right: 15px;
-  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  background: linear-gradient(135deg, #a855f7, #9333ea);
   color: white;
   border: none;
   border-radius: 8px;
@@ -538,7 +538,7 @@
 }
 
 .form-group input[type="file"]::file-selector-button:hover {
-  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  background: linear-gradient(135deg, #9333ea, #7c3aed);
 }
 
 /* ========== MOBILE ========== */
