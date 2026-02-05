@@ -208,10 +208,11 @@
 .dropdown-menu {
   position: absolute;
   left: 0;
-  bottom: 110%;
+  bottom: 50px;
   background: rgba(30, 41, 59, 0.98);
   color: #e2e8f0;
   width: 100%;
+  min-width: 180px;
   border-radius: 10px;
   box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.4);
   list-style: none;
