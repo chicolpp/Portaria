@@ -7,6 +7,7 @@ import Encomendas from "./pages/Encomendas";
 import Portaria from "./pages/Portaria";
 import CadastroUsuarios from "./pages/CadastroUsuarios";
 import Ocorrencias from "./pages/Ocorrencias";
+import LivroDeOcorrencia from "./pages/Livrodeocorrencia";
 import "./App.css";
 
 function Layout({ children }) {
@@ -68,6 +69,14 @@ function App() {
           element={
             <PrivateRoute>
               <Layout><Ocorrencias /></Layout>
+            </PrivateRoute>
+          }
+        />
+
+        <Route path="/livroocorrencias" 
+          element={
+            <PrivateRoute>
+              <Layout><LivroDeOcorrencia /></Layout>
             </PrivateRoute>
           }
         />

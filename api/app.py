@@ -1,7 +1,7 @@
 from flask import Flask, request, send_from_directory
 from flask_cors import CORS
 from database import db
-from models import User, Encomenda, Acesso
+from models import User, Encomenda, Acesso, Ocorrencia
 import jwt
 import datetime
 import os
@@ -347,6 +347,65 @@ def registrar_saida(id):
     db.session.commit()
     
     return {"message": "Saída registrada com sucesso", "acesso": acesso.to_dict()}, 200
+
+
+# ========== OCORRÊNCIAS ==========
+
+@app.route("/ocorrencias", methods=["POST"])
+def criar_ocorrencia():
+    try:
+        data = request.json
+        print(f"📝 Dados recebidos: {data}")
+
+        ocorrencia = Ocorrencia(
+            data=datetime.datetime.strptime(data["data"], "%Y-%m-%d").date(),
+            hora=datetime.datetime.strptime(data["hora"], "%H:%M").time(),
+            unidade_infratante=data["unidade_infratante"],
+            nome_morador=data["nome_morador"],
+            registrada_por=data["registrada_por"],
+            quem_registrou=data["quem_registrou"],
+            motivo_ocorrencia=data["motivo_ocorrencia"],
+        )
+
+        db.session.add(ocorrencia)
+        db.session.commit()
+
+        return {"message": "Ocorrência cadastrada", "ocorrencia": ocorrencia.to_dict()}, 201
+    except Exception as e:
+        print(f"❌ Erro ao criar ocorrência: {str(e)}")
+        return {"error": str(e)}, 500
+
+
+@app.route("/ocorrencias", methods=["GET"])
+def listar_ocorrencias():
+    ocorrencias = Ocorrencia.query.order_by(Ocorrencia.id.desc()).all()
+    return {"ocorrencias": [o.to_dict() for o in ocorrencias]}
+
+
+@app.route("/ocorrencias/<int:id>", methods=["PUT"])
+def editar_ocorrencia(id):
+    ocorrencia = Ocorrencia.query.get_or_404(id)
+    data = request.json
+
+    ocorrencia.data = datetime.datetime.strptime(data["data"], "%Y-%m-%d").date()
+    ocorrencia.hora = datetime.datetime.strptime(data["hora"], "%H:%M").time()
+    ocorrencia.unidade_infratante = data["unidade_infratante"]
+    ocorrencia.nome_morador = data["nome_morador"]
+    ocorrencia.registrada_por = data["registrada_por"]
+    ocorrencia.quem_registrou = data["quem_registrou"]
+    ocorrencia.motivo_ocorrencia = data["motivo_ocorrencia"]
+
+    db.session.commit()
+
+    return {"message": "Ocorrência atualizada", "ocorrencia": ocorrencia.to_dict()}, 200
+
+
+@app.route("/ocorrencias/<int:id>", methods=["DELETE"])
+def deletar_ocorrencia(id):
+    ocorrencia = Ocorrencia.query.get_or_404(id)
+    db.session.delete(ocorrencia)
+    db.session.commit()
+    return {"message": "Ocorrência deletada"}, 200
 
 
 # Servir frontend React

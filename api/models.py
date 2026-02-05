@@ -99,3 +99,30 @@ class Acesso(db.Model):
             "data_entrada": self.data_entrada.isoformat() if self.data_entrada else "",
             "data_saida": self.data_saida.isoformat() if self.data_saida else "",
         }
+
+
+class Ocorrencia(db.Model):
+    __tablename__ = "ocorrencias"
+
+    id = db.Column(db.Integer, primary_key=True)
+    data = db.Column(db.Date, nullable=False)
+    hora = db.Column(db.Time, nullable=False)
+    unidade_infratante = db.Column(db.String(50), nullable=False)
+    nome_morador = db.Column(db.String(200), nullable=False)
+    registrada_por = db.Column(db.String(50), nullable=False)  # 'unidade' ou 'condominio'
+    quem_registrou = db.Column(db.String(200), nullable=False)
+    motivo_ocorrencia = db.Column(db.Text, nullable=False)
+    data_criacao = db.Column(db.DateTime, default=db.func.now())
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "data": self.data.isoformat() if self.data else "",
+            "hora": self.hora.strftime("%H:%M") if self.hora else "",
+            "unidade_infratante": self.unidade_infratante,
+            "nome_morador": self.nome_morador,
+            "registrada_por": self.registrada_por,
+            "quem_registrou": self.quem_registrou,
+            "motivo_ocorrencia": self.motivo_ocorrencia,
+            "data_criacao": self.data_criacao.isoformat() if self.data_criacao else "",
+        }

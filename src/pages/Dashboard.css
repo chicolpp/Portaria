@@ -1,13 +1,17 @@
 .dashboard-container {
   padding: 40px;
   width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
   display: flex;
   flex-direction: column;
   align-items: center;
+  animation: fadeInUp 0.5s ease-out;
 }
 
 .dashboard-container h1 {
-  color: #fff;
+  color: var(--text-primary);
   font-size: 28px;
   margin-bottom: 8px;
   width: 100%;
@@ -15,7 +19,7 @@
 }
 
 .dashboard-container p {
-  color: #94a3b8;
+  color: var(--text-secondary);
   font-size: 16px;
   width: 100%;
   max-width: 900px;
@@ -28,6 +32,7 @@
   gap: 24px;
   max-width: 900px;
   width: 100%;
+  box-sizing: border-box;
 }
 
 .action-card {
@@ -38,31 +43,57 @@
   align-items: center;
   justify-content: center;
   gap: 12px;
-  border-radius: 12px;
-  border: none;
+  border-radius: 16px;
+  border: 2px solid transparent;
   cursor: pointer;
-  background: linear-gradient(135deg, #a855f7, #9333ea);
-  font-size: 16px;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  font-size: 15px;
   font-weight: 600;
+  font-family: 'Georgia', 'Times New Roman', serif;
+  letter-spacing: 0.5px;
   color: white;
-  box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4);
-  transition: all 0.3s ease;
+  box-shadow: 0 4px 20px var(--glow-color);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.action-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+  transition: left 0.6s ease;
+}
+
+.action-card:hover::before {
+  left: 100%;
 }
 
 .action-card:hover {
-  background: linear-gradient(135deg, #9333ea, #7c3aed);
-  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.5);
-  transform: translateY(-2px);
+  background: linear-gradient(135deg, var(--primary-dark), var(--primary-darker));
+  box-shadow: 0 8px 30px var(--glow-color);
+  transform: translateY(-5px);
+  border-color: var(--primary-light);
 }
 
 .action-card:active {
-  transform: translateY(0);
+  transform: translateY(-2px);
 }
 
 .action-card img {
   width: 56px;
   height: 56px;
   object-fit: contain;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+  transition: transform 0.3s ease;
+}
+
+.action-card:hover img {
+  transform: scale(1.1);
 }
 
 /* ========== MOBILE ========== */

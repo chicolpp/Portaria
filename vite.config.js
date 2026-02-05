@@ -12,6 +12,7 @@ export default defineConfig({
       '/usuarios': 'http://localhost:5000',
       '/encomendas': 'http://localhost:5000',
       '/acessos': 'http://localhost:5000',
+      '/ocorrencias': 'http://localhost:5000',
       '/uploads': 'http://localhost:5000',
     }
   }
