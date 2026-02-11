@@ -9,7 +9,7 @@ export default function LivroDeOcorrencia() {
   const [loading, setLoading] = useState(false);
   const [modalVisualizar, setModalVisualizar] = useState(null);
   const [modalEditar, setModalEditar] = useState(null);
-  
+
   const [formData, setFormData] = useState({
     data: "",
     hora: "",
@@ -32,10 +32,10 @@ export default function LivroDeOcorrencia() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    
+
     if (name === "registradaPor") {
-      setFormData({ 
-        ...formData, 
+      setFormData({
+        ...formData,
         [name]: value,
         quemRegistrou: value === "condominio" ? "Condomínio" : ""
       });
@@ -46,10 +46,10 @@ export default function LivroDeOcorrencia() {
 
   const handleEditChange = (e) => {
     const { name, value } = e.target;
-    
+
     if (name === "registradaPor") {
-      setEditFormData({ 
-        ...editFormData, 
+      setEditFormData({
+        ...editFormData,
         [name]: value,
         quemRegistrou: value === "condominio" ? "Condomínio" : ""
       });
@@ -133,7 +133,7 @@ export default function LivroDeOcorrencia() {
 
   const handleEditSubmit = async (e) => {
     e.preventDefault();
-    
+
     try {
       await api.put(`/ocorrencias/${modalEditar.id}`, {
         data: editFormData.data,
@@ -177,7 +177,7 @@ export default function LivroDeOcorrencia() {
           <div className="visualizar-modal" onClick={(e) => e.stopPropagation()}>
             <button className="foto-modal-close" onClick={closeVisualizarModal}>✕</button>
             <h3>Detalhes da Ocorrência</h3>
-            
+
             <div className="visualizar-info">
               <p><strong>Data:</strong> {modalVisualizar.data}</p>
               <p><strong>Hora:</strong> {modalVisualizar.hora}</p>
@@ -186,7 +186,7 @@ export default function LivroDeOcorrencia() {
               <p><strong>Registrada por:</strong> {modalVisualizar.registrada_por === "unidade" ? "Unidade" : "Condomínio"}</p>
               <p><strong>Quem Registrou:</strong> {modalVisualizar.quem_registrou}</p>
             </div>
-            
+
             <div className="motivo-box">
               <label>Motivo da Ocorrência:</label>
               <p className="motivo-texto">{modalVisualizar.motivo_ocorrencia}</p>
@@ -201,7 +201,7 @@ export default function LivroDeOcorrencia() {
           <div className="editar-modal" onClick={(e) => e.stopPropagation()}>
             <button className="foto-modal-close" onClick={closeEditarModal}>✕</button>
             <h3>Editar Ocorrência</h3>
-            
+
             <form className="editar-form" onSubmit={handleEditSubmit}>
               <div className="editar-form-group">
                 <label>Data:</label>
@@ -437,59 +437,61 @@ export default function LivroDeOcorrencia() {
             {ocorrencias.length === 0 ? (
               <p>Nenhuma ocorrência cadastrada ainda.</p>
             ) : (
-              <table className="ocorrencias-table">
-                <thead>
-                  <tr>
-                    <th>ID</th>
-                    <th>Data</th>
-                    <th>Hora</th>
-                    <th>Unidade</th>
-                    <th>Morador</th>
-                    <th>Registrada por</th>
-                    <th>Quem Registrou</th>
-                    <th>Ações</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {ocorrencias.map((o) => (
-                    <tr key={o.id}>
-                      <td>{o.id}</td>
-                      <td>{o.data}</td>
-                      <td>{o.hora}</td>
-                      <td>{o.unidade_infratante}</td>
-                      <td>{o.nome_morador}</td>
-                      <td>{o.registrada_por === "unidade" ? "Unidade" : "Condomínio"}</td>
-                      <td>{o.quem_registrou}</td>
-                      <td className="acoes-cell">
-                        <button
-                          type="button"
-                          className="ver-btn"
-                          onClick={() => openVisualizarModal(o)}
-                          data-tooltip="Visualizar"
-                        >
-                          👁️ Ver
-                        </button>
-                        <button
-                          type="button"
-                          className="editar-btn"
-                          onClick={() => openEditarModal(o)}
-                          data-tooltip="Editar"
-                        >
-                          ✏️ Editar
-                        </button>
-                        <button
-                          type="button"
-                          className="apagar-btn"
-                          onClick={() => handleDelete(o.id)}
-                          data-tooltip="Apagar"
-                        >
-                          🗑️ Apagar
-                        </button>
-                      </td>
+              <div className="responsive-table-container">
+                <table className="ocorrencias-table">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Data</th>
+                      <th>Hora</th>
+                      <th>Unidade</th>
+                      <th>Morador</th>
+                      <th>Registrada por</th>
+                      <th>Quem Registrou</th>
+                      <th>Ações</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {ocorrencias.map((o) => (
+                      <tr key={o.id}>
+                        <td>{o.id}</td>
+                        <td>{o.data}</td>
+                        <td>{o.hora}</td>
+                        <td>{o.unidade_infratante}</td>
+                        <td>{o.nome_morador}</td>
+                        <td>{o.registrada_por === "unidade" ? "Unidade" : "Condomínio"}</td>
+                        <td>{o.quem_registrou}</td>
+                        <td className="acoes-cell">
+                          <button
+                            type="button"
+                            className="ver-btn"
+                            onClick={() => openVisualizarModal(o)}
+                            data-tooltip="Visualizar"
+                          >
+                            👁️ Ver
+                          </button>
+                          <button
+                            type="button"
+                            className="editar-btn"
+                            onClick={() => openEditarModal(o)}
+                            data-tooltip="Editar"
+                          >
+                            ✏️ Editar
+                          </button>
+                          <button
+                            type="button"
+                            className="apagar-btn"
+                            onClick={() => handleDelete(o.id)}
+                            data-tooltip="Apagar"
+                          >
+                            🗑️ Apagar
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             )}
           </div>
         )}

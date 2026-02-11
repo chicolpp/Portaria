@@ -251,71 +251,73 @@ export default function Portaria() {
             {acessos.length === 0 ? (
               <p>Nenhum acesso cadastrado ainda.</p>
             ) : (
-              <table className="acessos-table">
-                <thead>
-                  <tr>
-                    <th>ID</th>
-                    <th>Nome</th>
-                    <th>Sobrenome</th>
-                    <th>Documento</th>
-                    <th>Placa</th>
-                    <th>Marca</th>
-                    <th>Modelo</th>
-                    <th>Cor</th>
-                    <th>Entrada</th>
-                    <th>Saída</th>
-                    <th>Ações</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {acessos.map((a) => (
-                    <tr key={a.id}>
-                      <td>{a.id}</td>
-                      <td>{a.nome}</td>
-                      <td>{a.sobrenome}</td>
-                      <td>{a.documento}</td>
-                      <td>{a.placa}</td>
-                      <td>{a.marca}</td>
-                      <td>{a.modelo}</td>
-                      <td>{a.cor}</td>
-                      <td>{a.data_entrada ? new Date(a.data_entrada).toLocaleString("pt-BR") : "-"}</td>
-                      <td>
-                        {a.data_saida ? (
-                          <span className="status-saida-registrada">
-                            ✓ {new Date(a.data_saida).toLocaleString("pt-BR")}
-                          </span>
-                        ) : (
-                          <span className="status-presente">🟢 Presente</span>
-                        )}
-                      </td>
-                      <td>
-                        {a.data_saida ? (
-                          <span className="admin-btn-small delete-btn" style={{ opacity: 0.5 }} title="Saída registrada">
-                            <LockIcon style={{ width: 14, height: 14 }} />
-                          </span>
-                        ) : (
-                          <button
-                            type="button"
-                            className="admin-btn-small edit-btn"
-                            onClick={() => registrarSaida(a.id)}
-                            data-tooltip="Registrar Saída"
-                          >
-                            <LogOutIcon style={{ width: 14, height: 14 }} />
-                          </button>
-                        )}
-                      </td>
+              <div className="responsive-table-container">
+                <table className="acessos-table">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Nome</th>
+                      <th>Sobrenome</th>
+                      <th>Documento</th>
+                      <th>Placa</th>
+                      <th>Marca</th>
+                      <th>Modelo</th>
+                      <th>Cor</th>
+                      <th>Entrada</th>
+                      <th>Saída</th>
+                      <th>Ações</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {acessos.map((a) => (
+                      <tr key={a.id}>
+                        <td>{a.id}</td>
+                        <td>{a.nome}</td>
+                        <td>{a.sobrenome}</td>
+                        <td>{a.documento}</td>
+                        <td>{a.placa}</td>
+                        <td>{a.marca}</td>
+                        <td>{a.modelo}</td>
+                        <td>{a.cor}</td>
+                        <td>{a.data_entrada ? new Date(a.data_entrada).toLocaleString("pt-BR") : "-"}</td>
+                        <td>
+                          {a.data_saida ? (
+                            <span className="status-saida-registrada">
+                              ✓ {new Date(a.data_saida).toLocaleString("pt-BR")}
+                            </span>
+                          ) : (
+                            <span className="status-presente">🟢 Presente</span>
+                          )}
+                        </td>
+                        <td>
+                          {a.data_saida ? (
+                            <span className="admin-btn-small delete-btn" style={{ opacity: 0.5 }} title="Saída registrada">
+                              <LockIcon style={{ width: 14, height: 14 }} />
+                            </span>
+                          ) : (
+                            <button
+                              type="button"
+                              className="admin-btn-small edit-btn"
+                              onClick={() => registrarSaida(a.id)}
+                              data-tooltip="Registrar Saída"
+                            >
+                              <LogOutIcon style={{ width: 14, height: 14 }} />
+                            </button>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             )}
-          </div>
-        )}
 
-        {activeTab === "liberacao" && (
-          <div className="liberacao">
-            <h2><ShieldCheckIcon className="section-icon" /> Liberação de Acessos</h2>
-            <p>Funcionalidade em desenvolvimento...</p>
+            {activeTab === "liberacao" && (
+              <div className="liberacao">
+                <h2><ShieldCheckIcon className="section-icon" /> Liberação de Acessos</h2>
+                <p>Funcionalidade em desenvolvimento...</p>
+              </div>
+            )}
           </div>
         )}
       </div>

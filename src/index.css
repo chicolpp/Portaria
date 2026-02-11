@@ -547,3 +547,81 @@ textarea:invalid:not(:placeholder-shown) {
     max-width: none;
   }
 }
+
+/* ========== GLOBAL RESPONSIVE UTILS ========== */
+.responsive-table-container {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-bottom: 20px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.responsive-table-container table {
+  margin-top: 0;
+  min-width: 600px;
+}
+
+@media (max-width: 768px) {
+  :root {
+    --spacing-xs: 8px;
+    --spacing-sm: 12px;
+    --spacing-md: 16px;
+  }
+
+  h1 {
+    font-size: 1.8rem;
+  }
+
+  h2 {
+    font-size: 1.4rem;
+  }
+
+  h3 {
+    font-size: 1.1rem;
+  }
+
+  button {
+    padding: 10px 16px;
+    font-size: 13px;
+  }
+
+  input,
+  select,
+  textarea {
+    padding: 10px 14px;
+    font-size: 14px;
+  }
+
+  .card,
+  .tab-content,
+  .modal-content {
+    padding: var(--spacing-md);
+  }
+
+  /* Compactar botões de admin no mobile de forma global */
+  .admin-btn-small {
+    width: 34px !important;
+    height: 34px !important;
+    border-radius: 8px !important;
+  }
+
+  .admin-btn-small svg {
+    width: 18px !important;
+    height: 18px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --spacing-xs: 6px;
+    --spacing-sm: 10px;
+    --spacing-md: 14px;
+  }
+
+  .admin-btn-small {
+    width: 32px !important;
+    height: 32px !important;
+  }
+}
