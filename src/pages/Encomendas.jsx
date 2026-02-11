@@ -43,6 +43,7 @@ export default function Encomendas() {
   const [activeTab, setActiveTab] = useState("cadastro");
   const [encomendas, setEncomendas] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [fetchLoading, setFetchLoading] = useState(false);
   const [formData, setFormData] = useState({
     nome: "",
     unidade: "",
@@ -64,11 +65,15 @@ export default function Encomendas() {
   }, []);
 
   const fetchEncomendas = async () => {
+    setFetchLoading(true);
     try {
       const response = await api.get("/encomendas");
       setEncomendas(response.data);
     } catch (error) {
       console.error(error);
+      toast.error("Erro ao carregar encomendas");
+    } finally {
+      setFetchLoading(false);
     }
   };
 
@@ -121,7 +126,7 @@ export default function Encomendas() {
       documento: encomenda.documento,
       pagina: encomenda.pagina,
       dataRecebimento: encomenda.data_recebimento,
-      horaRecebimento: encomenda.hora_recebimento,
+      horaRecebimento: encomenda.hora_recebimento || "", // Fallback
     });
   };
 
@@ -466,7 +471,11 @@ export default function Encomendas() {
         {activeTab === "visualizacao" && (
           <div className="visualizacao">
             <h2><BoxIcon className="section-icon" style={{ width: 22, height: 22 }} /> Visualização de Encomendas</h2>
-            {encomendas.length === 0 ? (
+            {fetchLoading ? (
+              <div className="loading-container" style={{ textAlign: 'center', padding: '40px' }}>
+                <p>Carregando encomendas...</p>
+              </div>
+            ) : encomendas.length === 0 ? (
               <p>Nenhuma encomenda cadastrada ainda.</p>
             ) : (
               <div className="responsive-table-container">

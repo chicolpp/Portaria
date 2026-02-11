@@ -6,16 +6,12 @@
   color: white;
 }
 
-.encomendas-container:has(.cadastro-form) .tab-content {
-  max-width: 800px;
+.encomendas-container .tab-content {
+  width: 100%;
+  transition: all 0.3s ease;
 }
 
-.encomendas-container:has(.visualizacao) .tab-content {
-  max-width: 100%;
-  overflow-x: auto;
-}
-
-/* TABS NAVIGATION - ESTILO ESPACOS SERVICOS */
+/* TABS NAVIGATION */
 .encomendas-tabs {
   display: flex;
   gap: 12px;
@@ -531,15 +527,14 @@
   }
 
   .encomendas-table {
-    display: block;
-    overflow-x: auto;
-    font-size: 12px;
+    width: 100%;
+    min-width: 800px;
   }
 
   .encomendas-table th,
   .encomendas-table td {
-    padding: 10px 6px;
-    font-size: 12px;
+    padding: 12px 10px;
+    font-size: 13px;
   }
 
   .foto-modal,
