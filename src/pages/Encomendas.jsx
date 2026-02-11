@@ -387,7 +387,7 @@ export default function Encomendas() {
       </div>
 
       {/* TAB CONTENT */}
-      <div className="tab-content">
+      <div className="tab-content" key={activeTab}>
         {activeTab === "cadastro" && (
           <form className="cadastro-form" onSubmit={handleSubmit} noValidate>
             <h2><PackageIcon className="section-icon" style={{ width: 22, height: 22 }} /> Cadastro de Encomendas</h2>

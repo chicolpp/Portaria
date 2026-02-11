@@ -485,22 +485,35 @@
   .encomendas-tabs {
     flex-wrap: nowrap;
     overflow-x: auto;
-    gap: 6px;
-    position: static;
-    padding-bottom: 6px;
-    -webkit-overflow-scrolling: touch;
+    gap: 8px;
+    padding: 0 5px 10px 5px;
+    margin-bottom: 15px;
+    border-bottom: 1px solid var(--border-color);
   }
 
   .encomendas-tab-btn {
-    padding: 10px 16px;
-    font-size: 13px;
+    padding: 12px 20px;
+    font-size: 14px;
     white-space: nowrap;
+    border-radius: 8px 8px 0 0;
+    border-left: none;
+    border-bottom: 3px solid transparent;
+    background: rgba(255, 255, 255, 0.02);
     flex-shrink: 0;
   }
 
+  .encomendas-tab-btn.active {
+    background: rgba(139, 92, 246, 0.2);
+    border-bottom-color: var(--primary);
+    border-left-color: transparent;
+  }
+
   .encomendas-container .tab-content {
-    padding: 15px;
-    border-radius: 12px;
+    padding: 20px 15px;
+    border-radius: 0 0 16px 16px;
+    min-height: 400px;
+    animation: none;
+    /* Remove animação no mobile para evitar bugs de renderização */
   }
 
   .encomendas-container .cadastro-form {
