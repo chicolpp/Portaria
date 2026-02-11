@@ -1,55 +1,7 @@
 import { useState, useEffect } from "react";
 import api from "../services/api";
-import { toast } from "sonner";
+import { useToast } from "../components/Toast";
 import "./Ocorrencias.css";
-
-// Ícones SVG inline
-const PencilIcon = ({ className, style }) => (
-  <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
-  </svg>
-);
-
-const TrashIcon = ({ className, style }) => (
-  <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M10 11v6M14 11v6" />
-  </svg>
-);
-
-const EyeIcon = ({ className, style }) => (
-  <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-    <circle cx="12" cy="12" r="3" />
-  </svg>
-);
-
-const FileTextIcon = ({ className, style }) => (
-  <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-    <polyline points="14 2 14 8 20 8" />
-    <line x1="16" y1="13" x2="8" y2="13" />
-    <line x1="16" y1="17" x2="8" y2="17" />
-    <polyline points="10 9 9 9 8 9" />
-  </svg>
-);
-
-const ClipboardIcon = ({ className, style }) => (
-  <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
-    <rect x="8" y="2" width="8" height="4" rx="1" ry="1" />
-  </svg>
-);
-
-const ListIcon = ({ className, style }) => (
-  <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <line x1="8" y1="6" x2="21" y2="6" />
-    <line x1="8" y1="12" x2="21" y2="12" />
-    <line x1="8" y1="18" x2="21" y2="18" />
-    <line x1="3" y1="6" x2="3.01" y2="6" />
-    <line x1="3" y1="12" x2="3.01" y2="12" />
-    <line x1="3" y1="18" x2="3.01" y2="18" />
-  </svg>
-);
 
 export default function LivroDeOcorrencia() {
   const [activeTab, setActiveTab] = useState("cadastro");
@@ -57,7 +9,7 @@ export default function LivroDeOcorrencia() {
   const [loading, setLoading] = useState(false);
   const [modalVisualizar, setModalVisualizar] = useState(null);
   const [modalEditar, setModalEditar] = useState(null);
-
+  
   const [formData, setFormData] = useState({
     data: "",
     hora: "",
@@ -80,10 +32,10 @@ export default function LivroDeOcorrencia() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-
+    
     if (name === "registradaPor") {
-      setFormData({
-        ...formData,
+      setFormData({ 
+        ...formData, 
         [name]: value,
         quemRegistrou: value === "condominio" ? "Condomínio" : ""
       });
@@ -94,10 +46,10 @@ export default function LivroDeOcorrencia() {
 
   const handleEditChange = (e) => {
     const { name, value } = e.target;
-
+    
     if (name === "registradaPor") {
-      setEditFormData({
-        ...editFormData,
+      setEditFormData({ 
+        ...editFormData, 
         [name]: value,
         quemRegistrou: value === "condominio" ? "Condomínio" : ""
       });
@@ -136,7 +88,7 @@ export default function LivroDeOcorrencia() {
         motivo_ocorrencia: formData.motivoOcorrencia,
       });
 
-      toast.success("Ocorrência cadastrada com sucesso!");
+      alert("Ocorrência cadastrada com sucesso!");
       setFormData({
         data: "",
         hora: "",
@@ -147,7 +99,7 @@ export default function LivroDeOcorrencia() {
         motivoOcorrencia: "",
       });
     } catch (error) {
-      toast.error("Erro ao cadastrar ocorrência");
+      alert("Erro ao cadastrar ocorrência");
       console.error(error);
     } finally {
       setLoading(false);
@@ -181,7 +133,7 @@ export default function LivroDeOcorrencia() {
 
   const handleEditSubmit = async (e) => {
     e.preventDefault();
-
+    
     try {
       await api.put(`/ocorrencias/${modalEditar.id}`, {
         data: editFormData.data,
@@ -193,11 +145,11 @@ export default function LivroDeOcorrencia() {
         motivo_ocorrencia: editFormData.motivoOcorrencia,
       });
 
-      toast.success("Ocorrência atualizada com sucesso!");
+      alert("Ocorrência atualizada com sucesso!");
       closeEditarModal();
       fetchOcorrencias();
     } catch (error) {
-      toast.error("Erro ao atualizar ocorrência");
+      alert("Erro ao atualizar ocorrência");
       console.error(error);
     }
   };
@@ -209,10 +161,10 @@ export default function LivroDeOcorrencia() {
 
     try {
       await api.delete(`/ocorrencias/${id}`);
-      toast.success("Ocorrência apagada com sucesso!");
+      alert("Ocorrência apagada com sucesso!");
       fetchOcorrencias();
     } catch (error) {
-      toast.error("Erro ao apagar ocorrência");
+      alert("Erro ao apagar ocorrência");
       console.error(error);
     }
   };
@@ -225,7 +177,7 @@ export default function LivroDeOcorrencia() {
           <div className="visualizar-modal" onClick={(e) => e.stopPropagation()}>
             <button className="foto-modal-close" onClick={closeVisualizarModal}>✕</button>
             <h3>Detalhes da Ocorrência</h3>
-
+            
             <div className="visualizar-info">
               <p><strong>Data:</strong> {modalVisualizar.data}</p>
               <p><strong>Hora:</strong> {modalVisualizar.hora}</p>
@@ -234,7 +186,7 @@ export default function LivroDeOcorrencia() {
               <p><strong>Registrada por:</strong> {modalVisualizar.registrada_por === "unidade" ? "Unidade" : "Condomínio"}</p>
               <p><strong>Quem Registrou:</strong> {modalVisualizar.quem_registrou}</p>
             </div>
-
+            
             <div className="motivo-box">
               <label>Motivo da Ocorrência:</label>
               <p className="motivo-texto">{modalVisualizar.motivo_ocorrencia}</p>
@@ -249,7 +201,7 @@ export default function LivroDeOcorrencia() {
           <div className="editar-modal" onClick={(e) => e.stopPropagation()}>
             <button className="foto-modal-close" onClick={closeEditarModal}>✕</button>
             <h3>Editar Ocorrência</h3>
-
+            
             <form className="editar-form" onSubmit={handleEditSubmit}>
               <div className="editar-form-group">
                 <label>Data:</label>
@@ -354,20 +306,20 @@ export default function LivroDeOcorrencia() {
       )}
 
       {/* TABS NAVIGATION */}
-      <div className="ocorrencias-tabs">
+      <div className="tabs">
         <button
           type="button"
-          className={`ocorrencias-tab-btn ${activeTab === "cadastro" ? "active" : ""}`}
+          className={activeTab === "cadastro" ? "active" : ""}
           onClick={() => setActiveTab("cadastro")}
         >
-          <PencilIcon className="section-icon" style={{ width: 22, height: 22 }} /> Cadastro de Ocorrências
+          📝 Cadastro de Ocorrências
         </button>
         <button
           type="button"
-          className={`ocorrencias-tab-btn ${activeTab === "visualizacao" ? "active" : ""}`}
+          className={activeTab === "visualizacao" ? "active" : ""}
           onClick={() => setActiveTab("visualizacao")}
         >
-          <ListIcon className="section-icon" style={{ width: 22, height: 22 }} /> Visualização de Ocorrências
+          📋 Visualização de Ocorrências
         </button>
       </div>
 
@@ -375,7 +327,7 @@ export default function LivroDeOcorrencia() {
       <div className="tab-content">
         {activeTab === "cadastro" && (
           <form className="cadastro-form" onSubmit={handleSubmit}>
-            <h2><FileTextIcon className="section-icon" /> Cadastro de Ocorrências</h2>
+            <h2>Cadastro de Ocorrências</h2>
 
             <div className="form-group">
               <label>Data:</label>
@@ -481,7 +433,7 @@ export default function LivroDeOcorrencia() {
 
         {activeTab === "visualizacao" && (
           <div className="visualizacao">
-            <h2><ClipboardIcon className="section-icon" /> Visualização de Ocorrências</h2>
+            <h2>Visualização de Ocorrências</h2>
             {ocorrencias.length === 0 ? (
               <p>Nenhuma ocorrência cadastrada ainda.</p>
             ) : (
@@ -511,27 +463,27 @@ export default function LivroDeOcorrencia() {
                       <td className="acoes-cell">
                         <button
                           type="button"
-                          className="admin-btn-small ver-btn"
+                          className="ver-btn"
                           onClick={() => openVisualizarModal(o)}
                           data-tooltip="Visualizar"
                         >
-                          <EyeIcon style={{ width: 14, height: 14 }} />
+                          👁️ Ver
                         </button>
                         <button
                           type="button"
-                          className="admin-btn-small edit-btn"
+                          className="editar-btn"
                           onClick={() => openEditarModal(o)}
                           data-tooltip="Editar"
                         >
-                          <PencilIcon style={{ width: 14, height: 14 }} />
+                          ✏️ Editar
                         </button>
                         <button
                           type="button"
-                          className="admin-btn-small delete-btn"
+                          className="apagar-btn"
                           onClick={() => handleDelete(o.id)}
                           data-tooltip="Apagar"
                         >
-                          <TrashIcon style={{ width: 14, height: 14 }} />
+                          🗑️ Apagar
                         </button>
                       </td>
                     </tr>

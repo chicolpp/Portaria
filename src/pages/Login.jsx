@@ -23,7 +23,7 @@ export default function Login() {
       // Redireciona para dashboard após login
       navigate("/dashboard");
     } catch (err) {
-      setError(err.response?.data?.error || "Email ou senha inválidos");
+      setError("Email ou senha inválidos");
     }
   }
 
@@ -39,6 +39,7 @@ export default function Login() {
             onChange={e => setEmail(e.target.value)}
             required
           />
+
           <input
             type="password"
             placeholder="Senha"

@@ -126,3 +126,134 @@ class Ocorrencia(db.Model):
             "motivo_ocorrencia": self.motivo_ocorrencia,
             "data_criacao": self.data_criacao.isoformat() if self.data_criacao else "",
         }
+
+
+class Chave(db.Model):
+    __tablename__ = "chaves"
+
+    id = db.Column(db.Integer, primary_key=True)
+    area_nome = db.Column(db.String(200), nullable=False)
+    codigo = db.Column(db.String(100), nullable=False)
+    setor = db.Column(db.String(100), nullable=False)
+    na_portaria = db.Column(db.Boolean, default=True)
+    retirado_por = db.Column(db.String(200), nullable=True)
+    unidade = db.Column(db.String(20), nullable=True) # Quem retirou (apartamento)
+    assinatura = db.Column(db.String(500), nullable=True) # Caminho da imagem
+    data_retirada = db.Column(db.DateTime, nullable=True)
+    data_devolucao = db.Column(db.DateTime, nullable=True) # Histórico
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "area_nome": self.area_nome,
+            "codigo": self.codigo,
+            "setor": self.setor,
+            "na_portaria": self.na_portaria,
+            "retirado_por": self.retirado_por or "",
+            "unidade": self.unidade or "",
+            "assinatura": self.assinatura or "",
+            # Se tiver upload de assinatura, precisamos garantir que o frontend consiga acessar a URL
+            # O ideal seria retornar a URL completa se existir
+            "assinatura_url": f"/uploads/{self.assinatura}" if self.assinatura else None,
+            "data_retirada": self.data_retirada.isoformat() if self.data_retirada else "",
+            "data_devolucao": self.data_devolucao.isoformat() if self.data_devolucao else "",
+        }
+
+
+class MovimentacaoChave(db.Model):
+    __tablename__ = "movimentacoes_chaves"
+
+    id = db.Column(db.Integer, primary_key=True)
+    chave_id = db.Column(db.Integer, db.ForeignKey("chaves.id"), nullable=False)
+    retirado_por = db.Column(db.String(200), nullable=False)
+    unidade = db.Column(db.String(20), nullable=False)
+    assinatura = db.Column(db.String(500), nullable=True)
+    item_id = db.Column(db.Integer, db.ForeignKey("itens_portaria.id"), nullable=True)
+    item_nome = db.Column(db.String(200), nullable=True)
+    data_retirada = db.Column(db.DateTime, default=db.func.now())
+    data_devolucao = db.Column(db.DateTime, nullable=True)
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "chave_id": self.chave_id,
+            "retirado_por": self.retirado_por,
+            "unidade": self.unidade,
+            "assinatura": self.assinatura or "",
+            "assinatura_url": f"/uploads/{self.assinatura}" if self.assinatura else None,
+            "item_nome": self.item_nome or "",
+            "data_retirada": self.data_retirada.isoformat() if self.data_retirada else "",
+            "data_devolucao": self.data_devolucao.isoformat() if self.data_devolucao else "",
+        }
+
+
+class ItemPortaria(db.Model):
+    __tablename__ = "itens_portaria"
+
+    id = db.Column(db.Integer, primary_key=True)
+    nome = db.Column(db.String(200), nullable=False)
+    tipo = db.Column(db.String(50), nullable=False)  # 'carrinho', 'escada', 'ferramenta'
+    disponivel = db.Column(db.Boolean, default=True)
+    retirado_por = db.Column(db.String(200), nullable=True)
+    apartamento = db.Column(db.String(20), nullable=True)
+    bloco = db.Column(db.String(20), nullable=True)
+    assinatura = db.Column(db.String(500), nullable=True)
+    data_retirada = db.Column(db.DateTime, nullable=True)
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "nome": self.nome,
+            "tipo": self.tipo,
+            "disponivel": self.disponivel,
+            "retirado_por": self.retirado_por or "",
+            "apartamento": self.apartamento or "",
+            "bloco": self.bloco or "",
+            "assinatura_url": f"/uploads/{self.assinatura}" if self.assinatura else None,
+            "data_retirada": self.data_retirada.isoformat() if self.data_retirada else "",
+        }
+
+class MovimentacaoItem(db.Model):
+    __tablename__ = "movimentacoes_itens"
+
+    id = db.Column(db.Integer, primary_key=True)
+    item_id = db.Column(db.Integer, db.ForeignKey("itens_portaria.id"), nullable=False)
+    retirado_por = db.Column(db.String(200), nullable=False)
+    apartamento = db.Column(db.String(20), nullable=False)
+    bloco = db.Column(db.String(20), nullable=False)
+    assinatura = db.Column(db.String(500), nullable=True)
+    data_retirada = db.Column(db.DateTime, default=db.func.now())
+    data_devolucao = db.Column(db.DateTime, nullable=True)
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "item_id": self.item_id,
+            "retirado_por": self.retirado_por,
+            "apartamento": self.apartamento,
+            "bloco": self.bloco,
+            "assinatura_url": f"/uploads/{self.assinatura}" if self.assinatura else None,
+            "data_retirada": self.data_retirada.isoformat() if self.data_retirada else "",
+            "data_devolucao": self.data_devolucao.isoformat() if self.data_devolucao else "",
+        }
+
+
+class ReservaEspaco(db.Model):
+    __tablename__ = "reservas_espacos"
+
+    id = db.Column(db.Integer, primary_key=True)
+    espaco = db.Column(db.String(100), nullable=False)  # 'salão', 'churrasqueira'
+    nome_morador = db.Column(db.String(200), nullable=False)
+    data = db.Column(db.Date, nullable=False)
+    hora_inicio = db.Column(db.Time, nullable=False)
+    hora_fim = db.Column(db.Time, nullable=False)
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "espaco": self.espaco,
+            "nome_morador": self.nome_morador,
+            "data": self.data.isoformat(),
+            "hora_inicio": self.hora_inicio.strftime("%H:%M"),
+            "hora_fim": self.hora_fim.strftime("%H:%M"),
+        }

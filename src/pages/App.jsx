@@ -8,8 +8,7 @@ import Portaria from "./pages/Portaria";
 import CadastroUsuarios from "./pages/CadastroUsuarios";
 import Ocorrencias from "./pages/Ocorrencias";
 import LivroDeOcorrencia from "./pages/Livrodeocorrencia";
-import EspacosServicos from "./pages/EspacosServicos";
-import { Toaster } from 'sonner';
+import { ToastProvider } from "./components/Toast";
 import "./App.css";
 
 function Layout({ children }) {
@@ -25,8 +24,8 @@ function Layout({ children }) {
 
 function App() {
   return (
+    <ToastProvider>
     <BrowserRouter>
-      <Toaster position="top-right" richColors />
       <Routes>
         {/* Redireciona a raiz "/" para "/login" */}
         <Route path="/" element={<Navigate to="/login" />} />
@@ -67,8 +66,8 @@ function App() {
             </PrivateRoute>
           }
         />
-
-        <Route path="/Ocorrencias"
+        
+        <Route path="/Ocorrencias" 
           element={
             <PrivateRoute>
               <Layout><Ocorrencias /></Layout>
@@ -76,7 +75,7 @@ function App() {
           }
         />
 
-        <Route path="/livroocorrencias"
+        <Route path="/livroocorrencias" 
           element={
             <PrivateRoute>
               <Layout><LivroDeOcorrencia /></Layout>
@@ -84,16 +83,9 @@ function App() {
           }
         />
 
-        <Route path="/espacosservicos"
-          element={
-            <PrivateRoute>
-              <Layout><EspacosServicos /></Layout>
-            </PrivateRoute>
-          }
-        />
-
       </Routes>
     </BrowserRouter>
+    </ToastProvider>
   );
 }
 

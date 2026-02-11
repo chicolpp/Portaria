@@ -30,16 +30,16 @@ export default function Header() {
           <Link to="/dashboard" className="header-logo">
             <img src="/icons/logo.png" alt="Logo" />
           </Link>
-          
+
           <span className="header-system-name">Prothax</span>
-          
+
           {/* Perfil mobile - aparece só no celular (à direita) */}
           <div className="mobile-user-profile">
             <span>{user?.nome || "Usuário"}</span>
             {user?.foto ? (
-              <img 
-                src={getUploadUrl(user.foto)} 
-                alt="Avatar" 
+              <img
+                src={getUploadUrl(user.foto)}
+                alt="Avatar"
                 onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }}
               />
             ) : null}
@@ -52,8 +52,8 @@ export default function Header() {
           <input type="text" placeholder="Pesquisar..." />
           <button>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="11" cy="11" r="8"/>
-              <path d="M21 21l-4.35-4.35"/>
+              <circle cx="11" cy="11" r="8" />
+              <path d="M21 21l-4.35-4.35" />
             </svg>
           </button>
         </div>
@@ -72,8 +72,8 @@ export default function Header() {
       <div className="header-right">
         <div className="user-profile">
           {user?.foto ? (
-            <img 
-              src={getUploadUrl(user.foto)} 
+            <img
+              src={getUploadUrl(user.foto)}
               alt="Avatar"
               onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }}
             />
@@ -85,12 +85,16 @@ export default function Header() {
         <div className="dropdown">
           <button>Menu ▾</button>
           <ul className="dropdown-menu">
-            <li>
-              <Link to="/cadastro-usuarios">Cadastro de Usuários</Link>
-            </li>
-            <li>
-              <Link to="/monitoramento">Monitoração</Link>
-            </li>
+            {user?.is_admin && (
+              <>
+                <li>
+                  <Link to="/cadastro-usuarios">Cadastro de Usuários</Link>
+                </li>
+                <li>
+                  <Link to="/monitoramento">Monitoração</Link>
+                </li>
+              </>
+            )}
             <li>
               <button onClick={handleLogout}>Sair</button>
             </li>
@@ -99,8 +103,8 @@ export default function Header() {
       </div>
 
       {/* Botão hamburger mobile */}
-      <button 
-        className="mobile-menu-btn" 
+      <button
+        className="mobile-menu-btn"
         onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
         aria-label="Menu"
       >
@@ -111,12 +115,16 @@ export default function Header() {
 
       {/* Menu mobile dropdown */}
       <div className={`mobile-dropdown ${mobileMenuOpen ? 'open' : ''}`}>
-        <Link to="/cadastro-usuarios" onClick={() => setMobileMenuOpen(false)}>
-          Cadastro de Usuários
-        </Link>
-        <Link to="/monitoramento" onClick={() => setMobileMenuOpen(false)}>
-          Monitoração
-        </Link>
+        {user?.is_admin && (
+          <>
+            <Link to="/cadastro-usuarios" onClick={() => setMobileMenuOpen(false)}>
+              Cadastro de Usuários
+            </Link>
+            <Link to="/monitoramento" onClick={() => setMobileMenuOpen(false)}>
+              Monitoração
+            </Link>
+          </>
+        )}
         <button onClick={() => { handleLogout(); setMobileMenuOpen(false); }}>
           Sair
         </button>

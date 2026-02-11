@@ -13,8 +13,6 @@ export default function Dashboard() {
 
   return (
     <div className="dashboard-container">
-      <h1>Bem-vindo!</h1>
-      <p>Login realizado com sucesso. Você está autenticado.</p>
 
       <div className="dashboard-grid">
         <ActionCard

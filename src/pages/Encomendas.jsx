@@ -1,6 +1,54 @@
 import { useState, useEffect, useRef } from "react";
 import api from "../services/api";
+import { toast } from "sonner";
 import "./Encomendas.css";
+
+// Ícones SVG inline
+const PencilIcon = ({ className, style }) => (
+  <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
+  </svg>
+);
+
+const TrashIcon = ({ className, style }) => (
+  <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M10 11v6M14 11v6" />
+  </svg>
+);
+
+const EyeIcon = ({ className, style }) => (
+  <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+    <circle cx="12" cy="12" r="3" />
+  </svg>
+);
+
+const PackageIcon = ({ className, style }) => (
+  <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M12.89 1.45l8 4.6a2 2 0 0 1 1 1.73v9.24a2 2 0 0 1-1 1.73l-8 4.6a2 2 0 0 1-2 0l-8-4.6a2 2 0 0 1-1-1.73V7.78a2 2 0 0 1 1-1.73l8-4.6a2 2 0 0 1 2 0z" />
+    <polyline points="3.29 7 12 12 20.71 7" />
+    <line x1="12" y1="22.5" x2="12" y2="12" />
+  </svg>
+);
+
+const BoxIcon = ({ className, style }) => (
+  <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="21 8 21 21 3 21 3 8" />
+    <rect x="1" y="3" width="22" height="5" />
+    <line x1="10" y1="12" x2="14" y2="12" />
+  </svg>
+);
+
+const ListIcon = ({ className, style }) => (
+  <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <line x1="8" y1="6" x2="21" y2="6" />
+    <line x1="8" y1="12" x2="21" y2="12" />
+    <line x1="8" y1="18" x2="21" y2="18" />
+    <line x1="3" y1="6" x2="3.01" y2="6" />
+    <line x1="3" y1="12" x2="3.01" y2="12" />
+    <line x1="3" y1="18" x2="3.01" y2="18" />
+  </svg>
+);
 
 export default function Encomendas() {
   const [activeTab, setActiveTab] = useState("cadastro");
@@ -68,6 +116,13 @@ export default function Encomendas() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!formData.nome.trim()) { toast.warning("Preencha o campo Nome."); return; }
+    if (!formData.unidade.trim()) { toast.warning("Preencha o campo Unidade."); return; }
+    if (!formData.documento.trim()) { toast.warning("Preencha o campo Código de Rastreamento."); return; }
+    if (!formData.dataRecebimento) { toast.warning("Preencha a Data de Recebimento."); return; }
+    if (!formData.horaRecebimento) { toast.warning("Preencha a Hora de Recebimento."); return; }
+
     setLoading(true);
 
     try {
@@ -86,7 +141,7 @@ export default function Encomendas() {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      alert("Encomenda cadastrada com sucesso!");
+      toast.success("Encomenda cadastrada com sucesso!");
       setFormData({
         nome: "",
         unidade: "",
@@ -98,7 +153,7 @@ export default function Encomendas() {
       setFotoFile(null);
       document.getElementById("foto-input").value = "";
     } catch (error) {
-      alert("Erro ao cadastrar encomenda");
+      toast.error("Erro ao cadastrar encomenda");
       console.error(error);
     } finally {
       setLoading(false);
@@ -151,7 +206,7 @@ export default function Encomendas() {
 
   const handleEditSubmit = async (e) => {
     e.preventDefault();
-    
+
     try {
       const data = new FormData();
       data.append("nome", editFormData.nome);
@@ -168,11 +223,11 @@ export default function Encomendas() {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      alert("Encomenda atualizada com sucesso!");
+      toast.success("Encomenda atualizada com sucesso!");
       closeEditarModal();
       fetchEncomendas();
     } catch (error) {
-      alert("Erro ao atualizar encomenda");
+      toast.error("Erro ao atualizar encomenda");
       console.error(error);
     }
   };
@@ -211,7 +266,7 @@ export default function Encomendas() {
 
   const confirmarRetirada = async () => {
     if (!nomeRetirada.trim()) {
-      alert("Por favor, preencha o nome de quem está retirando.");
+      toast.warning("Por favor, preencha o nome de quem está retirando.");
       return;
     }
 
@@ -225,11 +280,11 @@ export default function Encomendas() {
         await api.post(`/encomendas/${modalRetirada.id}/retirar`, formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
-        alert("Retirada confirmada com sucesso!");
+        toast.success("Retirada confirmada com sucesso!");
         closeRetiradaModal();
         fetchEncomendas();
       } catch (error) {
-        alert("Erro ao confirmar retirada");
+        toast.error("Erro ao confirmar retirada");
         console.error(error);
       }
     }, "image/png");
@@ -253,7 +308,7 @@ export default function Encomendas() {
           <div className="editar-modal" onClick={(e) => e.stopPropagation()}>
             <button className="foto-modal-close" onClick={closeEditarModal}>✕</button>
             <h3>Editar Encomenda #{modalEditar.id}</h3>
-            
+
             <form onSubmit={handleEditSubmit} className="editar-form">
               <div className="editar-form-group">
                 <label>Nome:</label>
@@ -344,7 +399,7 @@ export default function Encomendas() {
             <button className="foto-modal-close" onClick={closeRetiradaModal}>✕</button>
             <h3>Confirmar Retirada</h3>
             <p className="retirada-info">Encomenda #{modalRetirada.id} - {modalRetirada.nome}</p>
-            
+
             <div className="retirada-form-group">
               <label>Assinatura:</label>
               <canvas
@@ -386,22 +441,22 @@ export default function Encomendas() {
           className={`encomendas-tab-btn ${activeTab === "cadastro" ? "active" : ""}`}
           onClick={() => setActiveTab("cadastro")}
         >
-          📝 Cadastro de Encomendas
+          <PencilIcon className="section-icon" style={{ width: 22, height: 22 }} /> Cadastro de Encomendas
         </button>
         <button
           type="button"
           className={`encomendas-tab-btn ${activeTab === "visualizacao" ? "active" : ""}`}
           onClick={() => setActiveTab("visualizacao")}
         >
-          📋 Visualização de Encomendas
+          <ListIcon className="section-icon" style={{ width: 22, height: 22 }} /> Visualização de Encomendas
         </button>
       </div>
 
       {/* TAB CONTENT */}
       <div className="tab-content">
         {activeTab === "cadastro" && (
-          <form className="cadastro-form" onSubmit={handleSubmit}>
-            <h2>Cadastro de Encomendas</h2>
+          <form className="cadastro-form" onSubmit={handleSubmit} noValidate>
+            <h2><PackageIcon className="section-icon" /> Cadastro de Encomendas</h2>
 
             <div className="form-group">
               <label>Nome:</label>
@@ -410,7 +465,6 @@ export default function Encomendas() {
                 name="nome"
                 value={formData.nome}
                 onChange={handleChange}
-                required
               />
             </div>
 
@@ -421,7 +475,6 @@ export default function Encomendas() {
                 name="unidade"
                 value={formData.unidade}
                 onChange={handleChange}
-                required
               />
             </div>
 
@@ -432,7 +485,6 @@ export default function Encomendas() {
                 name="documento"
                 value={formData.documento}
                 onChange={handleChange}
-                required
               />
             </div>
 
@@ -453,7 +505,6 @@ export default function Encomendas() {
                 name="dataRecebimento"
                 value={formData.dataRecebimento}
                 onChange={handleChange}
-                required
               />
             </div>
 
@@ -464,7 +515,6 @@ export default function Encomendas() {
                 name="horaRecebimento"
                 value={formData.horaRecebimento}
                 onChange={handleChange}
-                required
               />
             </div>
 
@@ -486,7 +536,7 @@ export default function Encomendas() {
 
         {activeTab === "visualizacao" && (
           <div className="visualizacao">
-            <h2>Visualização de Encomendas</h2>
+            <h2><BoxIcon className="section-icon" /> Visualização de Encomendas</h2>
             {encomendas.length === 0 ? (
               <p>Nenhuma encomenda cadastrada ainda.</p>
             ) : (
@@ -518,11 +568,11 @@ export default function Encomendas() {
                         {e.foto ? (
                           <button
                             type="button"
-                            className="ver-foto-btn"
+                            className="admin-btn-small ver-btn"
                             onClick={() => openFotoModal(e.foto)}
                             data-tooltip="Ver Foto"
                           >
-                            📷 Ver Foto
+                            <EyeIcon style={{ width: 14, height: 14 }} />
                           </button>
                         ) : (
                           "-"
@@ -543,33 +593,33 @@ export default function Encomendas() {
                             {e.assinatura && (
                               <button
                                 type="button"
-                                className="ver-foto-btn"
+                                className="admin-btn-small ver-btn"
                                 onClick={() => openFotoModal(e.assinatura)}
                                 data-tooltip="Ver Assinatura"
                               >
-                                ✍️ Ver Assinatura
+                                <PencilIcon style={{ width: 14, height: 14 }} />
                               </button>
                             )}
                           </div>
                         ) : (
                           <button
                             type="button"
-                            className="retirar-btn"
+                            className="admin-btn-small edit-btn"
                             onClick={() => openRetiradaModal(e)}
                             data-tooltip="Retirar Encomenda"
                           >
-                            📦 Retirar
+                            <PackageIcon style={{ width: 14, height: 14 }} />
                           </button>
                         )}
                       </td>
                       <td>
                         <button
                           type="button"
-                          className="editar-btn"
+                          className="admin-btn-small edit-btn"
                           onClick={() => openEditarModal(e)}
                           data-tooltip="Editar"
                         >
-                          ✏️ Editar
+                          <PencilIcon style={{ width: 14, height: 14 }} />
                         </button>
                       </td>
                     </tr>

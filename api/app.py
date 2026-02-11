@@ -1,7 +1,7 @@
 from flask import Flask, request, send_from_directory
 from flask_cors import CORS
 from database import db
-from models import User, Encomenda, Acesso, Ocorrencia
+from models import User, Encomenda, Acesso, Ocorrencia, Chave, ItemPortaria, ReservaEspaco, MovimentacaoChave, MovimentacaoItem
 import jwt
 import datetime
 import os
@@ -58,6 +58,25 @@ with app.app_context():
             db.session.commit()
             print("🔄 Senha do admin resetada para: admin123")
 
+    # Seed de itens de portaria e reservas exemplo
+    if ItemPortaria.query.count() == 0:
+        db.session.add_all([
+            ItemPortaria(nome="Carrinho 1", tipo="carrinho"),
+            ItemPortaria(nome="Escada 1", tipo="escada"),
+            ItemPortaria(nome="Furadeira 1", tipo="ferramenta"),
+        ])
+        db.session.commit()
+        print("✅ Itens de portaria iniciais criados")
+
+    # Reservas de exemplo do dia (apenas se vazio)
+    if ReservaEspaco.query.count() == 0:
+        today = datetime.date.today()
+        db.session.add_all([
+            ReservaEspaco(espaco="Salão de Festas", nome_morador="João Silva", data=today, hora_inicio=datetime.time(18,0), hora_fim=datetime.time(22,0)),
+            ReservaEspaco(espaco="Churrasqueira", nome_morador="Maria Souza", data=today, hora_inicio=datetime.time(12,0), hora_fim=datetime.time(16,0)),
+        ])
+        db.session.commit()
+        print("✅ Reservas de exemplo adicionadas")
 
 @app.route("/register", methods=["POST"])
 def register():
@@ -415,6 +434,258 @@ def serve_frontend(path=''):
     if path and os.path.exists(os.path.join(STATIC_FOLDER, path)):
         return send_from_directory(STATIC_FOLDER, path)
     return send_from_directory(STATIC_FOLDER, 'index.html')
+
+
+
+
+# ========== ESPAÇOS E SERVIÇOS ==========
+
+@app.route("/chaves", methods=["POST"])
+def criar_chave():
+    data = request.json
+    import uuid
+    
+    # Gera um código aleatório se não for enviado (ou sempre, já que removemos do front)
+    codigo_gerado = f"KEY-{uuid.uuid4().hex[:6].upper()}"
+    
+    chave = Chave(
+        area_nome=data["area_nome"],
+        codigo=codigo_gerado,
+        setor="Geral", # Padrão já que removemos do front
+        na_portaria=True,
+    )
+    db.session.add(chave)
+    db.session.commit()
+    return {"message": "Chave cadastrada", "chave": chave.to_dict()}, 201
+
+@app.route("/chaves", methods=["GET"])
+def listar_chaves():
+    chaves = Chave.query.order_by(Chave.id.desc()).all()
+    return {"chaves": [c.to_dict() for c in chaves]}
+
+@app.route("/chaves/<int:id>", methods=["PUT"])
+def editar_chave(id):
+    chave = Chave.query.get_or_404(id)
+    data = request.json
+    
+    if "area_nome" in data:
+        chave.area_nome = data["area_nome"]
+    
+    db.session.commit()
+    return {"message": "Chave atualizada", "chave": chave.to_dict()}, 200
+
+@app.route("/chaves/<int:id>", methods=["DELETE"])
+def deletar_chave(id):
+    chave = Chave.query.get_or_404(id)
+    db.session.delete(chave)
+    db.session.commit()
+    return {"message": "Chave deletada"}, 200
+
+@app.route("/chaves/<int:id>/retirar", methods=["POST"])
+def retirar_chave(id):
+    chave = Chave.query.get_or_404(id)
+    
+    # Se for FormData, pega os dados de request.form
+    # Se for JSON, pega de request.json (mas aqui estamos focando em FormData por causa da imagem)
+    
+    # Check if request has files (multipart/form-data)
+    if request.files:
+        nome_retirada = request.form.get("retirado_por")
+        unidade = request.form.get("unidade")
+        item_ids = request.form.getlist("item_id") # Pega lista de IDs
+        
+        assinatura_path = ""
+        if 'assinatura' in request.files:
+            file = request.files['assinatura']
+            if file and file.filename:
+                # Gera um nome seguro para o arquivo
+                filename = secure_filename(f"assinatura_chave_{id}_{datetime.datetime.now().timestamp()}.png")
+                file.save(os.path.join(UPLOAD_FOLDER, filename))
+                assinatura_path = filename
+    else:
+        # Fallback para JSON
+        data = request.json
+        nome_retirada = data.get("retirado_por", "")
+        unidade = data.get("unidade", "")
+        item_ids = data.get("item_ids", [])
+        assinatura_path = ""
+
+    # Buscar nomes de todos os itens vinculados
+    item_nomes_list = []
+    for i_id in item_ids:
+        if i_id:
+            it = ItemPortaria.query.get(i_id)
+            if it:
+                item_nomes_list.append(it.nome)
+    
+    item_nome_final = ", ".join(item_nomes_list)
+
+    chave.na_portaria = False
+    chave.retirado_por = nome_retirada
+    chave.unidade = unidade
+    chave.assinatura = assinatura_path
+    chave.data_retirada = datetime.datetime.now()
+    chave.data_devolucao = None
+    
+    # Criar registro de histórico
+    log = MovimentacaoChave(
+        chave_id=chave.id,
+        retirado_por=nome_retirada,
+        unidade=unidade,
+        assinatura=assinatura_path,
+        item_id=int(item_ids[0]) if item_ids and item_ids[0] else None, # Mantém o primeiro como ref se necessário
+        item_nome=item_nome_final,
+        data_retirada=datetime.datetime.now()
+    )
+    db.session.add(log)
+    
+    db.session.commit()
+    return {"message": "Chave retirada", "chave": chave.to_dict()}, 200
+
+@app.route("/chaves/<int:id>/devolver", methods=["POST"])
+def devolver_chave(id):
+    chave = Chave.query.get_or_404(id)
+    chave.na_portaria = True
+    # Mantemos o histórico de quem retirou E quando devolveu?
+    # O modelo atual não tem histórico separado, ele sobrescreve.
+    # Se quiser histórico, precisaria de uma tabela separada 'MovimentacaoChave'.
+    # O pedido do usuário foi: "quero data de devolução". Se eu sobrescrever, perco quem retirou?
+    # O comportamento padrão do código anterior era limpar.
+    # Vou manter "retirado_por" LIMPO para indicar que está na portaria,
+    # MAS vou salvar `data_devolucao` antes de limpar? Não faz sentido se limparmos os dados.
+    # O usuário pediu "data de devolução". Normalmente isso implica ver o histórico.
+    # Mas no card "Na Portaria", não faz sentido mostrar data de devolução de uma retirada antiga.
+    # Vou manter o comportamento de limpar para indicar disponibilidade,
+    # mas o campo `data_devolucao` ficará disponível APENAS se eu não limpar tudo.
+    # Decisão: Para "devolver", vamos limpar os dados de retirada para indicar que está livre.
+    # Se o usuário quisesse histórico persistente, precisaria de outra tabela.
+    # Vou limpar retirado_por, unidade e assinatura, pois a chave está livre agora.
+    
+    chave.retirado_por = ""
+    chave.unidade = ""
+    chave.assinatura = ""
+    chave.data_retirada = None
+    chave.data_devolucao = datetime.datetime.now() # Salva a data da última devolução (opcional, mas solicitado)
+    
+    # Atualizar registro de histórico (marcar devolução no log aberto)
+    log = MovimentacaoChave.query.filter_by(chave_id=id, data_devolucao=None).order_by(MovimentacaoChave.data_retirada.desc()).first()
+    if log:
+        log.data_devolucao = datetime.datetime.now()
+    
+    db.session.commit()
+    return {"message": "Chave devolvida", "chave": chave.to_dict()}, 200
+
+@app.route("/chaves/<int:id>/historico", methods=["GET"])
+def historico_chave(id):
+    historico = MovimentacaoChave.query.filter_by(chave_id=id).order_by(MovimentacaoChave.data_retirada.desc()).all()
+    return {"historico": [h.to_dict() for h in historico]}
+
+@app.route("/itens", methods=["GET"])
+def listar_itens():
+    itens = ItemPortaria.query.order_by(ItemPortaria.id.asc()).all()
+    return {"itens": [i.to_dict() for i in itens]}
+
+@app.route("/itens", methods=["POST"])
+def criar_item():
+    data = request.json
+    item = ItemPortaria(
+        nome=data["nome"], 
+        tipo=data.get("tipo", "Geral")
+    )
+    db.session.add(item)
+    db.session.commit()
+    return {"message": "Item criado", "item": item.to_dict()}, 201
+
+@app.route("/itens/<int:id>/retirar", methods=["POST"])
+def retirar_item(id):
+    item = ItemPortaria.query.get_or_404(id)
+    if not item.disponivel:
+        return {"error": "Item já retirado"}, 400
+    
+    if request.files:
+        nome_morador = request.form.get("nome_morador")
+        apartamento = request.form.get("apartamento")
+        bloco = request.form.get("bloco")
+        assinatura_path = ""
+        if 'assinatura' in request.files:
+            file = request.files['assinatura']
+            if file and file.filename:
+                filename = secure_filename(f"assinatura_item_{id}_{datetime.datetime.now().timestamp()}.png")
+                file.save(os.path.join(UPLOAD_FOLDER, filename))
+                assinatura_path = filename
+    else:
+        data = request.json
+        nome_morador = data.get("nome_morador")
+        apartamento = data.get("apartamento")
+        bloco = data.get("bloco")
+        assinatura_path = ""
+
+    item.disponivel = False
+    item.retirado_por = nome_morador
+    item.apartamento = apartamento
+    item.bloco = bloco
+    item.assinatura = assinatura_path
+    item.data_retirada = datetime.datetime.now()
+    
+    # Criar registro de histórico
+    log = MovimentacaoItem(
+        item_id=item.id,
+        retirado_por=nome_morador,
+        apartamento=apartamento,
+        bloco=bloco,
+        assinatura=assinatura_path,
+        data_retirada=datetime.datetime.now()
+    )
+    db.session.add(log)
+    
+    db.session.commit()
+    return {"message": "Retirada registrada", "item": item.to_dict()}, 200
+
+@app.route("/itens/<int:id>/devolver", methods=["POST"])
+def devolver_item(id):
+    item = ItemPortaria.query.get_or_404(id)
+    item.disponivel = True
+    item.retirado_por = ""
+    item.apartamento = ""
+    item.bloco = ""
+    item.data_retirada = None
+    
+    # Atualizar registro de histórico
+    log = MovimentacaoItem.query.filter_by(item_id=id, data_devolucao=None).order_by(MovimentacaoItem.data_retirada.desc()).first()
+    if log:
+        log.data_devolucao = datetime.datetime.now()
+        
+    db.session.commit()
+    return {"message": "Devolução registrada", "item": item.to_dict()}, 200
+
+@app.route("/itens/<int:id>/historico", methods=["GET"])
+def historico_item(id):
+    historico = MovimentacaoItem.query.filter_by(item_id=id).order_by(MovimentacaoItem.data_retirada.desc()).all()
+    return {"historico": [h.to_dict() for h in historico]}
+
+@app.route("/itens/<int:id>", methods=["PUT"])
+def editar_item(id):
+    item = ItemPortaria.query.get_or_404(id)
+    data = request.json
+    if "nome" in data:
+        item.nome = data["nome"]
+    if "tipo" in data:
+        item.tipo = data["tipo"]
+    db.session.commit()
+    return {"message": "Item atualizado", "item": item.to_dict()}, 200
+
+@app.route("/itens/<int:id>", methods=["DELETE"])
+def deletar_item(id):
+    item = ItemPortaria.query.get_or_404(id)
+    db.session.delete(item)
+    db.session.commit()
+    return {"message": "Item removido"}, 200
+
+@app.route("/reservas/hoje", methods=["GET"])
+def reservas_hoje():
+    today = datetime.date.today()
+    reservas = ReservaEspaco.query.filter(ReservaEspaco.data == today).order_by(ReservaEspaco.hora_inicio.asc()).all()
+    return {"reservas": [r.to_dict() for r in reservas]}
 
 
 if __name__ == "__main__":

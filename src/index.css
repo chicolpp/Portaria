@@ -5,7 +5,7 @@
   color-scheme: dark;
   color: rgba(255, 255, 255, 0.87);
   background-color: #1a1625;
-  
+
   /* Paleta de cores principal */
   --primary: #8b5cf6;
   --primary-dark: #7c3aed;
@@ -59,6 +59,7 @@ a {
   text-decoration: inherit;
   transition: color 0.3s ease;
 }
+
 a:hover {
   color: var(--primary-lighter);
 }
@@ -76,7 +77,9 @@ body {
   min-height: 100vh;
 }
 
-h1, h2, h3 {
+h1,
+h2,
+h3 {
   line-height: 1.2;
   color: var(--text-primary);
 }
@@ -134,8 +137,48 @@ button:disabled {
   opacity: 0.7;
 }
 
+/* Botões de Ação (Pequenos) */
+.admin-btn-small {
+  background: var(--primary);
+  color: white;
+  border: none;
+  cursor: pointer;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border-radius: 8px;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.admin-btn-small:hover {
+  transform: scale(1.1);
+  filter: brightness(1.2);
+}
+
+.admin-btn-small:active {
+  transform: scale(0.9);
+}
+
+.edit-btn {
+  background: #8b5cf6 !important;
+}
+
+.delete-btn {
+  background: #6366f1 !important;
+}
+
+.ver-btn {
+  background: #10b981 !important;
+}
+
 /* Inputs globais */
-input, select, textarea {
+input,
+select,
+textarea {
   padding: 14px 18px;
   border: 2px solid var(--border-color);
   border-radius: 12px;
@@ -146,18 +189,23 @@ input, select, textarea {
   outline: none;
 }
 
-input::placeholder, textarea::placeholder {
+input::placeholder,
+textarea::placeholder {
   color: #64748b;
 }
 
-input:focus, select:focus, textarea:focus {
+input:focus,
+select:focus,
+textarea:focus {
   border-color: var(--primary);
   box-shadow: 0 0 20px rgba(139, 92, 246, 0.25);
   background: rgba(15, 23, 42, 1);
 }
 
 /* Cards globais */
-.card, .tab-content, .modal-content {
+.card,
+.tab-content,
+.modal-content {
   background: var(--bg-card);
   border-radius: 16px;
   padding: 30px;
@@ -206,6 +254,7 @@ tbody tr:hover {
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -213,8 +262,13 @@ tbody tr:hover {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes slideInRight {
@@ -222,6 +276,7 @@ tbody tr:hover {
     opacity: 0;
     transform: translateX(-20px);
   }
+
   to {
     opacity: 1;
     transform: translateX(0);
@@ -229,21 +284,32 @@ tbody tr:hover {
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.7; }
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.7;
+  }
 }
 
 @keyframes glow {
-  0%, 100% {
+
+  0%,
+  100% {
     box-shadow: 0 0 10px var(--glow-color);
   }
+
   50% {
     box-shadow: 0 0 25px var(--glow-color), 0 0 40px rgba(139, 92, 246, 0.2);
   }
 }
 
 /* Modais overlay */
-.modal-overlay, .foto-modal-overlay {
+.modal-overlay,
+.foto-modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -315,4 +381,169 @@ label {
 [data-tooltip]:hover::before {
   opacity: 1;
   visibility: visible;
+}
+
+/* ========== Validação de formulário sem destaque vermelho ========== */
+input:invalid:not(:placeholder-shown),
+select:invalid:not(:placeholder-shown),
+textarea:invalid:not(:placeholder-shown) {
+  border-color: var(--border-color);
+  box-shadow: none;
+}
+
+/* Tooltip de validação customizado */
+.form-field {
+  position: relative;
+}
+
+.form-field .validation-message {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 8px;
+  padding: 10px 16px;
+  background: linear-gradient(135deg, #1e1e2f, #151521);
+  color: var(--primary-light);
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: 10px;
+  border: 2px solid var(--primary);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), 0 0 20px var(--glow-color);
+  z-index: 100;
+  white-space: nowrap;
+  animation: fadeInUp 0.2s ease-out;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.form-field .validation-message::before {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  left: 20px;
+  border: 8px solid transparent;
+  border-bottom-color: var(--primary);
+}
+
+.form-field .validation-message .icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  border-radius: 50%;
+  font-size: 12px;
+}
+
+/* Toast notifications */
+.toast-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.toast {
+  padding: 14px 20px;
+  background: linear-gradient(135deg, #1e1e2f, #151521);
+  border-radius: 12px;
+  border: 2px solid var(--primary);
+  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.5), 0 0 25px var(--glow-color);
+  color: var(--text-primary);
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  animation: slideInRight 0.3s ease-out;
+  min-width: 280px;
+  max-width: 400px;
+}
+
+.toast.error {
+  border-color: #ef4444;
+  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.5), 0 0 25px rgba(239, 68, 68, 0.3);
+}
+
+.toast.success {
+  border-color: #22c55e;
+  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.5), 0 0 25px rgba(34, 197, 94, 0.3);
+}
+
+.toast.warning {
+  border-color: #f59e0b;
+  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.5), 0 0 25px rgba(245, 158, 11, 0.3);
+}
+
+.toast .toast-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.toast.error .toast-icon {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+}
+
+.toast.success .toast-icon {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+}
+
+.toast.warning .toast-icon {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+}
+
+.toast-close {
+  margin-left: auto;
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 4px;
+  font-size: 16px;
+  transition: color 0.2s;
+  box-shadow: none;
+}
+
+.toast-close:hover {
+  color: var(--text-primary);
+  background: none;
+  box-shadow: none;
+  transform: none;
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .toast-container {
+    top: auto;
+    bottom: 20px;
+    right: 10px;
+    left: 10px;
+  }
+
+  .toast {
+    min-width: auto;
+    max-width: none;
+  }
 }

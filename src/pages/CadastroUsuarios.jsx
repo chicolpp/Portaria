@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import api from "../services/api";
+import { toast } from "sonner";
 import "./CadastroUsuarios.css";
 
 export default function CadastroUsuarios() {
@@ -80,14 +81,14 @@ export default function CadastroUsuarios() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (formData.password !== formData.confirmPassword) {
-      alert("As senhas não coincidem!");
+      toast.warning("As senhas não coincidem!");
       return;
     }
 
     if (formData.password.length < 6) {
-      alert("A senha deve ter pelo menos 6 caracteres!");
+      toast.warning("A senha deve ter pelo menos 6 caracteres!");
       return;
     }
 
@@ -109,7 +110,7 @@ export default function CadastroUsuarios() {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      alert("Usuário cadastrado com sucesso!");
+      toast.success("Usuário cadastrado com sucesso!");
       setFormData({
         nome: "",
         sobrenome: "",
@@ -122,7 +123,7 @@ export default function CadastroUsuarios() {
       setFotoFile(null);
       setFotoPreview(null);
     } catch (error) {
-      alert(error.response?.data?.error || "Erro ao cadastrar usuário");
+      toast.error(error.response?.data?.error || "Erro ao cadastrar usuário");
       console.error(error);
     } finally {
       setLoading(false);
@@ -179,11 +180,11 @@ export default function CadastroUsuarios() {
       await api.put(`/usuarios/${modalEditar.id}`, data, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-      alert("Usuário atualizado com sucesso!");
+      toast.success("Usuário atualizado com sucesso!");
       closeEditarModal();
       fetchUsuarios();
     } catch (error) {
-      alert("Erro ao atualizar usuário");
+      toast.error("Erro ao atualizar usuário");
       console.error(error);
     }
   };
@@ -193,7 +194,7 @@ export default function CadastroUsuarios() {
       await api.post(`/usuarios/${id}/toggle-status`);
       fetchUsuarios();
     } catch (error) {
-      alert("Erro ao alterar status");
+      toast.error("Erro ao alterar status");
       console.error(error);
     }
   };
@@ -205,10 +206,10 @@ export default function CadastroUsuarios() {
 
     try {
       await api.delete(`/usuarios/${id}`);
-      alert("Usuário excluído com sucesso!");
+      toast.success("Usuário excluído com sucesso!");
       fetchUsuarios();
     } catch (error) {
-      alert("Erro ao excluir usuário");
+      toast.error("Erro ao excluir usuário");
       console.error(error);
     }
   };
@@ -429,7 +430,7 @@ export default function CadastroUsuarios() {
               <div className="form-group">
                 <label>Cargo:</label>
                 <div className="custom-select-container">
-                  <div 
+                  <div
                     className={`custom-select ${cargoDropdownOpen ? "open" : ""}`}
                     onClick={() => setCargoDropdownOpen(!cargoDropdownOpen)}
                   >

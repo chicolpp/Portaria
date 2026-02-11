@@ -14,6 +14,9 @@ export default defineConfig({
       '/acessos': 'http://localhost:5000',
       '/ocorrencias': 'http://localhost:5000',
       '/uploads': 'http://localhost:5000',
+      '/chaves': 'http://localhost:5000',
+      '/itens': 'http://localhost:5000',
+      '/reservas': 'http://localhost:5000',
     }
   }
 })

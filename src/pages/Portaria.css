@@ -16,16 +16,11 @@
   overflow-x: auto;
 }
 
-/* TABS NAVIGATION - BEM VISÍVEL */
+/* TABS NAVIGATION - ESTILO ESPACOS SERVICOS */
 .portaria-tabs {
   display: flex;
   gap: 12px;
   margin-bottom: 20px;
-  background: transparent;
-  padding: 5px 0;
-  position: sticky;
-  top: 70px;
-  z-index: 100;
 }
 
 .portaria-tab-btn {
@@ -41,55 +36,24 @@
   cursor: pointer;
   border-radius: 0 12px 12px 0;
   transition: all 0.3s ease;
-  box-shadow: none;
-  position: relative;
   display: flex;
   align-items: center;
   gap: 10px;
-  text-shadow: 0 0 15px rgba(196, 181, 253, 0.4);
-}
-
-.portaria-tab-btn::before {
-  content: '◈';
-  font-size: 10px;
-  color: var(--primary);
-  opacity: 0.5;
-  transition: all 0.3s ease;
-}
-
-.portaria-tab-btn:hover::before {
-  opacity: 1;
-  transform: scale(1.2);
-}
-
-.portaria-tab-btn:hover {
-  background: linear-gradient(90deg, rgba(139, 92, 246, 0.15), transparent);
-  color: #e9e3ff;
-  border-left-color: var(--primary);
-  padding-left: 32px;
-  box-shadow: none;
-  transform: none;
-  text-shadow: 0 0 20px rgba(196, 181, 253, 0.6);
 }
 
 .portaria-tab-btn.active {
-  background: linear-gradient(90deg, rgba(139, 92, 246, 0.2), transparent);
-  color: #e9e3ff;
+  color: #fff;
+  background: linear-gradient(90deg, rgba(139, 92, 246, 0.15), rgba(139, 92, 246, 0.05));
   border-left-color: var(--primary);
-  box-shadow: none;
-  text-shadow: 0 0 25px rgba(196, 181, 253, 0.7);
-}
-
-.portaria-tab-btn.active::before {
-  opacity: 1;
-  color: var(--primary-light);
+  box-shadow: 0 0 20px var(--glow-color);
 }
 
 /* TAB CONTENT */
 .portaria-container .tab-content {
   background: var(--bg-card);
   border-radius: 20px;
-  padding: 40px;
+  padding: 30px;
+  /* Reduzido de 40px para 30px */
   border: 1px solid var(--border-color);
   box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
   animation: fadeInUp 0.5s ease-out;
@@ -99,12 +63,16 @@
 .portaria-container .visualizacao h2,
 .portaria-container .liberacao h2 {
   margin-bottom: 30px;
-  font-size: 26px;
+  font-size: 24px;
+  /* Reduzido de 26px para 24px */
   font-weight: 700;
   background: linear-gradient(135deg, var(--primary), var(--primary-light));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .portaria-container .form-group {
@@ -115,10 +83,15 @@
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 20px;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 25px;
+  border-radius: 20px;
+  border: 1px solid var(--border-color);
 }
 
 .portaria-container .cadastro-form h2 {
   grid-column: 1 / -1;
+  margin-bottom: 20px;
 }
 
 .portaria-container .cadastro-form .form-group:last-of-type,
@@ -157,7 +130,6 @@
   outline: none;
   border-color: var(--primary);
   box-shadow: 0 0 20px var(--glow-color);
-  background: rgba(15, 23, 42, 1);
 }
 
 .portaria-container .submit-btn {
@@ -165,103 +137,57 @@
   padding: 16px 40px;
   background: linear-gradient(135deg, var(--primary), var(--primary-dark));
   color: white;
-  border: 2px solid transparent;
+  border: none;
   border-radius: 12px;
   font-size: 16px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 20px var(--glow-color);
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px var(--glow-color);
   text-transform: uppercase;
   letter-spacing: 1px;
   width: fit-content;
-  position: relative;
-  overflow: hidden;
-}
-
-.portaria-container .submit-btn::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  transition: left 0.5s ease;
-}
-
-.portaria-container .submit-btn:hover::before {
-  left: 100%;
 }
 
 .portaria-container .submit-btn:hover {
-  background: linear-gradient(135deg, var(--primary-dark), var(--primary-darker));
-  box-shadow: 0 8px 30px var(--glow-color);
-  transform: translateY(-3px);
-}
-
-.portaria-container .submit-btn:active {
-  transform: translateY(-1px);
-}
-
-.portaria-container .submit-btn:disabled {
-  background: linear-gradient(135deg, #475569, #334155);
-  cursor: not-allowed;
-  box-shadow: none;
-  transform: none;
-}
-
-.portaria-container .visualizacao {
-  min-width: 100%;
-  overflow-x: auto;
-}
-
-.portaria-container .visualizacao p,
-.portaria-container .liberacao p {
-  color: #94a3b8;
-  font-size: 16px;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px var(--glow-color);
+  filter: brightness(1.1);
 }
 
 /* TABLE */
 .acessos-table {
   width: 100%;
-  min-width: 900px;
   border-collapse: collapse;
   margin-top: 25px;
   border-radius: 12px;
   overflow: hidden;
 }
 
-.acessos-table th,
-.acessos-table td {
-  padding: 16px 20px;
-  text-align: left;
-  border-bottom: 1px solid rgba(139, 92, 246, 0.1);
-  white-space: nowrap;
-}
-
 .acessos-table th {
-  background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(124, 58, 237, 0.15));
+  background: rgba(139, 92, 246, 0.1);
   color: var(--primary-light);
   font-weight: 600;
   font-size: 14px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  text-align: left;
+  padding: 16px 20px;
 }
 
 .acessos-table td {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border-color);
   color: var(--text-primary);
   font-size: 15px;
-  background: transparent;
 }
 
 .acessos-table tbody tr {
-  background: transparent;
   transition: all 0.3s ease;
 }
 
 .acessos-table tbody tr:hover {
-  background: linear-gradient(90deg, rgba(139, 92, 246, 0.1), transparent);
+  background: rgba(139, 92, 246, 0.05);
 }
 
 /* STATUS SAÍDA */
@@ -393,5 +319,109 @@
   .portaria-tab-btn {
     padding: 10px 16px;
     font-size: 13px;
+  }
+}
+
+/* ========== GESTÃO DE ITENS ========== */
+.quick-add-container {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 24px;
+  border-radius: 16px;
+  border: 1px solid var(--border-color);
+  margin-bottom: 30px;
+}
+
+.quick-add-container .form-group {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+/* MODAL OVERLAY */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
+}
+
+.retirada-modal {
+  background: var(--bg-card);
+  padding: 30px;
+  border-radius: 24px;
+  max-width: 450px;
+  width: 90%;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+  animation: modalScale 0.3s ease-out;
+}
+
+.retirada-modal h3 {
+  margin: 0 0 25px 0;
+  font-size: 24px;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.retirada-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.modal-actions {
+  margin-top: 25px;
+  display: flex;
+  gap: 12px;
+}
+
+.cancel-btn {
+  flex: 1;
+  padding: 14px;
+  background: #475569;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.cancel-btn:hover {
+  background: #64748b;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes modalScale {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 1;
   }
 }
