@@ -234,19 +234,18 @@
 /* ========== MOBILE ========== */
 @media (max-width: 768px) {
   .portaria-container {
-    padding: 16px;
-    padding-top: 20px;
-    padding-left: 16px;
-    padding-bottom: 100px;
+    padding: 10px;
+    padding-top: 15px;
+    padding-bottom: 80px;
     overflow-x: hidden;
   }
 
   .portaria-tabs {
     flex-wrap: nowrap;
     overflow-x: auto;
-    gap: 10px;
+    gap: 6px;
     position: static;
-    padding-bottom: 8px;
+    padding-bottom: 6px;
     -webkit-overflow-scrolling: touch;
   }
 
@@ -255,70 +254,87 @@
   }
 
   .portaria-tab-btn {
-    padding: 12px 20px;
-    font-size: 14px;
+    padding: 10px 16px;
+    font-size: 13px;
     white-space: nowrap;
     flex-shrink: 0;
+    gap: 6px;
   }
 
   .portaria-container .tab-content {
-    padding: 20px;
-    border-radius: 16px;
+    padding: 15px;
+    border-radius: 12px;
   }
 
   .portaria-container .cadastro-form {
     grid-template-columns: 1fr;
-    gap: 16px;
+    gap: 12px;
+    padding: 15px;
   }
 
   .portaria-container .cadastro-form h2,
   .portaria-container .visualizacao h2 {
-    font-size: 20px;
+    font-size: 1.15rem;
+    margin-bottom: 15px;
+  }
+
+  .portaria-container .form-group {
+    margin-bottom: 12px;
   }
 
   .portaria-container .form-group input {
-    padding: 14px 16px;
-    font-size: 16px;
+    padding: 10px 14px;
+    font-size: 15px;
   }
 
   .portaria-container .submit-btn {
     width: 100%;
-    padding: 16px;
-    font-size: 16px;
+    padding: 14px;
+    font-size: 15px;
+    margin-top: 5px;
   }
 
   .acessos-table {
     display: block;
     overflow-x: auto;
-    font-size: 13px;
+    font-size: 12px;
   }
 
   .acessos-table th,
   .acessos-table td {
-    padding: 12px 10px;
-    font-size: 13px;
+    padding: 10px 6px;
+    font-size: 12px;
   }
 
   .registrar-saida-btn {
     padding: 10px 14px;
     font-size: 13px;
   }
+
+  .admin-btn-small {
+    width: 32px !important;
+    height: 32px !important;
+  }
 }
 
 @media (max-width: 480px) {
   .portaria-container {
-    padding: 12px;
-    padding-top: 16px;
+    padding: 8px;
+    padding-top: 12px;
     padding-bottom: 100px;
   }
 
   .portaria-container .tab-content {
-    padding: 16px;
+    padding: 12px;
   }
 
   .portaria-tab-btn {
-    padding: 10px 16px;
-    font-size: 13px;
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+
+  .portaria-container .cadastro-form {
+    padding: 10px;
   }
 }
 

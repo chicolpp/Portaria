@@ -65,20 +65,6 @@ const ShieldCheckIcon = ({ className, style }) => (
   </svg>
 );
 
-const ToolboxIcon = ({ className, style }) => (
-  <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h5l2-3h2l2 3h5a2 2 0 0 1 2 2z" />
-    <circle cx="12" cy="13" r="3" />
-  </svg>
-);
-
-const PlusIcon = ({ className, style }) => (
-  <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <line x1="12" y1="5" x2="12" y2="19" />
-    <line x1="5" y1="12" x2="19" y2="12" />
-  </svg>
-);
-
 export default function Portaria() {
   const [activeTab, setActiveTab] = useState("cadastro");
   const [acessos, setAcessos] = useState([]);
@@ -92,18 +78,6 @@ export default function Portaria() {
     modelo: "",
     cor: "",
   });
-
-  // State para Itens
-  const [itens, setItens] = useState([]);
-  const [loadingItens, setLoadingItens] = useState(false);
-  const [newItemNome, setNewItemNome] = useState("");
-  const [retiradaData, setRetiradaData] = useState({
-    nome_morador: "",
-    apartamento: "",
-    bloco: "",
-  });
-  const [itemParaRetirar, setItemParaRetirar] = useState(null);
-  const [showModalRetirada, setShowModalRetirada] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -133,63 +107,7 @@ export default function Portaria() {
     if (activeTab === "visualizacao") {
       fetchAcessos();
     }
-    if (activeTab === "gestao-itens") {
-      fetchItens();
-    }
   }, [activeTab]);
-
-  const fetchItens = async () => {
-    setLoadingItens(true);
-    try {
-      const resp = await api.get("/itens");
-      setItens(resp.data.itens);
-    } catch (err) {
-      toast.error("Erro ao buscar itens");
-    } finally {
-      setLoadingItens(false);
-    }
-  };
-
-  const handleCreateItem = async (e) => {
-    e.preventDefault();
-    if (!newItemNome) return;
-    try {
-      await api.post("/itens", { nome: newItemNome });
-      toast.success("Item cadastrado!");
-      setNewItemNome("");
-      fetchItens();
-    } catch (err) {
-      toast.error("Erro ao cadastrar item");
-    }
-  };
-
-  const handleWithdrawItem = async (e) => {
-    e.preventDefault();
-    try {
-      await api.post(`/itens/${itemParaRetirar.id}/retirar`, retiradaData);
-      toast.success("Retirada registrada!");
-      setShowModalRetirada(false);
-      setRetiradaData({ nome_morador: "", apartamento: "", bloco: "" });
-      fetchItens();
-    } catch (err) {
-      toast.error("Erro ao registrar retirada");
-    }
-  };
-
-  const handleReturnItem = async (id) => {
-    try {
-      await api.post(`/itens/${id}/devolver`);
-      toast.success("Devolução registrada!");
-      fetchItens();
-    } catch (err) {
-      toast.error("Erro ao registrar devolução");
-    }
-  };
-
-  const openModalRetirada = (item) => {
-    setItemParaRetirar(item);
-    setShowModalRetirada(true);
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -239,13 +157,6 @@ export default function Portaria() {
           onClick={() => setActiveTab("liberacao")}
         >
           <UnlockIcon className="section-icon" style={{ width: 22, height: 22 }} /> Liberação de Acessos
-        </button>
-        <button
-          type="button"
-          className={`portaria-tab-btn ${activeTab === "gestao-itens" ? "active" : ""}`}
-          onClick={() => setActiveTab("gestao-itens")}
-        >
-          <ToolboxIcon className="section-icon" style={{ width: 22, height: 22 }} /> Gestão de Itens
         </button>
       </div>
 
@@ -405,128 +316,6 @@ export default function Portaria() {
           <div className="liberacao">
             <h2><ShieldCheckIcon className="section-icon" /> Liberação de Acessos</h2>
             <p>Funcionalidade em desenvolvimento...</p>
-          </div>
-        )}
-        {activeTab === "gestao-itens" && (
-          <div className="gestao-itens">
-            <h2><ToolboxIcon className="section-icon" /> Gestão de Itens da Portaria</h2>
-
-            {/* Cadastro rápido que nem chaves */}
-            <div className="quick-add-container">
-              <div className="form-group">
-                <input
-                  type="text"
-                  placeholder="Nome do novo item..."
-                  value={newItemNome}
-                  onChange={(e) => setNewItemNome(e.target.value)}
-                />
-              </div>
-              <button
-                onClick={handleCreateItem}
-                className="submit-btn"
-              >
-                <PlusIcon style={{ width: 18, height: 18, marginRight: '8px' }} /> Adicionar Item
-              </button>
-            </div>
-
-            {loadingItens ? (
-              <p>Carregando itens...</p>
-            ) : itens.length === 0 ? (
-              <p>Nenhum item cadastrado.</p>
-            ) : (
-              <table className="acessos-table">
-                <thead>
-                  <tr>
-                    <th>Item</th>
-                    <th>Status</th>
-                    <th>Retirado Por</th>
-                    <th>Unidade</th>
-                    <th>Ações</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {itens.map((item) => (
-                    <tr key={item.id}>
-                      <td><strong>{item.nome}</strong></td>
-                      <td>
-                        {item.disponivel ? (
-                          <span className="status-presente">🟢 Disponível</span>
-                        ) : (
-                          <span className="status-saida-registrada">🔴 Retirado</span>
-                        )}
-                      </td>
-                      <td>{item.retirado_por || "-"}</td>
-                      <td>{item.apartamento ? `${item.apartamento} - ${item.bloco}` : "-"}</td>
-                      <td>
-                        {item.disponivel ? (
-                          <button
-                            type="button"
-                            className="admin-btn-small edit-btn"
-                            onClick={() => openModalRetirada(item)}
-                            data-tooltip="Retirar Item"
-                          >
-                            <LogOutIcon style={{ width: 14, height: 14 }} />
-                          </button>
-                        ) : (
-                          <button
-                            type="button"
-                            className="admin-btn-small ver-btn"
-                            onClick={() => handleReturnItem(item.id)}
-                            data-tooltip="Devolver Item"
-                          >
-                            <ShieldCheckIcon style={{ width: 14, height: 14 }} />
-                          </button>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            )}
-          </div>
-        )}
-
-        {/* Modal de Retirada (Estilo similar ao de chaves) */}
-        {showModalRetirada && (
-          <div className="modal-overlay" onClick={() => setShowModalRetirada(false)}>
-            <div className="retirada-modal" onClick={e => e.stopPropagation()}>
-              <h3>Retirar {itemParaRetirar?.nome}</h3>
-              <form onSubmit={handleWithdrawItem}>
-                <div className="form-group">
-                  <label>Morador / Solicitante:</label>
-                  <input
-                    type="text"
-                    required
-                    value={retiradaData.nome_morador}
-                    onChange={(e) => setRetiradaData({ ...retiradaData, nome_morador: e.target.value })}
-                  />
-                </div>
-                <div className="retirada-grid">
-                  <div className="form-group">
-                    <label>Apto:</label>
-                    <input
-                      type="text"
-                      required
-                      value={retiradaData.apartamento}
-                      onChange={(e) => setRetiradaData({ ...retiradaData, apartamento: e.target.value })}
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label>Bloco:</label>
-                    <input
-                      type="text"
-                      required
-                      value={retiradaData.bloco}
-                      onChange={(e) => setRetiradaData({ ...retiradaData, bloco: e.target.value })}
-                    />
-                  </div>
-                </div>
-                <div className="modal-actions">
-                  <button type="button" className="cancel-btn" onClick={() => setShowModalRetirada(false)}>Cancelar</button>
-                  <button type="submit" className="submit-btn">Confirmar</button>
-                </div>
-              </form>
-            </div>
           </div>
         )}
       </div>
