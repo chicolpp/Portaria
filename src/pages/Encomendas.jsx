@@ -1,15 +1,43 @@
 import React, { useState, useEffect, useRef } from "react";
-import {
-  Package as PackageIcon,
-  Pencil as PencilIcon,
-  List as ListIcon,
-  Eye as EyeIcon,
-  Box as BoxIcon,
-  Search as SearchIcon
-} from "lucide-react";
 import api from "../services/api";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import "./Encomendas.css";
+
+// Ícones SVG inline para evitar dependência de lucide-react
+const PackageIcon = ({ className, style }) => (
+  <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="m7.5 4.27 9 5.15" />
+    <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z" />
+    <path d="m3.3 7 8.7 5 8.7-5" />
+    <path d="M12 22V12" />
+  </svg>
+);
+
+const PencilIcon = ({ className, style }) => (
+  <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
+  </svg>
+);
+
+const ListIcon = ({ className, style }) => (
+  <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <line x1="8" y1="6" x2="21" y2="6" />
+    <line x1="8" y1="12" x2="21" y2="12" />
+    <line x1="8" y1="18" x2="21" y2="18" />
+    <line x1="3" y1="6" x2="3.01" y2="6" />
+    <line x1="3" y1="12" x2="3.01" y2="12" />
+    <line x1="3" y1="18" x2="3.01" y2="18" />
+  </svg>
+);
+
+const EyeIcon = ({ className, style }) => (
+  <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+    <circle cx="12" cy="12" r="3" />
+  </svg>
+);
+
+const BoxIcon = PackageIcon; // Reutilizando PackageIcon como BoxIcon
 
 export default function Encomendas() {
   const [activeTab, setActiveTab] = useState("cadastro");
@@ -136,6 +164,7 @@ export default function Encomendas() {
 
   const startDrawing = (e) => {
     const canvas = canvasRef.current;
+    if (!canvas) return;
     const rect = canvas.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
@@ -148,6 +177,7 @@ export default function Encomendas() {
   const draw = (e) => {
     if (!isDrawing) return;
     const canvas = canvasRef.current;
+    if (!canvas) return;
     const rect = canvas.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
@@ -160,12 +190,14 @@ export default function Encomendas() {
 
   const clearCanvas = () => {
     const canvas = canvasRef.current;
+    if (!canvas) return;
     const ctx = canvas.getContext("2d");
     ctx.clearRect(0, 0, canvas.width, canvas.height);
   };
 
   const confirmarRetirada = async () => {
     const canvas = canvasRef.current;
+    if (!canvas) return;
     canvas.toBlob(async (blob) => {
       const reader = new FileReader();
       reader.readAsDataURL(blob);
@@ -353,7 +385,7 @@ export default function Encomendas() {
       <div className="tab-content">
         {activeTab === "cadastro" && (
           <form className="cadastro-form" onSubmit={handleSubmit} noValidate>
-            <h2><PackageIcon className="section-icon" /> Cadastro de Encomendas</h2>
+            <h2><PackageIcon className="section-icon" style={{ width: 22, height: 22 }} /> Cadastro de Encomendas</h2>
 
             <div className="form-group">
               <label>Nome:</label>
@@ -433,7 +465,7 @@ export default function Encomendas() {
 
         {activeTab === "visualizacao" && (
           <div className="visualizacao">
-            <h2><BoxIcon className="section-icon" /> Visualização de Encomendas</h2>
+            <h2><BoxIcon className="section-icon" style={{ width: 22, height: 22 }} /> Visualização de Encomendas</h2>
             {encomendas.length === 0 ? (
               <p>Nenhuma encomenda cadastrada ainda.</p>
             ) : (
