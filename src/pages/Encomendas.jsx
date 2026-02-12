@@ -41,6 +41,7 @@ const BoxIcon = PackageIcon; // Reutilizando PackageIcon como BoxIcon
 
 export default function Encomendas() {
   const [activeTab, setActiveTab] = useState("cadastro");
+  const [lastPointRef] = useState({ current: null });
   const [encomendas, setEncomendas] = useState([]);
   const [loading, setLoading] = useState(false);
   const [fetchLoading, setFetchLoading] = useState(false);
@@ -194,18 +195,31 @@ export default function Encomendas() {
   const startDrawing = (e) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
+
     const rect = canvas.getBoundingClientRect();
     const clientX = e.touches ? e.touches[0].clientX : e.clientX;
     const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+    const dpr = window.devicePixelRatio || 1;
+    const ctx = canvas.getContext("2d");
+
+    if (canvas.width !== rect.width * dpr || canvas.height !== rect.height * dpr) {
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      ctx.scale(dpr, dpr);
+    }
+
     const x = clientX - rect.left;
     const y = clientY - rect.top;
-    const ctx = canvas.getContext("2d");
+
     ctx.beginPath();
     ctx.moveTo(x, y);
+    ctx.lineWidth = 2.5;
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
-    ctx.lineWidth = 3;
     ctx.strokeStyle = "#ffffff";
+
+    lastPointRef.current = { x, y };
     setIsDrawing(true);
     if (e.touches) e.preventDefault();
   };
@@ -214,18 +228,30 @@ export default function Encomendas() {
     if (!isDrawing) return;
     const canvas = canvasRef.current;
     if (!canvas) return;
+
     const rect = canvas.getBoundingClientRect();
     const clientX = e.touches ? e.touches[0].clientX : e.clientX;
     const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
     const x = clientX - rect.left;
     const y = clientY - rect.top;
     const ctx = canvas.getContext("2d");
-    ctx.lineTo(x, y);
-    ctx.stroke();
+    const lastPoint = lastPointRef.current;
+
+    if (lastPoint) {
+      const midPoint = { x: (lastPoint.x + x) / 2, y: (lastPoint.y + y) / 2 };
+      ctx.quadraticCurveTo(lastPoint.x, lastPoint.y, midPoint.x, midPoint.y);
+      ctx.stroke();
+    }
+
+    lastPointRef.current = { x, y };
     if (e.touches) e.preventDefault();
   };
 
-  const stopDrawing = () => setIsDrawing(false);
+  const stopDrawing = () => {
+    setIsDrawing(false);
+    lastPointRef.current = null;
+  };
 
   const clearCanvas = () => {
     const canvas = canvasRef.current;

@@ -60,6 +60,7 @@ export default function EspacosServicos() {
 
   // Canvas Ref
   const canvasRef = useRef(null);
+  const lastPointRef = useRef(null);
   const [isDrawing, setIsDrawing] = useState(false);
 
   const [modalItemOpen, setModalItemOpen] = useState(false);
@@ -147,22 +148,31 @@ export default function EspacosServicos() {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const ctx = canvas.getContext("2d");
     const rect = canvas.getBoundingClientRect();
     const clientX = e.touches ? e.touches[0].clientX : e.clientX;
     const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+    const dpr = window.devicePixelRatio || 1;
+    const ctx = canvas.getContext("2d");
+
+    if (canvas.width !== rect.width * dpr || canvas.height !== rect.height * dpr) {
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      ctx.scale(dpr, dpr);
+    }
 
     const x = clientX - rect.left;
     const y = clientY - rect.top;
 
     ctx.beginPath();
     ctx.moveTo(x, y);
-    ctx.lineWidth = 3;
+    ctx.lineWidth = 2.5;
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
     ctx.strokeStyle = "#ffffff";
-    setIsDrawing(true);
 
+    lastPointRef.current = { x, y };
+    setIsDrawing(true);
     if (e.touches) e.preventDefault();
   };
 
@@ -171,22 +181,28 @@ export default function EspacosServicos() {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const ctx = canvas.getContext("2d");
     const rect = canvas.getBoundingClientRect();
     const clientX = e.touches ? e.touches[0].clientX : e.clientX;
     const clientY = e.touches ? e.touches[0].clientY : e.clientY;
 
     const x = clientX - rect.left;
     const y = clientY - rect.top;
+    const ctx = canvas.getContext("2d");
+    const lastPoint = lastPointRef.current;
 
-    ctx.lineTo(x, y);
-    ctx.stroke();
+    if (lastPoint) {
+      const midPoint = { x: (lastPoint.x + x) / 2, y: (lastPoint.y + y) / 2 };
+      ctx.quadraticCurveTo(lastPoint.x, lastPoint.y, midPoint.x, midPoint.y);
+      ctx.stroke();
+    }
 
+    lastPointRef.current = { x, y };
     if (e.touches) e.preventDefault();
   };
 
   const stopDraw = () => {
     setIsDrawing(false);
+    lastPointRef.current = null;
   };
 
   const clearCanvas = () => {
