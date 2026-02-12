@@ -581,3 +581,16 @@
     font-size: 12px;
   }
 }
+
+@media (max-width: 768px) {
+
+  .encomendas-container .tab-content,
+  .encomendas-container .visualizacao,
+  .encomendas-container .loading-container,
+  .encomendas-container .encomendas-table {
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    color: white !important;
+  }
+}

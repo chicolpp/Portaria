@@ -51,6 +51,8 @@ export default function Encomendas() {
     pagina: "",
     dataRecebimento: "",
     horaRecebimento: "",
+    foto: "",
+    fotoFile: null
   });
   const [modalFoto, setModalFoto] = useState(null);
   const [modalEditar, setModalEditar] = useState(null);
@@ -68,10 +70,14 @@ export default function Encomendas() {
     setFetchLoading(true);
     try {
       const response = await api.get("/encomendas");
-      setEncomendas(response.data);
+      // O backend retorna { "encomendas": [...] }
+      const data = response.data.encomendas || [];
+      console.log("Encomendas carregadas:", data);
+      setEncomendas(Array.isArray(data) ? data : []);
     } catch (error) {
-      console.error(error);
+      console.error("Erro na API:", error);
       toast.error("Erro ao carregar encomendas");
+      setEncomendas([]);
     } finally {
       setFetchLoading(false);
     }
@@ -86,7 +92,11 @@ export default function Encomendas() {
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setFormData({ ...formData, foto: reader.result });
+        setFormData({
+          ...formData,
+          foto: reader.result,
+          fotoFile: file // Salva o arquivo real para envio via FormData
+        });
       };
       reader.readAsDataURL(file);
     }
@@ -96,8 +106,20 @@ export default function Encomendas() {
     e.preventDefault();
     setLoading(true);
     try {
-      await api.post("/encomendas", formData);
-      toast.success("Encomenda cadastrada com sucesso!");
+      const submitData = new FormData();
+      submitData.append("nome", formData.nome);
+      submitData.append("unidade", formData.unidade);
+      submitData.append("documento", formData.documento);
+      submitData.append("pagina", formData.pagina);
+      submitData.append("dataRecebimento", formData.dataRecebimento);
+      submitData.append("horaRecebimento", formData.horaRecebimento);
+
+      if (formData.fotoFile) {
+        submitData.append("foto", formData.fotoFile);
+      }
+
+      await api.post("/encomendas", submitData);
+      alert("Encomenda cadastrada com sucesso!");
       setFormData({
         nome: "",
         unidade: "",
@@ -105,11 +127,13 @@ export default function Encomendas() {
         pagina: "",
         dataRecebimento: "",
         horaRecebimento: "",
+        foto: "",
+        fotoFile: null
       });
       fetchEncomendas();
     } catch (error) {
-      toast.error("Erro ao cadastrar encomenda");
       console.error(error);
+      alert("Erro ao cadastrar encomenda. Verifique os dados.");
     } finally {
       setLoading(false);
     }
@@ -171,12 +195,19 @@ export default function Encomendas() {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    const x = clientX - rect.left;
+    const y = clientY - rect.top;
     const ctx = canvas.getContext("2d");
     ctx.beginPath();
     ctx.moveTo(x, y);
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = "#ffffff";
     setIsDrawing(true);
+    if (e.touches) e.preventDefault();
   };
 
   const draw = (e) => {
@@ -184,11 +215,14 @@ export default function Encomendas() {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    const x = clientX - rect.left;
+    const y = clientY - rect.top;
     const ctx = canvas.getContext("2d");
     ctx.lineTo(x, y);
     ctx.stroke();
+    if (e.touches) e.preventDefault();
   };
 
   const stopDrawing = () => setIsDrawing(false);
@@ -335,19 +369,24 @@ export default function Encomendas() {
             <p className="retirada-info">Encomenda #{modalRetirada.id} - {modalRetirada.nome}</p>
 
             <div className="retirada-form-group">
-              <label>Assinatura:</label>
-              <canvas
-                ref={canvasRef}
-                width={400}
-                height={200}
-                className="assinatura-canvas"
-                onMouseDown={startDrawing}
-                onMouseMove={draw}
-                onMouseUp={stopDrawing}
-                onMouseLeave={stopDrawing}
-              />
+              <label>Assinatura Digital:</label>
+              <div className="canvas-wrapper">
+                <canvas
+                  ref={canvasRef}
+                  width={400}
+                  height={200}
+                  className="assinatura-canvas"
+                  onMouseDown={startDrawing}
+                  onMouseMove={draw}
+                  onMouseUp={stopDrawing}
+                  onMouseLeave={stopDrawing}
+                  onTouchStart={startDrawing}
+                  onTouchMove={draw}
+                  onTouchEnd={stopDrawing}
+                />
+              </div>
               <button type="button" className="limpar-btn" onClick={clearCanvas}>
-                Limpar Assinatura
+                🧹 Limpar Assinatura
               </button>
             </div>
 

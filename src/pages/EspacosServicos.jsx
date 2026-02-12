@@ -144,48 +144,56 @@ export default function EspacosServicos() {
 
   // --- LOGICA CANVAS (Assinatura) ---
   const startDraw = (e) => {
-    setIsDrawing(true);
     const canvas = canvasRef.current;
     if (!canvas) return;
+
     const ctx = canvas.getContext("2d");
     const rect = canvas.getBoundingClientRect();
-    const x = (e.clientX || e.touches[0].clientX) - rect.left;
-    const y = (e.clientY || e.touches[0].clientY) - rect.top;
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+    const x = clientX - rect.left;
+    const y = clientY - rect.top;
+
     ctx.beginPath();
     ctx.moveTo(x, y);
+    ctx.lineWidth = 3;
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+    ctx.strokeStyle = "#ffffff";
+    setIsDrawing(true);
+
+    if (e.touches) e.preventDefault();
   };
 
   const draw = (e) => {
     if (!isDrawing) return;
     const canvas = canvasRef.current;
     if (!canvas) return;
+
     const ctx = canvas.getContext("2d");
     const rect = canvas.getBoundingClientRect();
-    const x = (e.clientX || e.touches[0].clientX) - rect.left;
-    const y = (e.clientY || e.touches[0].clientY) - rect.top;
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
 
-    ctx.lineWidth = 2;
-    ctx.lineCap = "round";
-    ctx.strokeStyle = "#ffffff";
+    const x = clientX - rect.left;
+    const y = clientY - rect.top;
+
     ctx.lineTo(x, y);
     ctx.stroke();
+
+    if (e.touches) e.preventDefault();
   };
 
   const stopDraw = () => {
     setIsDrawing(false);
-    const canvas = canvasRef.current;
-    if (canvas) {
-      const ctx = canvas.getContext("2d");
-      ctx.beginPath(); // Reset path to avoid connecting lines
-    }
   };
 
   const clearCanvas = () => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
-    ctx.fillStyle = "rgba(15, 23, 42, 1)";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
   };
 
   // --- AÇÕES: CHAVES ---
@@ -888,7 +896,7 @@ export default function EspacosServicos() {
 
               <div className="retirada-form-group">
                 <label>Assinatura do Morador (Obrigatório):</label>
-                <div className="canvas-container-wrapper">
+                <div className="canvas-wrapper">
                   <canvas
                     ref={canvasRef}
                     width={480}
@@ -955,7 +963,7 @@ export default function EspacosServicos() {
 
               <div className="retirada-form-group">
                 <label>Assinatura do Morador (Obrigatório):</label>
-                <div className="canvas-container-wrapper">
+                <div className="canvas-wrapper">
                   <canvas
                     ref={canvasRef}
                     width={480}
