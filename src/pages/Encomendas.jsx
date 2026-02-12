@@ -192,29 +192,30 @@ export default function Encomendas() {
 
   const closeRetiradaModal = () => setModalRetirada(null);
 
-  const startDrawing = (e) => {
+  const getCoordinates = (e) => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
-
+    if (!canvas) return { x: 0, y: 0 };
     const rect = canvas.getBoundingClientRect();
     const clientX = e.touches ? e.touches[0].clientX : e.clientX;
     const clientY = e.touches ? e.touches[0].clientY : e.clientY;
 
-    const dpr = window.devicePixelRatio || 1;
+    // Scale coordinates based on buffer vs visual size
+    return {
+      x: (clientX - rect.left) * (canvas.width / rect.width),
+      y: (clientY - rect.top) * (canvas.height / rect.height)
+    };
+  };
+
+  const startDrawing = (e) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const { x, y } = getCoordinates(e);
     const ctx = canvas.getContext("2d");
-
-    if (canvas.width !== rect.width * dpr || canvas.height !== rect.height * dpr) {
-      canvas.width = rect.width * dpr;
-      canvas.height = rect.height * dpr;
-      ctx.scale(dpr, dpr);
-    }
-
-    const x = clientX - rect.left;
-    const y = clientY - rect.top;
 
     ctx.beginPath();
     ctx.moveTo(x, y);
-    ctx.lineWidth = 2.5;
+    ctx.lineWidth = 4;
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
     ctx.strokeStyle = "#ffffff";
@@ -229,12 +230,7 @@ export default function Encomendas() {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const rect = canvas.getBoundingClientRect();
-    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-
-    const x = clientX - rect.left;
-    const y = clientY - rect.top;
+    const { x, y } = getCoordinates(e);
     const ctx = canvas.getContext("2d");
     const lastPoint = lastPointRef.current;
 
@@ -399,8 +395,8 @@ export default function Encomendas() {
               <div className="canvas-wrapper">
                 <canvas
                   ref={canvasRef}
-                  width={400}
-                  height={200}
+                  width={800}
+                  height={400}
                   className="assinatura-canvas"
                   onMouseDown={startDrawing}
                   onMouseMove={draw}
