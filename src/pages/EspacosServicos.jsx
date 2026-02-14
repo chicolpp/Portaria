@@ -977,8 +977,8 @@ export default function EspacosServicos() {
                 <div className="canvas-wrapper">
                   <canvas
                     ref={canvasRef}
-                    width={480}
-                    height={200}
+                    width={800}
+                    height={400}
                     className="assinatura-canvas"
                     onMouseDown={startDraw}
                     onMouseMove={draw}
