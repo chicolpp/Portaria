@@ -41,7 +41,7 @@ const BoxIcon = PackageIcon; // Reutilizando PackageIcon como BoxIcon
 
 export default function Encomendas() {
   const [activeTab, setActiveTab] = useState("cadastro");
-  const [lastPointRef] = useState({ current: null });
+  const lastPointRef = useRef(null);
   const [encomendas, setEncomendas] = useState([]);
   const [loading, setLoading] = useState(false);
   const [fetchLoading, setFetchLoading] = useState(false);
