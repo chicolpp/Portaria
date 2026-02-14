@@ -271,199 +271,83 @@
   background: #dc2626;
 }
 
-/* CARDS MOBILE */
-.encomendas-cards {
-  display: none;
-}
-
+/* MOBILE RESPONSIVO - FORMATO OCORRÊNCIAS */
 @media (max-width: 768px) {
-  .table-wrapper {
-    display: none !important;
+  .encomendas-container {
+    padding: 20px 12px;
+    padding-bottom: 100px;
   }
 
-  .encomendas-cards {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    margin-top: 20px;
-  }
-
-  .encomenda-card {
-    background: rgba(30, 41, 59, 0.95);
-    border: 1px solid rgba(139, 92, 246, 0.3);
-    border-radius: 16px;
+  .encomendas-container .tab-content {
     padding: 20px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-    transition: all 0.3s ease;
   }
 
-  .encomenda-card:active {
-    transform: scale(0.98);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-  }
-
-  .card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 16px;
-    padding-bottom: 12px;
-    border-bottom: 1px solid rgba(139, 92, 246, 0.2);
-  }
-
-  .card-title {
-    flex: 1;
-  }
-
-  .card-morador {
-    font-size: 18px;
-    font-weight: 700;
-    color: #fff;
-    margin-bottom: 4px;
-  }
-
-  .card-unidade {
+  .encomendas-tab-btn {
+    padding: 12px 20px;
     font-size: 14px;
-    color: #a78bfa;
-    font-weight: 600;
   }
 
-  .card-status-badge {
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 600;
-    white-space: nowrap;
+  .encomendas-container .cadastro-form {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    padding: 20px;
   }
 
-  .card-status-badge.aguardando {
-    background: rgba(245, 158, 11, 0.2);
-    color: #fbbf24;
-    border: 1px solid rgba(245, 158, 11, 0.4);
-  }
-
-  .card-status-badge.retirado {
-    background: rgba(16, 185, 129, 0.2);
-    color: #34d399;
-    border: 1px solid rgba(16, 185, 129, 0.4);
-  }
-
-  .card-body {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    margin-bottom: 16px;
-  }
-
-  .card-info-row {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-  }
-
-  .card-icon {
+  .encomendas-container .form-group input,
+  .encomendas-container .form-group select,
+  .encomendas-container .form-group textarea {
+    padding: 14px 16px;
     font-size: 16px;
-    min-width: 20px;
-    margin-top: 2px;
   }
 
-  .card-info-content {
-    flex: 1;
+  .encomendas-container .submit-btn {
+    width: 100%;
+    padding: 16px;
+    font-size: 16px;
   }
 
-  .card-info-label {
-    font-size: 11px;
-    color: #94a3b8;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 2px;
-  }
-
-  .card-info-value {
-    font-size: 15px;
-    color: #e2e8f0;
-    font-weight: 500;
-  }
-
-  .card-retirada-info {
-    background: rgba(16, 185, 129, 0.1);
-    border: 1px solid rgba(16, 185, 129, 0.3);
-    border-radius: 8px;
-    padding: 12px;
-    margin-top: 8px;
-  }
-
-  .card-retirada-info p {
-    margin: 4px 0;
+  .encomendas-table {
+    display: block;
+    overflow-x: auto;
     font-size: 13px;
-    color: #94a3b8;
   }
 
-  .card-retirada-info strong {
-    color: #34d399;
+  .encomendas-table th,
+  .encomendas-table td {
+    padding: 12px 10px;
+    font-size: 13px;
   }
 
-  .card-actions {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-  }
-
-  .card-btn {
-    flex: 1;
-    min-width: calc(50% - 4px);
-    padding: 12px 16px;
-    border: none;
-    border-radius: 10px;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    min-height: 44px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-  }
-
-  .card-btn-foto {
-    background: linear-gradient(135deg, #6366f1, #4f46e5);
-    color: white;
-  }
-
-  .card-btn-confirmar {
-    background: linear-gradient(135deg, #10b981, #059669);
-    color: white;
-    flex-basis: 100%;
-  }
-
-  .card-btn-editar {
-    background: linear-gradient(135deg, #a855f7, #9333ea);
-    color: white;
-  }
-
-  .card-btn-excluir {
-    background: linear-gradient(135deg, #ef4444, #dc2626);
-    color: white;
-  }
-
-  .card-btn:active {
-    transform: scale(0.96);
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+  .foto-modal,
+  .retirada-modal,
+  .editar-modal {
+    width: 95%;
+    padding: 20px;
+    max-height: 85vh;
   }
 }
 
-/* MODAL RETIRADA */
-.retirada-modal {
-  position: relative;
-  background: var(--bg-card);
-  padding: 30px;
-  border-radius: 24px;
-  max-width: 500px;
-  width: 90%;
-  border: 1px solid var(--border-color);
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+@media (max-width: 480px) {
+  .encomendas-container {
+    padding: 12px;
+    padding-top: 16px;
+    padding-bottom: 100px;
+  }
+
+  .encomendas-container .tab-content {
+    padding: 16px;
+  }
+
+  .encomendas-tab-btn {
+    padding: 10px 16px;
+    font-size: 13px;
+  }
+}
+
+max-width: 500px;
+width: 90%;
+border: 1px solid var(--border-color);
+box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
 }
 
 .retirada-modal h3 {
