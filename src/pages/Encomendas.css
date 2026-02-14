@@ -153,6 +153,38 @@
   min-width: 100%;
 }
 
+/* RESPONSIVE TABLE WRAPPER */
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 20px 0;
+  border-radius: 12px;
+  position: relative;
+}
+
+.table-wrapper::after {
+  content: '→';
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.3));
+  padding: 10px 15px;
+  border-radius: 8px 0 0 8px;
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+  font-size: 18px;
+  color: var(--primary-light);
+}
+
+@media (max-width: 768px) {
+  .table-wrapper::after {
+    opacity: 1;
+  }
+}
+
 /* TABLE */
 .encomendas-table {
   width: 100%;
@@ -492,14 +524,15 @@
   }
 
   .encomendas-tab-btn {
-    padding: 12px 20px;
-    font-size: 14px;
+    padding: 16px 24px;
+    font-size: 15px;
     white-space: nowrap;
     border-radius: 8px 8px 0 0;
     border-left: none;
     border-bottom: 3px solid transparent;
     background: rgba(255, 255, 255, 0.02);
     flex-shrink: 0;
+    min-height: 48px;
   }
 
   .encomendas-tab-btn.active {
@@ -524,19 +557,22 @@
 
   .encomendas-container .cadastro-form h2,
   .encomendas-container .visualizacao h2 {
-    font-size: 1.15rem;
-    margin-bottom: 15px;
+    font-size: 1.25rem;
+    margin-bottom: 16px;
+    letter-spacing: 0.3px;
   }
 
   .encomendas-container .form-group input {
-    padding: 10px 14px;
-    font-size: 15px;
+    padding: 16px 18px;
+    font-size: 16px;
+    min-height: 48px;
   }
 
   .encomendas-container .submit-btn {
     width: 100%;
-    padding: 14px;
-    font-size: 15px;
+    padding: 18px;
+    font-size: 16px;
+    min-height: 52px;
   }
 
   .encomendas-table {
@@ -546,8 +582,9 @@
 
   .encomendas-table th,
   .encomendas-table td {
-    padding: 12px 10px;
-    font-size: 13px;
+    padding: 14px 12px;
+    font-size: 14px;
+    line-height: 1.4;
   }
 
   .foto-modal,
@@ -561,8 +598,45 @@
 
   .retirada-modal h3,
   .editar-modal h3 {
-    font-size: 1.2rem;
-    margin-bottom: 15px;
+    font-size: 1.25rem;
+    margin-bottom: 16px;
+  }
+
+  /* Touch targets para botões de modal */
+  .limpar-btn,
+  .confirmar-retirada-btn,
+  .salvar-edicao-btn {
+    min-height: 48px;
+    padding: 14px 20px;
+  }
+
+  /* Estados de foco mais visíveis em mobile */
+  .encomendas-container .form-group input:focus,
+  .retirada-form-group input:focus,
+  .editar-form-group input:focus {
+    border-width: 3px;
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+  }
+
+  button:focus-visible {
+    outline: 3px solid var(--primary);
+    outline-offset: 2px;
+  }
+
+  /* Desabilitar animações pesadas em mobile */
+  .encomendas-container .tab-content {
+    animation: none !important;
+  }
+
+  /* Simplificar box-shadows para performance */
+  .encomendas-container .submit-btn,
+  .confirmar-retirada-btn {
+    box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3);
+  }
+
+  .encomendas-container .submit-btn:active,
+  .confirmar-retirada-btn:active {
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
   }
 }
 
@@ -577,8 +651,8 @@
   }
 
   .encomendas-tab-btn {
-    padding: 8px 12px;
-    font-size: 12px;
+    padding: 10px 16px;
+    font-size: 13px;
   }
 }
 
