@@ -21,16 +21,12 @@ export default function Header() {
     { path: "/espacosservicos", label: "Espaços e Serviços" },
   ];
 
-  // Áreas pesquisáveis do sistema (com sinônimos/locais)
+  // Áreas pesquisáveis do sistema (Apenas as solicitadas pelo usuário)
   const allSearchableAreas = [
-    { path: "/encomendas", label: "Encomendas / Pacotes / Correio" },
-    { path: "/portaria", label: "Portaria / Acessos / Entradas" },
-    { path: "/livroocorrencias", label: "Livro de Ocorrências / Relatórios" },
-    { path: "/espacosservicos", label: "Espaços e Serviços / Academia / Salão / Churrasqueira" },
-    { path: "/dashboard", label: "Dashboard / Início / Resumo" },
-    { path: "/cadastro-usuarios", label: "Cadastro de Usuários / Moradores / Funcionários", adminOnly: true },
-    { path: "/monitoramento", label: "Monitoração / Câmeras / Status", adminOnly: true },
-    { path: "/Ocorrencias", label: "Ocorrências (Visualização)" },
+    { path: "/encomendas", label: "Encomendas" },
+    { path: "/portaria", label: "Portaria" },
+    { path: "/livroocorrencias", label: "Livro de Ocorrências" },
+    { path: "/espacosservicos", label: "Espaços e Serviços" },
   ];
 
   const [searchTerm, setSearchTerm] = useState("");
