@@ -21,6 +21,64 @@ export default function Header() {
     { path: "/espacosservicos", label: "Espaços e Serviços" },
   ];
 
+  // Áreas pesquisáveis do sistema
+  const allSearchableAreas = [
+    ...quickLinks,
+    { path: "/dashboard", label: "Dashboard / Início" },
+    { path: "/cadastro-usuarios", label: "Cadastro de Usuários", adminOnly: true },
+    { path: "/monitoramento", label: "Monitoração / Monitoramento", adminOnly: true },
+    { path: "/Ocorrencias", label: "Ocorrências" },
+  ];
+
+  const [searchTerm, setSearchTerm] = useState("");
+  const [suggestions, setSuggestions] = useState([]);
+
+  const handleSearchChange = (e) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+
+    if (value.trim().length > 0) {
+      const filtered = allSearchableAreas.filter(area => {
+        if (area.adminOnly && !user?.is_admin) return false;
+        return area.label.toLowerCase().includes(value.toLowerCase());
+      });
+      setSuggestions(filtered);
+    } else {
+      setSuggestions([]);
+    }
+  };
+
+  const handleSearchSubmit = (e) => {
+    e?.preventDefault();
+    if (suggestions.length > 0) {
+      navigate(suggestions[0].path);
+      setSearchTerm("");
+      setSuggestions([]);
+    }
+  };
+
+  const handleSuggestionClick = (path) => {
+    navigate(path);
+    setSearchTerm("");
+    setSuggestions([]);
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      handleSearchSubmit();
+    } else if (e.key === "Escape") {
+      setSuggestions([]);
+      setSearchTerm("");
+    }
+  };
+
+  const handleBlur = () => {
+    // Pequeno delay para permitir o clique na sugestão antes de fechar
+    setTimeout(() => {
+      setSuggestions([]);
+    }, 200);
+  };
+
   return (
     <header>
       {/* Sidebar esquerda */}
@@ -49,13 +107,35 @@ export default function Header() {
 
         {/* Pesquisa */}
         <div className="header-search">
-          <input type="text" placeholder="Pesquisar..." />
-          <button>
+          <input
+            type="text"
+            placeholder="Pesquisar..."
+            value={searchTerm}
+            onChange={handleSearchChange}
+            onKeyDown={handleKeyDown}
+            onBlur={handleBlur}
+          />
+          <button onClick={handleSearchSubmit}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="11" cy="11" r="8" />
               <path d="M21 21l-4.35-4.35" />
             </svg>
           </button>
+
+          {/* Sugestões de busca */}
+          {suggestions.length > 0 && (
+            <ul className="search-suggestions">
+              {suggestions.map((s) => (
+                <li key={s.path} onClick={() => handleSuggestionClick(s.path)}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="11" cy="11" r="8" />
+                    <path d="M21 21l-4.35-4.35" />
+                  </svg>
+                  {s.label}
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
 
         {/* Links rápidos */}
