@@ -66,7 +66,7 @@ export default function EspacosServicos() {
   const [modalItemOpen, setModalItemOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const [isSignatureZoomed, setIsSignatureZoomed] = useState(false);
-
+  const [storedSignature, setStoredSignature] = useState(null); // Para guardar a assinatura após o zoom
   // Estados para Histórico e Edição
   const [modalHistorico, setModalHistorico] = useState(null);
   const [historicoData, setHistoricoData] = useState([]);
@@ -206,9 +206,23 @@ export default function EspacosServicos() {
 
   const clearCanvas = () => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    if (canvas) {
+      const ctx = canvas.getContext("2d");
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+    setStoredSignature(null);
+  };
+
+  const handleConcluirZoom = () => {
+    const canvas = canvasRef.current;
+    if (canvas) {
+      canvas.toBlob((blob) => {
+        setStoredSignature(blob);
+        setIsSignatureZoomed(false);
+      });
+    } else {
+      setIsSignatureZoomed(false);
+    }
   };
 
   // --- AÇÕES: CHAVES ---
@@ -252,58 +266,54 @@ export default function EspacosServicos() {
       return;
     }
 
-    const canvas = canvasRef.current;
-    if (!canvas) return;
+    if (!storedSignature) {
+      toast.warning("A assinatura é obrigatória. Clique no botão de assinar.");
+      return;
+    }
 
-    canvas.toBlob(async (blob) => {
-      const formData = new FormData();
-      formData.append("retirado_por", retiradaChaveForm.nome);
-      formData.append("unidade", retiradaChaveForm.unidade);
+    const blob = storedSignature; // Use o blob armazenado
+
+    try {
+      // 1. Retirar Chave
+      const keyFormData = new FormData();
+      keyFormData.append("retirado_por", retiradaChaveForm.nome);
+      keyFormData.append("unidade", retiradaChaveForm.unidade);
       if (blob) {
-        formData.append("assinatura", blob, "assinatura.png");
+        keyFormData.append("assinatura", blob, "assinatura.png");
       }
 
-      try {
-        // 1. Retirar Chave
-        const keyFormData = new FormData();
-        keyFormData.append("retirado_por", retiradaChaveForm.nome);
-        keyFormData.append("unidade", retiradaChaveForm.unidade);
+      // Adicionar todos os item_ids
+      itensSelecionados.forEach(it => {
+        keyFormData.append("item_id", it.id);
+      });
+
+      await api.post(`/chaves/${selectedChave.id}/retirar`, keyFormData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
+      // 2. Retirar cada item separadamente (para o modelo ItemPortaria)
+      for (const it of itensSelecionados) {
+        const itemFormData = new FormData();
+        itemFormData.append("nome_morador", retiradaChaveForm.nome);
+        itemFormData.append("apartamento", retiradaChaveChaveForm.unidade);
+        itemFormData.append("bloco", "");
         if (blob) {
-          keyFormData.append("assinatura", blob, "assinatura.png");
+          itemFormData.append("assinatura", blob, "assinatura_item.png");
         }
 
-        // Adicionar todos os item_ids
-        itensSelecionados.forEach(it => {
-          keyFormData.append("item_id", it.id);
-        });
-
-        await api.post(`/chaves/${selectedChave.id}/retirar`, keyFormData, {
+        await api.post(`/itens/${it.id}/retirar`, itemFormData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
-
-        // 2. Retirar cada item separadamente (para o modelo ItemPortaria)
-        for (const it of itensSelecionados) {
-          const itemFormData = new FormData();
-          itemFormData.append("nome_morador", retiradaChaveForm.nome);
-          itemFormData.append("apartamento", retiradaChaveForm.unidade);
-          itemFormData.append("bloco", "");
-          if (blob) {
-            itemFormData.append("assinatura", blob, "assinatura_item.png");
-          }
-
-          await api.post(`/itens/${it.id}/retirar`, itemFormData, {
-            headers: { "Content-Type": "multipart/form-data" },
-          });
-        }
-
-        toast.success(`Chave ${temItemEntrega ? 'e Item ' : ''}retirada(s) com sucesso!`);
-        setModalChaveOpen(false);
-        fetchAll();
-      } catch (error) {
-        console.error(error);
-        toast.error("Erro ao registrar retirada.");
       }
-    }, "image/png");
+
+      toast.success(`Chave ${temItemEntrega ? 'e Item ' : ''}retirada(s) com sucesso!`);
+      setModalChaveOpen(false);
+      setStoredSignature(null);
+      fetchAll();
+    } catch (error) {
+      console.error(error);
+      toast.error("Erro ao registrar retirada.");
+    }
   };
 
   const handleDevolverChave = (chave) => {
@@ -417,30 +427,32 @@ export default function EspacosServicos() {
       return;
     }
 
-    const canvas = canvasRef.current;
-    if (!canvas) return;
+    if (!storedSignature) {
+      toast.warning("A assinatura é obrigatória. Clique no botão de assinar.");
+      return;
+    }
 
-    canvas.toBlob(async (blob) => {
-      const formData = new FormData();
-      formData.append("nome_morador", nome_morador);
-      formData.append("apartamento", apartamento);
-      formData.append("bloco", bloco);
-      if (blob) {
-        formData.append("assinatura", blob, "assinatura_item.png");
-      }
+    const blob = storedSignature;
+    const formData = new FormData();
+    formData.append("nome_morador", nome_morador);
+    formData.append("apartamento", apartamento);
+    formData.append("bloco", bloco);
+    if (blob) {
+      formData.append("assinatura", blob, "assinatura_item.png");
+    }
 
-      try {
-        await api.post(`/itens/${selectedItem.id}/retirar`, formData, {
-          headers: { "Content-Type": "multipart/form-data" },
-        });
-        toast.success(`Item retirado por ${nome_morador}`);
-        setModalItemOpen(false);
-        fetchAll();
-      } catch (error) {
-        console.error(error);
-        toast.error("Erro ao registrar retirada de item.");
-      }
-    }, "image/png");
+    try {
+      await api.post(`/itens/${selectedItem.id}/retirar`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      toast.success(`Item retirado por ${nome_morador}`);
+      setModalItemOpen(false);
+      setStoredSignature(null);
+      fetchAll();
+    } catch (error) {
+      console.error(error);
+      toast.error("Erro ao registrar retirada.");
+    }
   };
 
   const handleDevolverItem = (item) => {
@@ -960,7 +972,7 @@ export default function EspacosServicos() {
             </div>
             <div className="zoom-footer">
               <button className="limpar-btn" onClick={clearCanvas}>Limpar</button>
-              <button className="concluir-zoom-btn" onClick={() => setIsSignatureZoomed(false)}>
+              <button className="concluir-zoom-btn" onClick={handleConcluirZoom}>
                 ✅ Concluído
               </button>
             </div>
