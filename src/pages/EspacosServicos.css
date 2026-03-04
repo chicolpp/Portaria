@@ -889,18 +889,83 @@
   width: 100vw;
   height: 100vh;
   background: #0f172a;
-  z-index: 3000;
+  z-index: 9999;
+  /* Z-index altíssimo para ficar sobre qualquer modal */
   display: flex;
   flex-direction: column;
   animation: fadeIn 0.3s ease;
+  overflow: hidden;
+}
+
+/* AVISO DE ORIENTAÇÃO */
+.orientation-warning {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: #0f172a;
+  z-index: 10000;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 30px;
+}
+
+.warning-content h3 {
+  color: white;
+  margin: 20px 0 10px;
+}
+
+.warning-content p {
+  color: #94a3b8;
+}
+
+.warning-icon {
+  font-size: 50px;
+  animation: rotate 2s infinite linear;
+  display: block;
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  25% {
+    transform: rotate(90deg);
+  }
+
+  50% {
+    transform: rotate(90deg);
+  }
+
+  75% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+/* Mostrar aviso apenas no celular em modo retrato */
+@media (max-width: 900px) and (orientation: portrait) {
+  .orientation-warning {
+    display: flex;
+  }
+
+  .signature-zoom-content {
+    display: none;
+    /* Esconde o conteúdo da assinatura se estiver em pé */
+  }
 }
 
 .signature-zoom-content {
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding: 20px;
-  gap: 20px;
+  padding: 15px;
+  gap: 15px;
 }
 
 .zoom-header {
@@ -910,20 +975,21 @@
 .zoom-header h3 {
   margin: 0;
   color: #fff;
-  font-size: 1.5rem;
+  font-size: 1.3rem;
 }
 
 .zoom-header p {
   color: #94a3b8;
   margin: 5px 0 0 0;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
 }
 
 .zoom-canvas-wrapper {
   flex: 1;
-  background: #1e293b;
-  border: 2px dashed var(--primary);
-  border-radius: 16px;
+  background: white;
+  /* Fundo branco para assinatura ficar clara */
+  border: 2px solid var(--primary);
+  border-radius: 12px;
   position: relative;
   overflow: hidden;
   touch-action: none !important;
@@ -939,27 +1005,28 @@
 .zoom-footer {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 15px;
-  padding: 10px 20px 20px 20px;
-  padding-bottom: env(safe-area-inset-bottom, 20px);
+  gap: 12px;
+  padding-bottom: env(safe-area-inset-bottom, 15px);
 }
 
 .zoom-footer .limpar-btn {
-  height: 56px;
-  font-size: 16px !important;
-  background: #334155 !important;
+  height: 50px;
+  font-size: 15px !important;
+  background: #ef4444 !important;
+  /* Cor de perigo para limpar */
+  color: white !important;
 }
 
 .concluir-zoom-btn {
-  height: 56px;
-  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  height: 50px;
+  background: linear-gradient(135deg, #10b981, #059669);
+  /* Verde para concluir */
   color: white;
   border: none;
-  border-radius: 12px;
-  font-size: 18px;
+  border-radius: 10px;
+  font-size: 16px;
   font-weight: 700;
   cursor: pointer;
-  box-shadow: 0 4px 15px var(--glow-color);
 }
 
 .signature-actions {
@@ -990,19 +1057,17 @@
 }
 
 @media (max-width: 768px) {
-  .zoom-header h3 {
-    font-size: 1.25rem;
-  }
-
   .zoom-footer {
-    grid-template-columns: 1fr;
+    padding: 0 5px;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
   }
 
-  .zoom-footer .limpar-btn {
-    order: 2;
-  }
-
-  .concluir-zoom-btn {
-    order: 1;
+  to {
+    opacity: 1;
   }
 }

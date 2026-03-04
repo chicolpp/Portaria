@@ -947,6 +947,15 @@ export default function EspacosServicos() {
       {/* --- MODAL DE ASSINATURA AMPLIADA (ZOOM) --- */}
       {isSignatureZoomed && (
         <div className="signature-zoom-overlay">
+          {/* Aviso de Rotacionar Tela */}
+          <div className="orientation-warning">
+            <div className="warning-content">
+              <span className="warning-icon">🔄</span>
+              <h3>Por favor, gire o celular</h3>
+              <p>A assinatura deve ser feita com o celular na horizontal (deitado)</p>
+            </div>
+          </div>
+
           <div className="signature-zoom-content">
             <div className="zoom-header">
               <h3>Assine no campo abaixo</h3>
@@ -955,8 +964,8 @@ export default function EspacosServicos() {
             <div className="zoom-canvas-wrapper">
               <canvas
                 ref={canvasRef}
-                width={window.innerWidth * 1.5}
-                height={window.innerHeight * 0.6}
+                width={window.innerWidth > window.innerHeight ? window.innerWidth * 1.5 : window.innerHeight * 1.5}
+                height={window.innerWidth > window.innerHeight ? window.innerHeight * 0.7 : window.innerWidth * 0.7}
                 className="assinatura-canvas zoomed"
                 onMouseDown={startDraw}
                 onMouseMove={draw}
