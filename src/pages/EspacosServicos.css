@@ -438,15 +438,15 @@
   }
 
   .espacos-tab-btn {
-    padding: 16px 24px;
-    font-size: 15px;
+    padding: 10px 16px;
+    font-size: 13px;
     white-space: nowrap;
     border-radius: 8px 8px 0 0;
     border-left: none;
     border-bottom: 3px solid transparent;
     background: rgba(255, 255, 255, 0.02);
     flex-shrink: 0;
-    min-height: 48px;
+    gap: 6px;
   }
 
   .espacos-tab-btn.active {
@@ -590,8 +590,8 @@
   }
 
   .espacos-tab-btn {
-    padding: 10px 16px;
-    font-size: 13px;
+    padding: 8px 12px;
+    font-size: 12px;
   }
 }
 

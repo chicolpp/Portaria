@@ -344,10 +344,11 @@
   }
 }
 
-max-width: 500px;
-width: 90%;
-border: 1px solid var(--border-color);
-box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+.retirada-modal {
+  max-width: 500px;
+  width: 90%;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
 }
 
 .retirada-modal h3 {
@@ -601,15 +602,15 @@ box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
   }
 
   .encomendas-tab-btn {
-    padding: 16px 24px;
-    font-size: 15px;
+    padding: 10px 16px;
+    font-size: 13px;
     white-space: nowrap;
     border-radius: 8px 8px 0 0;
     border-left: none;
     border-bottom: 3px solid transparent;
     background: rgba(255, 255, 255, 0.02);
     flex-shrink: 0;
-    min-height: 48px;
+    gap: 6px;
   }
 
   .encomendas-tab-btn.active {
@@ -728,8 +729,8 @@ box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
   }
 
   .encomendas-tab-btn {
-    padding: 10px 16px;
-    font-size: 13px;
+    padding: 8px 12px;
+    font-size: 12px;
   }
 }
 
