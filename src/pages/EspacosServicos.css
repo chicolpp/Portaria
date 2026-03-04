@@ -528,7 +528,7 @@
     height: 18px !important;
   }
 
-  /* Modais mais compactos no mobile */
+  /* Modais mais compactos no mobile com rolagem vertical habilitada */
   .retirada-modal,
   .edit-modal,
   .confirm-modal {
@@ -536,6 +536,19 @@
     max-height: 90vh;
     border-radius: 16px !important;
     padding: 15px !important;
+    overflow-y: auto !important;
+    /* Esconder scrollbar mantendo funcionalidade */
+    scrollbar-width: none;
+    /* Firefox */
+    -ms-overflow-style: none;
+    /* IE/Edge */
+  }
+
+  .retirada-modal::-webkit-scrollbar,
+  .edit-modal::-webkit-scrollbar,
+  .confirm-modal::-webkit-scrollbar {
+    display: none;
+    /* Chrome, Safari, Opera */
   }
 
   .modal-header h3 {
