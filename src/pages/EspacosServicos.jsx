@@ -1006,27 +1006,9 @@ export default function EspacosServicos() {
 
             <div className="retirada-form-group">
               <label>Assinatura do Morador (Obrigatório):</label>
-              <div className="canvas-wrapper">
-                <canvas
-                  ref={canvasRef}
-                  width={800}
-                  height={400}
-                  className="assinatura-canvas"
-                  onMouseDown={startDraw}
-                  onMouseMove={draw}
-                  onMouseUp={stopDraw}
-                  onMouseLeave={stopDraw}
-                  onTouchStart={startDraw}
-                  onTouchMove={draw}
-                  onTouchEnd={stopDraw}
-                />
-              </div>
-              <div className="signature-actions">
-                <button type="button" className="limpar-btn" onClick={clearCanvas}>
-                  Limpar
-                </button>
-                <button type="button" className="zoom-btn" onClick={() => setIsSignatureZoomed(true)}>
-                  🔍 Ampliar para Assinar
+              <div className="signature-status-container">
+                <button type="button" className="zoom-btn-large" onClick={() => setIsSignatureZoomed(true)}>
+                  ✍️ CLIQUE AQUI PARA ASSINAR
                 </button>
               </div>
             </div>
