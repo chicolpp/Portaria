@@ -1030,9 +1030,14 @@ export default function EspacosServicos() {
                   onTouchEnd={stopDraw}
                 />
               </div>
-              <button type="button" className="limpar-btn" onClick={clearCanvas}>
-                Limpar Assinatura
-              </button>
+              <div className="signature-actions">
+                <button type="button" className="limpar-btn" onClick={clearCanvas}>
+                  Limpar
+                </button>
+                <button type="button" className="zoom-btn" onClick={() => setIsSignatureZoomed(true)}>
+                  🔍 Ampliar para Assinar
+                </button>
+              </div>
             </div>
 
             <button className="confirmar-retirada-btn-large" onClick={handleConfirmarRetiradaItem}>
