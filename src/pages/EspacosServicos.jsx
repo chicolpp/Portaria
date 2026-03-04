@@ -170,10 +170,10 @@ export default function EspacosServicos() {
     ctx.lineWidth = 3.5;
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
-    ctx.strokeStyle = "#ffffff";
+    ctx.strokeStyle = "#000000";
     // Efeito Caneta (suavização)
     ctx.shadowBlur = 1;
-    ctx.shadowColor = "#ffffff";
+    ctx.shadowColor = "#000000";
 
     lastPointRef.current = { x, y };
     setIsDrawing(true);
