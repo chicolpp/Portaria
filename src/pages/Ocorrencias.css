@@ -12,7 +12,6 @@
 
 .ocorrencias-container:has(.visualizacao) .tab-content {
   max-width: 100%;
-  overflow-x: auto;
 }
 
 /* TABS NAVIGATION */
@@ -197,7 +196,7 @@
 .ocorrencias-container .ocorrencias-table td {
   padding: 16px 20px;
   border-bottom: 1px solid var(--border-color);
-  color: #e2e8f0;
+  color: var(--text-primary);
   font-size: 15px;
 }
 
@@ -484,15 +483,15 @@
   }
 
   .ocorrencias-table {
-    display: block;
-    overflow-x: auto;
-    font-size: 13px;
+    width: 100%;
+    min-width: 800px;
+    font-size: 12px;
   }
 
   .ocorrencias-table th,
   .ocorrencias-table td {
-    padding: 14px 12px;
-    font-size: 14px;
+    padding: 10px 6px;
+    font-size: 12px;
     line-height: 1.4;
   }
 

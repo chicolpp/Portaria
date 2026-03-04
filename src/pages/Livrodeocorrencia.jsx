@@ -485,59 +485,61 @@ export default function LivroDeOcorrencia() {
             {ocorrencias.length === 0 ? (
               <p>Nenhuma ocorrência cadastrada ainda.</p>
             ) : (
-              <table className="ocorrencias-table">
-                <thead>
-                  <tr>
-                    <th>ID</th>
-                    <th>Data</th>
-                    <th>Hora</th>
-                    <th>Unidade</th>
-                    <th>Morador</th>
-                    <th>Registrada por</th>
-                    <th>Quem Registrou</th>
-                    <th>Ações</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {ocorrencias.map((o) => (
-                    <tr key={o.id}>
-                      <td>{o.id}</td>
-                      <td>{o.data}</td>
-                      <td>{o.hora}</td>
-                      <td>{o.unidade_infratante}</td>
-                      <td>{o.nome_morador}</td>
-                      <td>{o.registrada_por === "unidade" ? "Unidade" : "Condomínio"}</td>
-                      <td>{o.quem_registrou}</td>
-                      <td className="acoes-cell">
-                        <button
-                          type="button"
-                          className="admin-btn-small ver-btn"
-                          onClick={() => openVisualizarModal(o)}
-                          data-tooltip="Visualizar"
-                        >
-                          <EyeIcon style={{ width: 14, height: 14 }} />
-                        </button>
-                        <button
-                          type="button"
-                          className="admin-btn-small edit-btn"
-                          onClick={() => openEditarModal(o)}
-                          data-tooltip="Editar"
-                        >
-                          <PencilIcon style={{ width: 14, height: 14 }} />
-                        </button>
-                        <button
-                          type="button"
-                          className="admin-btn-small delete-btn"
-                          onClick={() => handleDelete(o.id)}
-                          data-tooltip="Apagar"
-                        >
-                          <TrashIcon style={{ width: 14, height: 14 }} />
-                        </button>
-                      </td>
+              <div className="responsive-table-container">
+                <table className="ocorrencias-table">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Data</th>
+                      <th>Hora</th>
+                      <th>Unidade</th>
+                      <th>Morador</th>
+                      <th>Registrada por</th>
+                      <th>Quem Registrou</th>
+                      <th>Ações</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {ocorrencias.map((o) => (
+                      <tr key={o.id}>
+                        <td>{o.id}</td>
+                        <td>{o.data}</td>
+                        <td>{o.hora}</td>
+                        <td>{o.unidade_infratante}</td>
+                        <td>{o.nome_morador}</td>
+                        <td>{o.registrada_por === "unidade" ? "Unidade" : "Condomínio"}</td>
+                        <td>{o.quem_registrou}</td>
+                        <td className="acoes-cell">
+                          <button
+                            type="button"
+                            className="admin-btn-small ver-btn"
+                            onClick={() => openVisualizarModal(o)}
+                            data-tooltip="Visualizar"
+                          >
+                            <EyeIcon style={{ width: 14, height: 14 }} />
+                          </button>
+                          <button
+                            type="button"
+                            className="admin-btn-small edit-btn"
+                            onClick={() => openEditarModal(o)}
+                            data-tooltip="Editar"
+                          >
+                            <PencilIcon style={{ width: 14, height: 14 }} />
+                          </button>
+                          <button
+                            type="button"
+                            className="admin-btn-small delete-btn"
+                            onClick={() => handleDelete(o.id)}
+                            data-tooltip="Apagar"
+                          >
+                            <TrashIcon style={{ width: 14, height: 14 }} />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             )}
           </div>
         )}
