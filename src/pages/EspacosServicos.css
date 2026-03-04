@@ -425,6 +425,16 @@
     padding: 0 5px 10px 5px;
     margin-bottom: 15px;
     border-bottom: 1px solid var(--border-color);
+    /* Esconder scrollbar */
+    scrollbar-width: none;
+    /* Firefox */
+    -ms-overflow-style: none;
+    /* IE/Edge */
+  }
+
+  .espacos-tabs::-webkit-scrollbar {
+    display: none;
+    /* Chrome, Safari, Opera */
   }
 
   .espacos-tab-btn {
