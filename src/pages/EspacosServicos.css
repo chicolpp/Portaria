@@ -880,3 +880,129 @@
   background: rgba(255, 255, 255, 0.1);
   color: white;
 }
+
+/* ========== SIGNATURE ZOOM (FULL SCREEN MOBILE) ========== */
+.signature-zoom-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #0f172a;
+  z-index: 3000;
+  display: flex;
+  flex-direction: column;
+  animation: fadeIn 0.3s ease;
+}
+
+.signature-zoom-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  gap: 20px;
+}
+
+.zoom-header {
+  text-align: center;
+}
+
+.zoom-header h3 {
+  margin: 0;
+  color: #fff;
+  font-size: 1.5rem;
+}
+
+.zoom-header p {
+  color: #94a3b8;
+  margin: 5px 0 0 0;
+  font-size: 0.9rem;
+}
+
+.zoom-canvas-wrapper {
+  flex: 1;
+  background: #1e293b;
+  border: 2px dashed var(--primary);
+  border-radius: 16px;
+  position: relative;
+  overflow: hidden;
+  touch-action: none !important;
+}
+
+.assinatura-canvas.zoomed {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+  cursor: crosshair;
+}
+
+.zoom-footer {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  padding: 10px 20px 20px 20px;
+  padding-bottom: env(safe-area-inset-bottom, 20px);
+}
+
+.zoom-footer .limpar-btn {
+  height: 56px;
+  font-size: 16px !important;
+  background: #334155 !important;
+}
+
+.concluir-zoom-btn {
+  height: 56px;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 15px var(--glow-color);
+}
+
+.signature-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.zoom-btn {
+  flex: 1;
+  background: rgba(139, 92, 246, 0.1) !important;
+  color: var(--primary-light) !important;
+  border: 1px solid var(--primary) !important;
+  padding: 8px 16px !important;
+  border-radius: 8px !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s;
+}
+
+.zoom-btn:hover {
+  background: rgba(139, 92, 246, 0.2) !important;
+}
+
+@media (max-width: 768px) {
+  .zoom-header h3 {
+    font-size: 1.25rem;
+  }
+
+  .zoom-footer {
+    grid-template-columns: 1fr;
+  }
+
+  .zoom-footer .limpar-btn {
+    order: 2;
+  }
+
+  .concluir-zoom-btn {
+    order: 1;
+  }
+}
