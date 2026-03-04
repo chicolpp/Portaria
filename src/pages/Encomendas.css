@@ -613,6 +613,11 @@
     gap: 6px;
   }
 
+  .encomendas-tab-btn .section-icon {
+    width: 18px !important;
+    height: 18px !important;
+  }
+
   .encomendas-tab-btn.active {
     background: rgba(139, 92, 246, 0.2);
     border-bottom-color: var(--primary);
@@ -635,22 +640,20 @@
 
   .encomendas-container .cadastro-form h2,
   .encomendas-container .visualizacao h2 {
-    font-size: 1.25rem;
-    margin-bottom: 16px;
+    font-size: 1.15rem;
+    margin-bottom: 15px;
     letter-spacing: 0.3px;
   }
 
   .encomendas-container .form-group input {
-    padding: 16px 18px;
-    font-size: 16px;
-    min-height: 48px;
+    padding: 10px 14px;
+    font-size: 15px;
   }
 
   .encomendas-container .submit-btn {
     width: 100%;
-    padding: 18px;
-    font-size: 16px;
-    min-height: 52px;
+    padding: 14px;
+    font-size: 15px;
   }
 
   .encomendas-table {
@@ -703,6 +706,7 @@
 
   /* Desabilitar animações pesadas em mobile */
   .encomendas-container .tab-content {
+    padding: 15px;
     animation: none !important;
   }
 

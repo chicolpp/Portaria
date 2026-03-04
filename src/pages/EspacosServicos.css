@@ -421,7 +421,7 @@
   .espacos-tabs {
     flex-wrap: nowrap;
     overflow-x: auto;
-    gap: 8px;
+    gap: 6px;
     padding: 0 5px 10px 5px;
     margin-bottom: 15px;
     border-bottom: 1px solid var(--border-color);
@@ -449,6 +449,11 @@
     gap: 6px;
   }
 
+  .espacos-tab-btn .section-icon {
+    width: 18px !important;
+    height: 18px !important;
+  }
+
   .espacos-tab-btn.active {
     background: rgba(139, 92, 246, 0.2);
     border-bottom-color: var(--primary);
@@ -456,15 +461,14 @@
   }
 
   .tab-content {
-    padding: 20px 15px;
+    padding: 15px;
     border-radius: 0 0 16px 16px;
-    min-height: 400px;
     animation: none !important;
   }
 
   .section-title h2 {
-    font-size: 1.25rem;
-    margin-bottom: 16px;
+    font-size: 1.15rem;
+    margin-bottom: 15px;
     letter-spacing: 0.3px;
   }
 
@@ -475,15 +479,13 @@
   }
 
   .chaves-form input {
-    padding: 16px 18px;
-    font-size: 16px;
-    min-height: 48px;
+    padding: 10px 14px;
+    font-size: 15px;
   }
 
   .chaves-form button {
-    padding: 18px;
-    font-size: 16px;
-    min-height: 52px;
+    padding: 14px;
+    font-size: 15px;
   }
 
   .cards-grid {

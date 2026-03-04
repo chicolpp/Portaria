@@ -15,16 +15,14 @@
   overflow-x: auto;
 }
 
-/* TABS NAVIGATION - ESTILO ESPACOS SERVICOS */
-.ocorrencias-container .tabs,
-.ocorrencias-container .ocorrencias-tabs {
+/* TABS NAVIGATION */
+.ocorrencias-tabs {
   display: flex;
   gap: 12px;
   margin-bottom: 20px;
 }
 
-.ocorrencias-container .tabs button,
-.ocorrencias-container .ocorrencias-tab-btn {
+.ocorrencias-tab-btn {
   padding: 14px 28px;
   background: transparent;
   border: none;
@@ -42,8 +40,7 @@
   gap: 10px;
 }
 
-.ocorrencias-container .tabs button.active,
-.ocorrencias-container .ocorrencias-tab-btn.active {
+.ocorrencias-tab-btn.active {
   color: #fff;
   background: linear-gradient(90deg, rgba(139, 92, 246, 0.15), rgba(139, 92, 246, 0.05));
   border-left-color: var(--primary);
@@ -442,6 +439,11 @@
     gap: 6px;
   }
 
+  .ocorrencias-tab-btn .section-icon {
+    width: 18px !important;
+    height: 18px !important;
+  }
+
   .ocorrencias-tab-btn.active {
     background: rgba(139, 92, 246, 0.2);
     border-bottom-color: var(--primary);
@@ -449,7 +451,7 @@
   }
 
   .ocorrencias-container .tab-content {
-    padding: 20px 15px;
+    padding: 15px;
     border-radius: 0 0 16px 16px;
     min-height: 400px;
     animation: none !important;
@@ -463,24 +465,22 @@
 
   .ocorrencias-container .cadastro-form h2,
   .ocorrencias-container .visualizacao h2 {
-    font-size: 1.25rem;
-    margin-bottom: 16px;
+    font-size: 1.15rem;
+    margin-bottom: 15px;
     letter-spacing: 0.3px;
   }
 
   .ocorrencias-container .form-group input,
   .ocorrencias-container .form-group select,
   .ocorrencias-container .form-group textarea {
-    padding: 16px 18px;
-    font-size: 16px;
-    min-height: 48px;
+    padding: 10px 14px;
+    font-size: 15px;
   }
 
   .ocorrencias-container .submit-btn {
     width: 100%;
-    padding: 18px;
-    font-size: 16px;
-    min-height: 52px;
+    padding: 14px;
+    font-size: 15px;
   }
 
   .ocorrencias-table {

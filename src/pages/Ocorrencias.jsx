@@ -31,13 +31,13 @@ export default function Ocorrencias() {
           className={`ocorrencias-tab-btn ${activeTab === "cadastro" ? "active" : ""}`}
           onClick={() => handleTabClick("cadastro")}
         >
-          Cadastro de Ocorrencias
+          <svg style={{ width: 22, height: 22, marginRight: 8 }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" /></svg> Cadastro de Ocorrências
         </button>
         <button
           className={`ocorrencias-tab-btn ${activeTab === "visualizacao" ? "active" : ""}`}
           onClick={() => handleTabClick("visualizacao")}
         >
-          Visualização de Ocorrencias
+          <svg style={{ width: 22, height: 22, marginRight: 8 }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="8" y1="6" x2="21" y2="6" /><line x1="8" y1="12" x2="21" y2="12" /><line x1="8" y1="18" x2="21" y2="18" /><line x1="3" y1="6" x2="3.01" y2="6" /><line x1="3" y1="12" x2="3.01" y2="12" /><line x1="3" y1="18" x2="3.01" y2="18" /></svg> Visualização de Ocorrências
         </button>
       </div>
 
