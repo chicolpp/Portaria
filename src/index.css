@@ -611,6 +611,19 @@ textarea:invalid:not(:placeholder-shown) {
     width: 18px !important;
     height: 18px !important;
   }
+
+  /* Esconder todas as scrollbars globalmente no mobile */
+  * {
+    scrollbar-width: none !important;
+    /* Firefox */
+    -ms-overflow-style: none !important;
+    /* IE/Edge */
+  }
+
+  *::-webkit-scrollbar {
+    display: none !important;
+    /* Chrome, Safari, Opera */
+  }
 }
 
 @media (max-width: 480px) {
