@@ -65,6 +65,7 @@ export default function EspacosServicos() {
 
   const [modalItemOpen, setModalItemOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
+  const [isSignatureZoomed, setIsSignatureZoomed] = useState(false);
 
   // Estados para Histórico e Edição
   const [modalHistorico, setModalHistorico] = useState(null);
@@ -166,10 +167,13 @@ export default function EspacosServicos() {
 
     ctx.beginPath();
     ctx.moveTo(x, y);
-    ctx.lineWidth = 4;
+    ctx.lineWidth = 3.5;
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
     ctx.strokeStyle = "#ffffff";
+    // Efeito Caneta (suavização)
+    ctx.shadowBlur = 1;
+    ctx.shadowColor = "#ffffff";
 
     lastPointRef.current = { x, y };
     setIsDrawing(true);
@@ -905,225 +909,268 @@ export default function EspacosServicos() {
                 />
               </div>
 
-              <div className="retirada-form-group">
-                <label>Assinatura do Morador (Obrigatório):</label>
-                <div className="canvas-wrapper">
-                  <canvas
-                    ref={canvasRef}
-                    width={800}
-                    height={400}
-                    className="assinatura-canvas"
-                    onMouseDown={startDraw}
-                    onMouseMove={draw}
-                    onMouseUp={stopDraw}
-                    onMouseLeave={stopDraw}
-                    onTouchStart={startDraw}
-                    onTouchMove={draw}
-                    onTouchEnd={stopDraw}
-                  />
-                </div>
-                <button type="button" className="limpar-btn" onClick={clearCanvas}>
-                  Limpar Assinatura
-                </button>
-              </div>
-
-              <button className="confirmar-retirada-btn-large" onClick={handleConfirmarRetiradaChave}>
-                CONFIRMAR E SALVAR
-              </button>
-            </div>
-          </div>
-        )
-      }
-
-      {/* --- MODAL DE RETIRADA DE ITEM --- */}
-      {
-        modalItemOpen && (
-          <div className="foto-modal-overlay" onClick={() => setModalItemOpen(false)}>
-            <div className="retirada-modal" onClick={e => e.stopPropagation()}>
-              <button className="foto-modal-close" onClick={() => setModalItemOpen(false)}>✕</button>
-              <h3>Emprestar Item: {selectedItem?.nome}</h3>
-
-              <div className="retirada-form-group">
-                <label>Nome do Morador/Funcionário:</label>
-                <input
-                  autoFocus
-                  type="text"
-                  value={retiradaItemForm.nome_morador}
-                  onChange={e => setRetiradaItemForm({ ...retiradaItemForm, nome_morador: e.target.value })}
+              <label>Assinatura do Morador (Obrigatório):</label>
+              <div className="canvas-wrapper">
+                <canvas
+                  ref={canvasRef}
+                  width={800}
+                  height={400}
+                  className="assinatura-canvas"
+                  onMouseDown={startDraw}
+                  onMouseMove={draw}
+                  onMouseUp={stopDraw}
+                  onMouseLeave={stopDraw}
+                  onTouchStart={startDraw}
+                  onTouchMove={draw}
+                  onTouchEnd={stopDraw}
                 />
               </div>
-
-              <div className="form-row">
-                <div className="retirada-form-group half">
-                  <label>Apartamento:</label>
-                  <input
-                    type="text"
-                    value={retiradaItemForm.apartamento}
-                    onChange={e => setRetiradaItemForm({ ...retiradaItemForm, apartamento: e.target.value })}
-                  />
-                </div>
-                <div className="retirada-form-group half">
-                  <label>Bloco:</label>
-                  <input
-                    type="text"
-                    value={retiradaItemForm.bloco}
-                    onChange={e => setRetiradaItemForm({ ...retiradaItemForm, bloco: e.target.value })}
-                  />
-                </div>
-              </div>
-
-              <div className="retirada-form-group">
-                <label>Assinatura do Morador (Obrigatório):</label>
-                <div className="canvas-wrapper">
-                  <canvas
-                    ref={canvasRef}
-                    width={800}
-                    height={400}
-                    className="assinatura-canvas"
-                    onMouseDown={startDraw}
-                    onMouseMove={draw}
-                    onMouseUp={stopDraw}
-                    onMouseLeave={stopDraw}
-                    onTouchStart={startDraw}
-                    onTouchMove={draw}
-                    onTouchEnd={stopDraw}
-                  />
-                </div>
+              <div className="signature-actions">
                 <button type="button" className="limpar-btn" onClick={clearCanvas}>
-                  Limpar Assinatura
+                  Limpar
+                </button>
+                <button type="button" className="zoom-btn" onClick={() => setIsSignatureZoomed(true)}>
+                  🔍 Ampliar para Assinar
                 </button>
               </div>
-
-              <button className="confirmar-retirada-btn-large" onClick={handleConfirmarRetiradaItem}>
-                CONFIRMAR EMPRÉSTIMO
-              </button>
             </div>
+
+            <button className="confirmar-retirada-btn-large" onClick={handleConfirmarRetiradaChave}>
+              CONFIRMAR E SALVAR
+            </button>
           </div>
-        )
-      }
-
-      {/* Modal de Histórico */}
-      {
-        modalHistorico && (
-          <div className="foto-modal-overlay">
-            <div className="retirada-modal historico-modal">
-              <button className="foto-modal-close" onClick={() => setModalHistorico(null)}>✕</button>
-              <h3>Histórico: {modalHistorico.area_nome || modalHistorico.nome}</h3>
-
-              <div className="historico-table-container">
-                <table className="chaves-table">
-                  <thead>
-                    <tr>
-                      <th>Retirada</th>
-                      <th>Devolução</th>
-                      <th>Nome</th>
-                      <th>Unidade</th>
-                      {modalHistorico.area_nome && <th>Item</th>}
-                      <th>Ações</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {historicoData.length === 0 ? (
-                      <tr><td colSpan={modalHistorico.area_nome ? "6" : "5"} style={{ textAlign: 'center' }}>Nenhum registro encontrado</td></tr>
-                    ) : (
-                      historicoData.map((log) => (
-                        <tr key={log.id}>
-                          <td>{new Date(log.data_retirada).toLocaleString('pt-BR')}</td>
-                          <td>{log.data_devolucao ? new Date(log.data_devolucao).toLocaleString('pt-BR') : <span className="pendente">Pendente</span>}</td>
-                          <td>{log.retirado_por}</td>
-                          <td>{log.unidade || `${log.apartamento} / ${log.bloco}`}</td>
-                          {modalHistorico.area_nome && <td>{log.item_nome || "-"}</td>}
-                          <td>
-                            {log.assinatura_url && (
-                              <button
-                                className="admin-btn-small"
-                                onClick={() => setAssinaturaVer(log.assinatura_url)}
-                                title="Ver Assinatura"
-                              >
-                                ✍️
-                              </button>
-                            )}
-                          </td>
-                        </tr>
-                      ))
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            </div>
           </div>
-        )
-      }
+  )
+}
 
-      {/* Modal de Assinatura (Zoom) */}
-      {
-        assinaturaVer && (
-          <div className="foto-modal-overlay" onClick={() => setAssinaturaVer(null)}>
-            <div className="assinatura-zoom-container" onClick={e => e.stopPropagation()}>
-              <button className="foto-modal-close" onClick={() => setAssinaturaVer(null)}>✕</button>
-              <h3>Assinatura</h3>
-              <img src={assinaturaVer} alt="Assinatura" className="assinatura-img-zoom" />
-            </div>
-          </div>
-        )
-      }
-
-      {/* Modal de Edição Customizado */}
-      {modalEditOpen && (
-        <div className="modal-overlay">
-          <div className="modal-container edit-modal">
-            <div className="modal-header">
-              <h3>Editar {editType === 'chave' ? 'Chave' : 'Item'}</h3>
-              <button className="modal-close" onClick={() => setModalEditOpen(false)}>✕</button>
-            </div>
-            <div className="modal-body">
-              <div className="retirada-form-group">
-                <label>Nome da {editType === 'chave' ? 'Área' : 'Item'}:</label>
-                <input
-                  type="text"
-                  value={editValue}
-                  onChange={(e) => setEditValue(e.target.value)}
-                  placeholder="Digite o novo nome..."
-                  autoFocus
-                />
-              </div>
-            </div>
-            <div className="modal-footer" style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
-              <button className="btn-cancelar" onClick={() => setModalEditOpen(false)}>Cancelar</button>
-              <button className="btn-confirmar" onClick={saveEdit}>Salvar Alterações</button>
-            </div>
-          </div>
+{/* --- MODAL DE ASSINATURA AMPLIADA (ZOOM) --- */ }
+{
+  isSignatureZoomed && (
+    <div className="signature-zoom-overlay">
+      <div className="signature-zoom-content">
+        <div className="zoom-header">
+          <h3>Assine no campo abaixo</h3>
+          <p>Use o dedo para escrever como se fosse um caderno</p>
         </div>
-      )}
-
-      {/* Modal de Confirmação Unificado (Devolução/Exclusão) */}
-      {modalConfirmOpen && (
-        <div className="modal-overlay danger">
-          <div className={`modal-container confirm-modal ${confirmConfig.type}`}>
-            <div className="modal-header">
-              <h3>{confirmConfig.title}</h3>
-              <button className="modal-close" onClick={() => setModalConfirmOpen(false)}>✕</button>
-            </div>
-            <div className="modal-body">
-              <p style={{ color: '#94a3b8', fontSize: '1.1rem', lineHeight: '1.6' }}>
-                {confirmConfig.text}
-              </p>
-            </div>
-            <div className="modal-footer" style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
-              <button className="btn-cancelar" onClick={() => setModalConfirmOpen(false)}>Cancelar</button>
-              <button
-                className={`btn-confirmar ${confirmConfig.type === 'danger' ? 'danger' : 'success'}`}
-                onClick={() => {
-                  confirmConfig.onConfirm();
-                  setModalConfirmOpen(false);
-                }}
-              >
-                {confirmConfig.type === 'danger' ? 'Sim, Excluir' : 'Confirmar'}
-              </button>
-            </div>
-          </div>
+        <div className="zoom-canvas-wrapper">
+          <canvas
+            ref={canvasRef}
+            width={window.innerWidth * 1.5}
+            height={window.innerHeight * 0.6}
+            className="assinatura-canvas zoomed"
+            onMouseDown={startDraw}
+            onMouseMove={draw}
+            onMouseUp={stopDraw}
+            onMouseLeave={stopDraw}
+            onTouchStart={startDraw}
+            onTouchMove={draw}
+            onTouchEnd={stopDraw}
+          />
         </div>
-      )}
+        <div className="zoom-footer">
+          <button className="limpar-btn" onClick={clearCanvas}>Limpar</button>
+          <button className="concluir-zoom-btn" onClick={() => setIsSignatureZoomed(false)}>
+            ✅ Concluído
+          </button>
+        </div>
+      </div>
     </div>
+  )
+}
+
+{/* --- MODAL DE RETIRADA DE ITEM --- */ }
+{
+  modalItemOpen && (
+    <div className="foto-modal-overlay" onClick={() => setModalItemOpen(false)}>
+      <div className="retirada-modal" onClick={e => e.stopPropagation()}>
+        <button className="foto-modal-close" onClick={() => setModalItemOpen(false)}>✕</button>
+        <h3>Emprestar Item: {selectedItem?.nome}</h3>
+
+        <div className="retirada-form-group">
+          <label>Nome do Morador/Funcionário:</label>
+          <input
+            autoFocus
+            type="text"
+            value={retiradaItemForm.nome_morador}
+            onChange={e => setRetiradaItemForm({ ...retiradaItemForm, nome_morador: e.target.value })}
+          />
+        </div>
+
+        <div className="form-row">
+          <div className="retirada-form-group half">
+            <label>Apartamento:</label>
+            <input
+              type="text"
+              value={retiradaItemForm.apartamento}
+              onChange={e => setRetiradaItemForm({ ...retiradaItemForm, apartamento: e.target.value })}
+            />
+          </div>
+          <div className="retirada-form-group half">
+            <label>Bloco:</label>
+            <input
+              type="text"
+              value={retiradaItemForm.bloco}
+              onChange={e => setRetiradaItemForm({ ...retiradaItemForm, bloco: e.target.value })}
+            />
+          </div>
+        </div>
+
+        <div className="retirada-form-group">
+          <label>Assinatura do Morador (Obrigatório):</label>
+          <div className="canvas-wrapper">
+            <canvas
+              ref={canvasRef}
+              width={800}
+              height={400}
+              className="assinatura-canvas"
+              onMouseDown={startDraw}
+              onMouseMove={draw}
+              onMouseUp={stopDraw}
+              onMouseLeave={stopDraw}
+              onTouchStart={startDraw}
+              onTouchMove={draw}
+              onTouchEnd={stopDraw}
+            />
+          </div>
+          <button type="button" className="limpar-btn" onClick={clearCanvas}>
+            Limpar Assinatura
+          </button>
+        </div>
+
+        <button className="confirmar-retirada-btn-large" onClick={handleConfirmarRetiradaItem}>
+          CONFIRMAR EMPRÉSTIMO
+        </button>
+      </div>
+    </div>
+  )
+}
+
+{/* Modal de Histórico */ }
+{
+  modalHistorico && (
+    <div className="foto-modal-overlay">
+      <div className="retirada-modal historico-modal">
+        <button className="foto-modal-close" onClick={() => setModalHistorico(null)}>✕</button>
+        <h3>Histórico: {modalHistorico.area_nome || modalHistorico.nome}</h3>
+
+        <div className="historico-table-container">
+          <table className="chaves-table">
+            <thead>
+              <tr>
+                <th>Retirada</th>
+                <th>Devolução</th>
+                <th>Nome</th>
+                <th>Unidade</th>
+                {modalHistorico.area_nome && <th>Item</th>}
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              {historicoData.length === 0 ? (
+                <tr><td colSpan={modalHistorico.area_nome ? "6" : "5"} style={{ textAlign: 'center' }}>Nenhum registro encontrado</td></tr>
+              ) : (
+                historicoData.map((log) => (
+                  <tr key={log.id}>
+                    <td>{new Date(log.data_retirada).toLocaleString('pt-BR')}</td>
+                    <td>{log.data_devolucao ? new Date(log.data_devolucao).toLocaleString('pt-BR') : <span className="pendente">Pendente</span>}</td>
+                    <td>{log.retirado_por}</td>
+                    <td>{log.unidade || `${log.apartamento} / ${log.bloco}`}</td>
+                    {modalHistorico.area_nome && <td>{log.item_nome || "-"}</td>}
+                    <td>
+                      {log.assinatura_url && (
+                        <button
+                          className="admin-btn-small"
+                          onClick={() => setAssinaturaVer(log.assinatura_url)}
+                          title="Ver Assinatura"
+                        >
+                          ✍️
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+{/* Modal de Assinatura (Zoom) */ }
+{
+  assinaturaVer && (
+    <div className="foto-modal-overlay" onClick={() => setAssinaturaVer(null)}>
+      <div className="assinatura-zoom-container" onClick={e => e.stopPropagation()}>
+        <button className="foto-modal-close" onClick={() => setAssinaturaVer(null)}>✕</button>
+        <h3>Assinatura</h3>
+        <img src={assinaturaVer} alt="Assinatura" className="assinatura-img-zoom" />
+      </div>
+    </div>
+  )
+}
+
+{/* Modal de Edição Customizado */ }
+{
+  modalEditOpen && (
+    <div className="modal-overlay">
+      <div className="modal-container edit-modal">
+        <div className="modal-header">
+          <h3>Editar {editType === 'chave' ? 'Chave' : 'Item'}</h3>
+          <button className="modal-close" onClick={() => setModalEditOpen(false)}>✕</button>
+        </div>
+        <div className="modal-body">
+          <div className="retirada-form-group">
+            <label>Nome da {editType === 'chave' ? 'Área' : 'Item'}:</label>
+            <input
+              type="text"
+              value={editValue}
+              onChange={(e) => setEditValue(e.target.value)}
+              placeholder="Digite o novo nome..."
+              autoFocus
+            />
+          </div>
+        </div>
+        <div className="modal-footer" style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
+          <button className="btn-cancelar" onClick={() => setModalEditOpen(false)}>Cancelar</button>
+          <button className="btn-confirmar" onClick={saveEdit}>Salvar Alterações</button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+{/* Modal de Confirmação Unificado (Devolução/Exclusão) */ }
+{
+  modalConfirmOpen && (
+    <div className="modal-overlay danger">
+      <div className={`modal-container confirm-modal ${confirmConfig.type}`}>
+        <div className="modal-header">
+          <h3>{confirmConfig.title}</h3>
+          <button className="modal-close" onClick={() => setModalConfirmOpen(false)}>✕</button>
+        </div>
+        <div className="modal-body">
+          <p style={{ color: '#94a3b8', fontSize: '1.1rem', lineHeight: '1.6' }}>
+            {confirmConfig.text}
+          </p>
+        </div>
+        <div className="modal-footer" style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
+          <button className="btn-cancelar" onClick={() => setModalConfirmOpen(false)}>Cancelar</button>
+          <button
+            className={`btn-confirmar ${confirmConfig.type === 'danger' ? 'danger' : 'success'}`}
+            onClick={() => {
+              confirmConfig.onConfirm();
+              setModalConfirmOpen(false);
+            }}
+          >
+            {confirmConfig.type === 'danger' ? 'Sim, Excluir' : 'Confirmar'}
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+    </div >
   );
 }
