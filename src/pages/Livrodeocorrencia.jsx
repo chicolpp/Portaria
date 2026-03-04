@@ -490,7 +490,7 @@ export default function LivroDeOcorrencia() {
 
         {activeTab === "visualizacao" && (
           <div className="visualizacao">
-            <h2><ClipboardIcon className="section-icon" /> Visualização de Ocorrências</h2>
+            <h2><ListIcon className="section-icon" /> Visualização de Ocorrências</h2>
             {ocorrencias.length === 0 ? (
               <p>Nenhuma ocorrência cadastrada ainda.</p>
             ) : (

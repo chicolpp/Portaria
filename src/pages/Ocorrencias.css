@@ -173,8 +173,8 @@
   filter: brightness(1.1);
 }
 
-/* TABLE */
-.ocorrencias-container .ocorrencias-table {
+/* TABLE STYLE STANDARDIZED (MATCHING PORTARIA/ENCOMENDAS) */
+.ocorrencias-table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 25px;
@@ -182,7 +182,7 @@
   overflow: hidden;
 }
 
-.ocorrencias-container .ocorrencias-table th {
+.ocorrencias-table th {
   background: rgba(139, 92, 246, 0.1);
   color: var(--primary-light);
   font-weight: 600;
@@ -193,18 +193,18 @@
   padding: 10px 14px;
 }
 
-.ocorrencias-container .ocorrencias-table td {
+.ocorrencias-table td {
   padding: 10px 14px;
   border-bottom: 1px solid var(--border-color);
   color: var(--text-primary);
   font-size: 13px;
 }
 
-.ocorrencias-container .ocorrencias-table tbody tr {
+.ocorrencias-table tbody tr {
   transition: all 0.3s ease;
 }
 
-.ocorrencias-container .ocorrencias-table tbody tr:hover {
+.ocorrencias-table tbody tr:hover {
   background: rgba(139, 92, 246, 0.05);
 }
 
