@@ -31,7 +31,7 @@ export default function Dashboard() {
           onClick={() => navigate("/livroocorrencias")}
         />
         <ActionCard
-          image="/icons/acao9.png"
+          image="/icons/amenities.png"
           label="Espaços e Serviços"
           onClick={() => navigate("/espacosservicos")}
         />

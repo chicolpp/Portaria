@@ -25,21 +25,24 @@ export default function Ocorrencias() {
 
   return (
     <div className="ocorrencias-container">
+      {/* TABS NAVIGATION */}
+      <div className="ocorrencias-tabs">
+        <button
+          className={`ocorrencias-tab-btn ${activeTab === "cadastro" ? "active" : ""}`}
+          onClick={() => handleTabClick("cadastro")}
+        >
+          Cadastro de Ocorrencias
+        </button>
+        <button
+          className={`ocorrencias-tab-btn ${activeTab === "visualizacao" ? "active" : ""}`}
+          onClick={() => handleTabClick("visualizacao")}
+        >
+          Visualização de Ocorrencias
+        </button>
+      </div>
+
+      {/* TAB CONTENT */}
       <div className="tab-content">
-        <div className="tabs">
-          <button
-            className={activeTab === "cadastro" ? "active" : ""}
-            onClick={() => handleTabClick("cadastro")}
-          >
-            Cadastro de Ocorrencias
-          </button>
-          <button
-            className={activeTab === "visualizacao" ? "active" : ""}
-            onClick={() => handleTabClick("visualizacao")}
-          >
-            Visualização de Ocorrencias
-          </button>
-        </div>
         {activeTab === "cadastro" && (
           <div className="cadastro-form">
             <h2>Cadastro de Ocorrencias</h2>

@@ -6,8 +6,8 @@
   color: white;
 }
 
-.ocorrencias-container:has(.cadastro-form) .tab-content {
-  max-width: 800px;
+.ocorrencias-container .tab-content {
+  width: 100%;
 }
 
 .ocorrencias-container:has(.visualizacao) .tab-content {
@@ -405,108 +405,107 @@
 /* ========== MOBILE ========== */
 @media (max-width: 768px) {
   .ocorrencias-container {
-    padding: 16px;
-    padding-top: 20px;
-    padding-left: 16px;
-    padding-bottom: 100px;
+    padding: 10px;
+    padding-top: 15px;
+    padding-bottom: 80px;
     overflow-x: hidden;
   }
 
-  .ocorrencias-container .tabs {
+  .ocorrencias-tabs {
     flex-wrap: nowrap;
     overflow-x: auto;
-    gap: 10px;
-    position: static;
-    padding-bottom: 8px;
-    -webkit-overflow-scrolling: touch;
+    gap: 8px;
+    padding: 0 5px 10px 5px;
+    margin-bottom: 15px;
+    border-bottom: 1px solid var(--border-color);
   }
 
-  .ocorrencias-container .tabs::-webkit-scrollbar,
-  .ocorrencias-container .ocorrencias-tabs::-webkit-scrollbar {
-    display: none;
-  }
-
-  .ocorrencias-container .tabs button,
-  .ocorrencias-container .ocorrencias-tab-btn {
-    padding: 12px 20px;
-    font-size: 14px;
+  .ocorrencias-tab-btn {
+    padding: 16px 24px;
+    font-size: 15px;
     white-space: nowrap;
+    border-radius: 8px 8px 0 0;
+    border-left: none;
+    border-bottom: 3px solid transparent;
+    background: rgba(255, 255, 255, 0.02);
     flex-shrink: 0;
+    min-height: 48px;
+  }
+
+  .ocorrencias-tab-btn.active {
+    background: rgba(139, 92, 246, 0.2);
+    border-bottom-color: var(--primary);
+    border-left-color: transparent;
   }
 
   .ocorrencias-container .tab-content {
-    padding: 20px;
-    border-radius: 16px;
+    padding: 20px 15px;
+    border-radius: 0 0 16px 16px;
+    min-height: 400px;
+    animation: none !important;
   }
 
   .ocorrencias-container .cadastro-form {
     grid-template-columns: 1fr;
-    gap: 16px;
+    gap: 12px;
+    padding: 15px;
   }
 
   .ocorrencias-container .cadastro-form h2,
   .ocorrencias-container .visualizacao h2 {
-    font-size: 20px;
+    font-size: 1.25rem;
+    margin-bottom: 16px;
+    letter-spacing: 0.3px;
   }
 
   .ocorrencias-container .form-group input,
   .ocorrencias-container .form-group select,
   .ocorrencias-container .form-group textarea {
-    padding: 14px 16px;
+    padding: 16px 18px;
     font-size: 16px;
+    min-height: 48px;
   }
 
   .ocorrencias-container .submit-btn {
     width: 100%;
-    padding: 16px;
+    padding: 18px;
     font-size: 16px;
+    min-height: 52px;
   }
 
-  .ocorrencias-container .ocorrencias-table {
+  .ocorrencias-table {
     display: block;
     overflow-x: auto;
     font-size: 13px;
   }
 
-  .ocorrencias-container .ocorrencias-table th,
-  .ocorrencias-container .ocorrencias-table td {
-    padding: 12px 10px;
-    font-size: 13px;
-  }
-
-  .ocorrencias-container .acoes-cell {
-    flex-direction: column;
-    gap: 6px;
-  }
-
-  .ocorrencias-container .ver-btn,
-  .ocorrencias-container .editar-btn,
-  .ocorrencias-container .apagar-btn {
-    padding: 8px 12px;
-    font-size: 12px;
+  .ocorrencias-table th,
+  .ocorrencias-table td {
+    padding: 14px 12px;
+    font-size: 14px;
+    line-height: 1.4;
   }
 
   .visualizar-modal,
   .editar-modal {
     width: 95%;
-    padding: 20px;
-    max-height: 85vh;
+    padding: 15px;
+    max-height: 90vh;
+    border-radius: 16px;
   }
 }
 
 @media (max-width: 480px) {
   .ocorrencias-container {
-    padding: 12px;
-    padding-top: 16px;
-    padding-bottom: 100px;
+    padding: 8px;
+    padding-top: 12px;
   }
 
   .ocorrencias-container .tab-content {
-    padding: 16px;
+    padding: 12px;
   }
 
-  .ocorrencias-container .tabs button,
-  .ocorrencias-container .ocorrencias-tab-btn {
+  .ocorrencias-tab-btn {
     padding: 10px 16px;
     font-size: 13px;
   }

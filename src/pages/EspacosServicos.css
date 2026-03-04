@@ -413,42 +413,67 @@
 @media (max-width: 768px) {
   .espacos-container {
     padding: 10px;
-    padding-bottom: 70px;
+    padding-top: 15px;
+    padding-bottom: 80px;
+    overflow-x: hidden;
   }
 
   .espacos-tabs {
+    flex-wrap: nowrap;
     overflow-x: auto;
-    padding-bottom: 6px;
-    margin-bottom: 12px;
-    -webkit-overflow-scrolling: touch;
-    gap: 6px;
+    gap: 8px;
+    padding: 0 5px 10px 5px;
+    margin-bottom: 15px;
+    border-bottom: 1px solid var(--border-color);
   }
 
   .espacos-tab-btn {
-    padding: 8px 12px;
-    font-size: 13px;
+    padding: 16px 24px;
+    font-size: 15px;
     white-space: nowrap;
-    border-radius: 10px;
+    border-radius: 8px 8px 0 0;
+    border-left: none;
+    border-bottom: 3px solid transparent;
+    background: rgba(255, 255, 255, 0.02);
+    flex-shrink: 0;
+    min-height: 48px;
+  }
+
+  .espacos-tab-btn.active {
+    background: rgba(139, 92, 246, 0.2);
+    border-bottom-color: var(--primary);
+    border-left-color: transparent;
+  }
+
+  .tab-content {
+    padding: 20px 15px;
+    border-radius: 0 0 16px 16px;
+    min-height: 400px;
+    animation: none !important;
   }
 
   .section-title h2 {
-    font-size: 1.1rem;
-    margin-bottom: 15px;
+    font-size: 1.25rem;
+    margin-bottom: 16px;
+    letter-spacing: 0.3px;
   }
 
   .chaves-form {
     grid-template-columns: 1fr;
-    gap: 10px;
+    gap: 12px;
+    padding: 15px;
   }
 
   .chaves-form input {
-    padding: 10px 14px;
-    font-size: 14px;
+    padding: 16px 18px;
+    font-size: 16px;
+    min-height: 48px;
   }
 
   .chaves-form button {
-    padding: 12px;
-    font-size: 14px;
+    padding: 18px;
+    font-size: 16px;
+    min-height: 52px;
   }
 
   .cards-grid {
@@ -496,20 +521,14 @@
   .edit-modal,
   .confirm-modal {
     width: 95% !important;
-    max-height: 95vh;
+    max-height: 90vh;
     border-radius: 16px !important;
-  }
-
-  .modal-header {
-    padding: 14px 18px !important;
+    padding: 15px !important;
   }
 
   .modal-header h3 {
-    font-size: 1.15rem !important;
-  }
-
-  .modal-body {
-    padding: 15px 18px !important;
+    font-size: 1.25rem;
+    margin-bottom: 16px;
   }
 
   .modal-footer {
@@ -547,6 +566,22 @@
   .devolver-btn-large {
     padding: 10px !important;
     font-size: 14px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .espacos-container {
+    padding: 8px;
+    padding-top: 12px;
+  }
+
+  .tab-content {
+    padding: 12px;
+  }
+
+  .espacos-tab-btn {
+    padding: 10px 16px;
+    font-size: 13px;
   }
 }
 

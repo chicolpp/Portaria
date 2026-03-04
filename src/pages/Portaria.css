@@ -6,8 +6,8 @@
   color: white;
 }
 
-.portaria-container:has(.cadastro-form) .tab-content {
-  max-width: 800px;
+.portaria-container .tab-content {
+  width: 100%;
 }
 
 .portaria-container:has(.visualizacao) .tab-content,
