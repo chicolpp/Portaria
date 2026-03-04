@@ -307,8 +307,8 @@
   }
 
   .encomendas-table {
-    display: block;
-    overflow-x: auto;
+    width: 100%;
+    min-width: 800px;
     font-size: 13px;
   }
 
@@ -742,8 +742,7 @@
 
   .encomendas-container .tab-content,
   .encomendas-container .visualizacao,
-  .encomendas-container .loading-container,
-  .encomendas-container .encomendas-table {
+  .encomendas-container .loading-container {
     display: block !important;
     opacity: 1 !important;
     visibility: visible !important;

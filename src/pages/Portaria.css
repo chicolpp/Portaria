@@ -13,7 +13,6 @@
 .portaria-container:has(.visualizacao) .tab-content,
 .portaria-container:has(.liberacao) .tab-content {
   max-width: 100%;
-  overflow-x: auto;
 }
 
 /* TABS NAVIGATION */
@@ -316,8 +315,8 @@
   }
 
   .acessos-table {
-    display: block;
-    overflow-x: auto;
+    width: 100%;
+    min-width: 800px;
     font-size: 12px;
   }
 
