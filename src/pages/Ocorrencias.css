@@ -182,21 +182,11 @@
 }
 
 .ocorrencias-table th {
-  background: rgba(139, 92, 246, 0.1);
-  color: var(--primary-light);
-  font-weight: 600;
-  font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  text-align: left;
   padding: 8px 12px;
 }
 
 .ocorrencias-table td {
   padding: 8px 12px;
-  border-bottom: 1px solid var(--border-color);
-  color: var(--text-primary);
-  font-size: 13px;
 }
 
 .ocorrencias-table tbody tr {

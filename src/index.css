@@ -137,21 +137,21 @@ button:disabled {
   opacity: 0.7;
 }
 
-/* Botões de Ação (Pequenos) */
+/* Botões de Ação (Pequenos) - PADRONIZADO 32px */
 .admin-btn-small {
   background: var(--primary);
   color: white;
   border: none;
   cursor: pointer;
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   padding: 0;
   border-radius: 8px;
   transition: all 0.2s;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
 .admin-btn-small:hover {
@@ -226,18 +226,20 @@ th {
   background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(124, 58, 237, 0.15));
   color: var(--primary-light);
   font-weight: 600;
-  font-size: 14px;
+  font-size: 13px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  padding: 16px 20px;
+  padding: 8px 12px;
   text-align: left;
 }
 
 td {
-  padding: 16px 20px;
+  padding: 8px 12px;
   color: var(--text-primary);
   border-bottom: 1px solid rgba(139, 92, 246, 0.1);
   transition: all 0.2s ease;
+  font-size: 13px;
+  line-height: 1.2;
 }
 
 tbody tr {
@@ -480,19 +482,7 @@ textarea:invalid:not(:placeholder-shown) {
   box-shadow: 0 4px 25px rgba(0, 0, 0, 0.5), 0 0 25px rgba(245, 158, 11, 0.3);
 }
 
-.admin-btn-small {
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  color: white;
-  position: relative;
-}
+
 
 .toast .toast-icon {
   display: flex;
