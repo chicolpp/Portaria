@@ -153,38 +153,6 @@
   min-width: 100%;
 }
 
-/* RESPONSIVE TABLE WRAPPER */
-.table-wrapper {
-  width: 100%;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  margin: 20px 0;
-  border-radius: 12px;
-  position: relative;
-}
-
-.table-wrapper::after {
-  content: '→';
-  position: absolute;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.3));
-  padding: 10px 15px;
-  border-radius: 8px 0 0 8px;
-  opacity: 0;
-  transition: opacity 0.3s;
-  pointer-events: none;
-  font-size: 18px;
-  color: var(--primary-light);
-}
-
-@media (max-width: 768px) {
-  .table-wrapper::after {
-    opacity: 1;
-  }
-}
-
 /* TABLE */
 .encomendas-table {
   width: 100%;
@@ -212,7 +180,7 @@
   font-size: 15px;
 }
 
-.encomendas-table tr {
+.encomendas-table tbody tr {
   transition: all 0.3s ease;
 }
 
@@ -659,12 +627,13 @@
   .encomendas-table {
     width: 100%;
     min-width: 800px;
+    font-size: 12px;
   }
 
   .encomendas-table th,
   .encomendas-table td {
-    padding: 14px 12px;
-    font-size: 14px;
+    padding: 10px 6px;
+    font-size: 12px;
     line-height: 1.4;
   }
 
