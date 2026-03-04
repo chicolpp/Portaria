@@ -59,9 +59,8 @@
 
 .ocorrencias-container .cadastro-form h2,
 .ocorrencias-container .visualizacao h2 {
-  margin-bottom: 30px;
-  font-size: 24px;
-  /* Reduzido de 26px para 24px */
+  margin-bottom: 20px;
+  font-size: 22px;
   font-weight: 700;
   background: linear-gradient(135deg, var(--primary), var(--primary-light));
   -webkit-background-clip: text;
@@ -190,11 +189,11 @@
   text-transform: uppercase;
   letter-spacing: 0.5px;
   text-align: left;
-  padding: 10px 14px;
+  padding: 8px 12px;
 }
 
 .ocorrencias-table td {
-  padding: 10px 14px;
+  padding: 8px 12px;
   border-bottom: 1px solid var(--border-color);
   color: var(--text-primary);
   font-size: 13px;
@@ -453,7 +452,6 @@
   .ocorrencias-container .tab-content {
     padding: 15px;
     border-radius: 0 0 16px 16px;
-    min-height: 400px;
     animation: none !important;
   }
 

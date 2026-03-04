@@ -56,8 +56,8 @@
 
 .encomendas-container .cadastro-form h2,
 .encomendas-container .visualizacao h2 {
-  margin-bottom: 30px;
-  font-size: 24px;
+  margin-bottom: 20px;
+  font-size: 22px;
   /* Padronizado de 26px para 24px */
   font-weight: 700;
   background: linear-gradient(135deg, var(--primary), var(--primary-light));
@@ -170,11 +170,11 @@
   text-transform: uppercase;
   letter-spacing: 0.5px;
   text-align: left;
-  padding: 10px 14px;
+  padding: 8px 12px;
 }
 
 .encomendas-table td {
-  padding: 10px 14px;
+  padding: 8px 12px;
   border-bottom: 1px solid var(--border-color);
   color: var(--text-primary);
   font-size: 13px;
