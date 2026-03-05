@@ -246,7 +246,7 @@ export default function Encomendas() {
     };
   };
 
-  const startDrawing = (e) => {
+  const startDraw = (e) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
@@ -255,10 +255,13 @@ export default function Encomendas() {
 
     ctx.beginPath();
     ctx.moveTo(x, y);
-    ctx.lineWidth = 4;
+    ctx.lineWidth = 3.5;
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
-    ctx.strokeStyle = "#ffffff";
+    ctx.strokeStyle = "#000000";
+    // Efeito Caneta (suavização)
+    ctx.shadowBlur = 1;
+    ctx.shadowColor = "#000000";
 
     lastPointRef.current = { x, y };
     setIsDrawing(true);
@@ -284,25 +287,29 @@ export default function Encomendas() {
     if (e.touches) e.preventDefault();
   };
 
-  const stopDrawing = () => {
+  const stopDraw = () => {
     setIsDrawing(false);
     lastPointRef.current = null;
   };
 
   const clearCanvas = () => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    if (canvas) {
+      const ctx = canvas.getContext("2d");
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
     setStoredSignature(null);
   };
 
   const handleConcluirZoom = () => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
-    const signatureData = canvas.toDataURL("image/png");
-    setStoredSignature(signatureData);
-    setIsSignatureZoomed(false);
+    if (canvas) {
+      const signatureData = canvas.toDataURL("image/png");
+      setStoredSignature(signatureData);
+      setIsSignatureZoomed(false);
+    } else {
+      setIsSignatureZoomed(false);
+    }
   };
 
   const confirmarRetirada = async () => {
@@ -491,13 +498,13 @@ export default function Encomendas() {
               width={windowSize.width}
               height={windowSize.height}
               className="assinatura-canvas zoomed-full"
-              onMouseDown={startDrawing}
+              onMouseDown={startDraw}
               onMouseMove={draw}
-              onMouseUp={stopDrawing}
-              onMouseLeave={stopDrawing}
-              onTouchStart={startDrawing}
+              onMouseUp={stopDraw}
+              onMouseLeave={stopDraw}
+              onTouchStart={startDraw}
               onTouchMove={draw}
-              onTouchEnd={stopDrawing}
+              onTouchEnd={stopDraw}
             />
 
             {/* Botoes Flutuantes Pequenos */}

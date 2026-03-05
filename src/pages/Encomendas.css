@@ -451,7 +451,8 @@
 .signature-preview-signed img {
   max-width: 90%;
   max-height: 80%;
-  filter: invert(1);
+  filter: none;
+  /* Removido invert para combinar com tinta preta */
 }
 
 .change-sig-hint {
