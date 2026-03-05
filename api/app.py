@@ -57,6 +57,32 @@ db.init_app(app)
 with app.app_context():
     db.create_all()
     
+    # --- MIGRAÇÃO FORÇADA DE COLUNAS PARA TEXT (BASE64) ---
+    try:
+        targets = [
+            ("users", "foto"),
+            ("encomendas", "foto"),
+            ("encomendas", "assinatura"),
+            ("chaves", "assinatura"),
+            ("movimentacoes_chaves", "assinatura"),
+            ("itens_portaria", "assinatura"),
+            ("movimentacoes_itens", "assinatura")
+        ]
+        for table, column in targets:
+            try:
+                # SQL direto para garantir a mudança de tipo
+                db.session.execute(text(f"ALTER TABLE {table} ALTER COLUMN {column} TYPE TEXT USING {column}::TEXT"))
+                db.session.commit()
+            except Exception as inner_e:
+                db.session.rollback()
+                # Silencioso se a coluna não existir, mas loga se for outro erro
+                if "does not exist" not in str(inner_e):
+                    print(f"⚠️ Aviso na migração de {table}.{column}: {inner_e}")
+        print("✅ Colunas de imagem/assinatura garantidas como TEXT")
+    except Exception as e:
+        print(f"❌ Erro crítico na migração automática: {e}")
+    # -----------------------------------------------------
+
     # Criar admin padrão se não existir
     admin_email = "admin@portaria.com"
     admin = User.query.filter_by(email=admin_email).first()
