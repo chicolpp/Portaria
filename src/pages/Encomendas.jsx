@@ -65,15 +65,27 @@ export default function Encomendas() {
 
   useEffect(() => {
     fetchEncomendas();
-    // Preenche data e hora atuais para visualização
-    const agora = new Date();
-    const dataISO = agora.toISOString().split('T')[0];
-    const horaISO = agora.toTimeString().split(' ')[0].substring(0, 5);
-    setFormData(prev => ({
-      ...prev,
-      dataRecebimento: dataISO,
-      horaRecebimento: horaISO
-    }));
+
+    // Atualiza data e hora em tempo real (hora local)
+    const timer = setInterval(() => {
+      const agora = new Date();
+
+      // Formata data YYYY-MM-DD local
+      const an = agora.getFullYear();
+      const ms = String(agora.getMonth() + 1).padStart(2, '0');
+      const di = String(agora.getDate()).padStart(2, '0');
+      const dataLocal = `${an}-${ms}-${di}`;
+
+      const horaLocal = agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+
+      setFormData(prev => ({
+        ...prev,
+        dataRecebimento: dataLocal,
+        horaRecebimento: horaLocal
+      }));
+    }, 1000);
+
+    return () => clearInterval(timer);
   }, []);
 
   const fetchEncomendas = async () => {
