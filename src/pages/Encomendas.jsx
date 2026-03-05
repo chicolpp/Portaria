@@ -529,6 +529,7 @@ export default function Encomendas() {
                 type="file"
                 id="foto-input"
                 accept="image/*"
+                capture="environment"
                 onChange={handleFotoChange}
               />
             </div>
