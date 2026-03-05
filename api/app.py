@@ -319,7 +319,7 @@ def editar_encomenda(id):
     return {"message": "Encomenda atualizada", "encomenda": encomenda.to_dict()}, 200
 
 
-@app.route("/encomendas/<int:id>/retirar", methods=["POST"])
+@app.route("/encomendas/<int:id>/retirada", methods=["POST"])
 def retirar_encomenda(id):
     encomenda = Encomenda.query.get_or_404(id)
     
