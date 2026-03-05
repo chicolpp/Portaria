@@ -60,13 +60,22 @@ export default function EspacosServicos() {
 
   // Canvas Ref
   const canvasRef = useRef(null);
-  const lastPointRef = useRef(null);
   const [isDrawing, setIsDrawing] = useState(false);
 
   const [modalItemOpen, setModalItemOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const [isSignatureZoomed, setIsSignatureZoomed] = useState(false);
-  const [storedSignature, setStoredSignature] = useState(null); // Para guardar a assinatura após o zoom
+  const [storedSignature, setStoredSignature] = useState(null);
+  const [windowSize, setWindowSize] = useState({ width: window.innerWidth, height: window.innerHeight });
+  const canvasRef = useRef(null);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowSize({ width: window.innerWidth, height: window.innerHeight });
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
   // Estados para Histórico e Edição
   const [modalHistorico, setModalHistorico] = useState(null);
   const [historicoData, setHistoricoData] = useState([]);
@@ -938,41 +947,42 @@ export default function EspacosServicos() {
         )
       }
 
-      {/* --- MODAL DE ASSINATURA AMPLIADA (ZOOM) --- */}
+      {/* --- MODAL DE ASSINATURA AMPLIADA (ZOOM TELA CHEIA) --- */}
       {isSignatureZoomed && (
         <div className="signature-zoom-overlay">
-          {/* Aviso de Rotacionar Tela */}
+          {/* Aviso de Rotacionar Tela (Apenas Mobile Portrait) */}
           <div className="orientation-warning">
             <div className="warning-content">
               <span className="warning-icon">🔄</span>
-              <h3>Por favor, gire o celular</h3>
-              <p>A assinatura deve ser feita com o celular na horizontal (deitado)</p>
+              <h3>Gire o celular para assinar</h3>
+              <p>O modo de assinatura exige a tela na horizontal</p>
             </div>
           </div>
 
-          <div className="signature-zoom-content">
-            <div className="zoom-header">
-              <h3>Assine no campo abaixo</h3>
-              <p>Use o dedo para escrever como se fosse um caderno</p>
-            </div>
-            <div className="zoom-canvas-wrapper">
-              <canvas
-                ref={canvasRef}
-                width={window.innerWidth > window.innerHeight ? window.innerWidth * 1.5 : window.innerHeight * 1.5}
-                height={window.innerWidth > window.innerHeight ? window.innerHeight * 0.7 : window.innerWidth * 0.7}
-                className="assinatura-canvas zoomed"
-                onMouseDown={startDraw}
-                onMouseMove={draw}
-                onMouseUp={stopDraw}
-                onMouseLeave={stopDraw}
-                onTouchStart={startDraw}
-                onTouchMove={draw}
-                onTouchEnd={stopDraw}
-              />
-            </div>
-            <div className="zoom-footer">
-              <button className="limpar-btn" onClick={clearCanvas}>Limpar</button>
-              <button className="concluir-zoom-btn" onClick={handleConcluirZoom}>
+          <div className="signature-zoom-fullscreen">
+            <canvas
+              ref={canvasRef}
+              width={windowSize.width}
+              height={windowSize.height}
+              className="assinatura-canvas zoomed-full"
+              onMouseDown={startDraw}
+              onMouseMove={draw}
+              onMouseUp={stopDraw}
+              onMouseLeave={stopDraw}
+              onTouchStart={startDraw}
+              onTouchMove={draw}
+              onTouchEnd={stopDraw}
+            />
+
+            {/* Botoes Flutuantes Pequenos */}
+            <div className="zoom-floating-actions">
+              <button className="float-btn clear" onClick={clearCanvas} title="Limpar">
+                🗑️
+              </button>
+              <button className="float-btn close" onClick={() => setIsSignatureZoomed(false)} title="Cancelar">
+                ✕
+              </button>
+              <button className="float-btn save" onClick={handleConcluirZoom} title="Confirmar">
                 ✅ Concluído
               </button>
             </div>
