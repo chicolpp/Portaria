@@ -63,6 +63,8 @@ export default function Encomendas() {
   const [nomeRetirada, setNomeRetirada] = useState("");
   const cameraInputRef = useRef(null);
   const galleryInputRef = useRef(null);
+  const canvasRef = useRef(null); // Adicionado
+  const [isDrawing, setIsDrawing] = useState(false); // Adicionado
   const [isSignatureZoomed, setIsSignatureZoomed] = useState(false);
   const [storedSignature, setStoredSignature] = useState(null);
   const [windowSize, setWindowSize] = useState({ width: window.innerWidth, height: window.innerHeight });
@@ -332,9 +334,9 @@ export default function Encomendas() {
     <div className="encomendas-container">
       {/* MODAL FOTO */}
       {modalFoto && (
-        <div className="foto-modal-overlay" onClick={closeFotoModal}>
-          <div className="foto-modal" onClick={(e) => e.stopPropagation()}>
-            <button className="foto-modal-close" onClick={closeFotoModal}>✕</button>
+        <div className="enc-foto-modal-overlay" onClick={closeFotoModal}>
+          <div className="enc-foto-modal" onClick={(e) => e.stopPropagation()}>
+            <button className="enc-foto-modal-close" onClick={closeFotoModal}>✕</button>
             <img src={modalFoto} alt="Foto da encomenda" />
           </div>
         </div>
@@ -342,9 +344,9 @@ export default function Encomendas() {
 
       {/* MODAL EDITAR */}
       {modalEditar && (
-        <div className="foto-modal-overlay" onClick={closeEditarModal}>
-          <div className="editar-modal" onClick={(e) => e.stopPropagation()}>
-            <button className="foto-modal-close" onClick={closeEditarModal}>✕</button>
+        <div className="enc-foto-modal-overlay" onClick={closeEditarModal}>
+          <div className="enc-editar-modal" onClick={(e) => e.stopPropagation()}>
+            <button className="enc-foto-modal-close" onClick={closeEditarModal}>✕</button>
             <h3>Editar Encomenda #{modalEditar.id}</h3>
 
             <form onSubmit={handleEditSubmit} className="editar-form">
@@ -432,9 +434,9 @@ export default function Encomendas() {
 
       {/* MODAL RETIRADA */}
       {modalRetirada && (
-        <div className="foto-modal-overlay" onClick={closeRetiradaModal}>
-          <div className="retirada-modal" onClick={(e) => e.stopPropagation()}>
-            <button className="foto-modal-close" onClick={closeRetiradaModal}>✕</button>
+        <div className="enc-foto-modal-overlay" onClick={closeRetiradaModal}>
+          <div className="enc-retirada-modal" onClick={(e) => e.stopPropagation()}>
+            <button className="enc-foto-modal-close" onClick={closeRetiradaModal}>✕</button>
             <h3>Confirmar Retirada</h3>
             <p className="retirada-info">Encomenda #{modalRetirada.id} - {modalRetirada.nome}</p>
 
