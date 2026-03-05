@@ -61,10 +61,19 @@ export default function Encomendas() {
   const [editFormData, setEditFormData] = useState({});
   const [modalRetirada, setModalRetirada] = useState(null);
   const [nomeRetirada, setNomeRetirada] = useState("");
-  const canvasRef = useRef(null);
-  const [isDrawing, setIsDrawing] = useState(false);
   const cameraInputRef = useRef(null);
   const galleryInputRef = useRef(null);
+  const [isSignatureZoomed, setIsSignatureZoomed] = useState(false);
+  const [storedSignature, setStoredSignature] = useState(null);
+  const [windowSize, setWindowSize] = useState({ width: window.innerWidth, height: window.innerHeight });
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowSize({ width: window.innerWidth, height: window.innerHeight });
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     fetchEncomendas();
@@ -283,30 +292,40 @@ export default function Encomendas() {
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    setStoredSignature(null);
+  };
+
+  const handleConcluirZoom = () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const signatureData = canvas.toDataURL("image/png");
+    setStoredSignature(signatureData);
+    setIsSignatureZoomed(false);
   };
 
   const confirmarRetirada = async () => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    canvas.toBlob(async (blob) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(blob);
-      reader.onloadend = async () => {
-        const assinaturaData = reader.result;
-        try {
-          await api.post(`/encomendas/${modalRetirada.id}/retirada`, {
-            nome_retirada: nomeRetirada,
-            assinatura: assinaturaData,
-          });
-          toast.success("Retirada confirmada!");
-          closeRetiradaModal();
-          fetchEncomendas();
-        } catch (error) {
-          toast.error("Erro ao confirmar retirada");
-          console.error(error);
-        }
-      };
-    }, "image/png");
+    if (!storedSignature) {
+      toast.error("A assinatura é obrigatória");
+      return;
+    }
+    if (!nomeRetirada) {
+      toast.error("O nome de quem retira é obrigatório");
+      return;
+    }
+
+    try {
+      await api.post(`/encomendas/${modalRetirada.id}/retirada`, {
+        nome_retirada: nomeRetirada,
+        assinatura: storedSignature,
+      });
+      toast.success("Retirada confirmada!");
+      closeRetiradaModal();
+      setStoredSignature(null);
+      fetchEncomendas();
+    } catch (error) {
+      toast.error("Erro ao confirmar retirada");
+      console.error(error);
+    }
   };
 
   return (
@@ -421,24 +440,18 @@ export default function Encomendas() {
 
             <div className="retirada-form-group">
               <label>Assinatura Digital:</label>
-              <div className="canvas-wrapper">
-                <canvas
-                  ref={canvasRef}
-                  width={800}
-                  height={400}
-                  className="assinatura-canvas"
-                  onMouseDown={startDrawing}
-                  onMouseMove={draw}
-                  onMouseUp={stopDrawing}
-                  onMouseLeave={stopDrawing}
-                  onTouchStart={startDrawing}
-                  onTouchMove={draw}
-                  onTouchEnd={stopDrawing}
-                />
+              <div className="signature-status-container">
+                {storedSignature ? (
+                  <div className="signature-preview-signed" onClick={() => setIsSignatureZoomed(true)}>
+                    <img src={storedSignature} alt="Assinatura" />
+                    <span className="change-sig-hint">Clique para alterar</span>
+                  </div>
+                ) : (
+                  <button type="button" className="zoom-btn-large" onClick={() => setIsSignatureZoomed(true)}>
+                    ✍️ CLIQUE AQUI PARA ASSINAR
+                  </button>
+                )}
               </div>
-              <button type="button" className="limpar-btn" onClick={clearCanvas}>
-                🧹 Limpar Assinatura
-              </button>
             </div>
 
             <div className="retirada-form-group">
@@ -451,9 +464,53 @@ export default function Encomendas() {
               />
             </div>
 
-            <button type="button" className="confirmar-retirada-btn" onClick={confirmarRetirada}>
+            <button type="button" className="confirmar-retirada-btn-large" onClick={confirmarRetirada}>
               ✓ Confirmar Retirada
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* --- MODAL DE ASSINATURA AMPLIADA (ZOOM TELA CHEIA) --- */}
+      {isSignatureZoomed && (
+        <div className="signature-zoom-overlay">
+          {/* Aviso de Rotacionar Tela (Apenas Mobile Portrait) */}
+          <div className="orientation-warning">
+            <div className="warning-content">
+              <span className="warning-icon">🔄</span>
+              <h3>Gire o celular para assinar</h3>
+              <p>O modo de assinatura exige a tela na horizontal</p>
+            </div>
+          </div>
+
+          <div className="signature-zoom-fullscreen">
+            <canvas
+              ref={canvasRef}
+              width={windowSize.width}
+              height={windowSize.height}
+              className="assinatura-canvas zoomed-full"
+              onMouseDown={startDrawing}
+              onMouseMove={draw}
+              onMouseUp={stopDrawing}
+              onMouseLeave={stopDrawing}
+              onTouchStart={startDrawing}
+              onTouchMove={draw}
+              onTouchEnd={stopDrawing}
+            />
+
+            {/* Botoes Flutuantes Pequenos */}
+            <div className="zoom-floating-actions">
+              <button className="float-btn clear" onClick={clearCanvas} title="Limpar">
+                🗑️ <span className="pc-only-text">Limpar</span>
+              </button>
+              <button className="float-btn close" onClick={() => setIsSignatureZoomed(false)} title="Cancelar">
+                ✕ <span className="pc-only-text">Sair sem Salvar</span>
+              </button>
+              <button className="float-btn save" onClick={handleConcluirZoom} title="Confirmar">
+                ✅ <span className="pc-only-text">Confirmar Assinatura</span>
+                <span className="mobile-only-text">Concluído</span>
+              </button>
+            </div>
           </div>
         </div>
       )}
