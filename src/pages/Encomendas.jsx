@@ -62,6 +62,8 @@ export default function Encomendas() {
   const [nomeRetirada, setNomeRetirada] = useState("");
   const canvasRef = useRef(null);
   const [isDrawing, setIsDrawing] = useState(false);
+  const cameraInputRef = useRef(null);
+  const galleryInputRef = useRef(null);
 
   useEffect(() => {
     fetchEncomendas();
@@ -540,15 +542,56 @@ export default function Encomendas() {
               />
             </div>
 
-            <div className="form-group">
-              <label>Foto:</label>
+            <div className="form-group full-width photo-selection-group">
+              <label>Foto da Encomenda:</label>
+
+              <div className="photo-buttons-container">
+                <button
+                  type="button"
+                  className="photo-action-btn camera-btn"
+                  onClick={() => cameraInputRef.current?.click()}
+                >
+                  📸 Tirar Foto
+                </button>
+                <button
+                  type="button"
+                  className="photo-action-btn gallery-btn"
+                  onClick={() => galleryInputRef.current?.click()}
+                >
+                  🖼️ Escolher Foto
+                </button>
+              </div>
+
+              {/* Inputs Ocultos */}
               <input
                 type="file"
-                id="foto-input"
+                ref={cameraInputRef}
                 accept="image/*"
                 capture="environment"
+                style={{ display: 'none' }}
                 onChange={handleFotoChange}
               />
+              <input
+                type="file"
+                ref={galleryInputRef}
+                accept="image/*"
+                style={{ display: 'none' }}
+                onChange={handleFotoChange}
+              />
+
+              {/* Preview da Foto */}
+              {formData.foto && (
+                <div className="photo-preview-container">
+                  <img src={formData.foto} alt="Preview" className="photo-preview-img" />
+                  <button
+                    type="button"
+                    className="remove-photo-btn"
+                    onClick={() => setFormData({ ...formData, foto: "", fotoFile: null })}
+                  >
+                    ✕ Remover
+                  </button>
+                </div>
+              )}
             </div>
 
             <button type="submit" className="submit-btn" disabled={loading}>
