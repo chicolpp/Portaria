@@ -12,7 +12,7 @@ def fix_columns():
         db_url = db_url.replace("postgres://", "postgresql://", 1)
 
     try:
-        print(f"🔧 Conectando ao banco para migração...")
+        print(f"🔧 Iniciando migração forçada de colunas para TEXT...")
         engine = create_engine(db_url)
         
         targets = [
@@ -26,22 +26,26 @@ def fix_columns():
         ]
         
         with engine.connect() as conn:
-            for table, column in targets:
-                print(f"  - Alterando {table}.{column} para TEXT...")
-                try:
-                    # Verifica se a tabela existe antes
-                    check_table = conn.execute(text(f"SELECT EXISTS (SELECT FROM information_schema.tables WHERE table_name = '{table}')"))
-                    if not check_table.scalar():
-                        print(f"    ⏩ Tabela {table} não existe ainda. Pulando.")
-                        continue
-                        
-                    conn.execute(text(f"ALTER TABLE {table} ALTER COLUMN {column} TYPE TEXT"))
-                    conn.commit()
-                    print(f"    ✅ Sucesso.")
-                except Exception as inner_e:
-                    print(f"    ⚠️ Erro em {table}.{column}: {inner_e}")
+            # Desativar autocommit para controle manual se necessário, 
+            # mas aqui vamos usar transações explícitas
+            with conn.begin():
+                for table, column in targets:
+                    print(f"  - Verificando {table}.{column}...")
+                    try:
+                        # Verifica se a tabela existe
+                        check_table = conn.execute(text(f"SELECT EXISTS (SELECT FROM information_schema.tables WHERE table_name = '{table}')"))
+                        if not check_table.scalar():
+                            print(f"    ⏩ Tabela {table} não existe. Pulando.")
+                            continue
+                            
+                        # Comando SQL agressivo para converter tipo
+                        sql = f"ALTER TABLE {table} ALTER COLUMN {column} TYPE TEXT USING {column}::TEXT"
+                        conn.execute(text(sql))
+                        print(f"    ✅ {table}.{column} convertido para TEXT.")
+                    except Exception as inner_e:
+                        print(f"    ⚠️ Erro em {table}.{column}: {inner_e}")
             
-        print("✅ Processo de migração concluído.")
+        print("✅ Migração concluída com commit realizado.")
     except Exception as e:
         print(f"❌ Erro fatal na migração: {e}")
 
