@@ -66,17 +66,22 @@ export default function Encomendas() {
   useEffect(() => {
     fetchEncomendas();
 
-    // Atualiza data e hora em tempo real (hora local)
+    // Relógio em Tempo Real (Hora Local Brasil)
     const timer = setInterval(() => {
       const agora = new Date();
 
-      // Formata data YYYY-MM-DD local
+      // Formata data YYYY-MM-DD
       const an = agora.getFullYear();
       const ms = String(agora.getMonth() + 1).padStart(2, '0');
       const di = String(agora.getDate()).padStart(2, '0');
       const dataLocal = `${an}-${ms}-${di}`;
 
-      const horaLocal = agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+      // Formata hora HH:mm:ss para ver a "contabilização"
+      const horaLocal = agora.toLocaleTimeString('pt-BR', {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      });
 
       setFormData(prev => ({
         ...prev,
@@ -527,7 +532,7 @@ export default function Encomendas() {
             <div className="form-group">
               <label>Hora de Recebimento:</label>
               <input
-                type="time"
+                type="text"
                 name="horaRecebimento"
                 value={formData.horaRecebimento}
                 readOnly
