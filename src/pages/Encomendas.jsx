@@ -159,9 +159,9 @@ export default function Encomendas() {
         fotoFile: null
       });
       fetchEncomendas();
-    } catch (error) {
+      const errorMsg = error.response?.data?.error || error.message || "Erro desconhecido";
       console.error(error);
-      alert("Erro ao cadastrar encomenda. Verifique os dados.");
+      alert(`Erro ao cadastrar encomenda: ${errorMsg}`);
     } finally {
       setLoading(false);
     }
