@@ -65,6 +65,15 @@ export default function Encomendas() {
 
   useEffect(() => {
     fetchEncomendas();
+    // Preenche data e hora atuais para visualização
+    const agora = new Date();
+    const dataISO = agora.toISOString().split('T')[0];
+    const horaISO = agora.toTimeString().split(' ')[0].substring(0, 5);
+    setFormData(prev => ({
+      ...prev,
+      dataRecebimento: dataISO,
+      horaRecebimento: horaISO
+    }));
   }, []);
 
   const fetchEncomendas = async () => {
@@ -112,8 +121,7 @@ export default function Encomendas() {
       submitData.append("unidade", formData.unidade);
       submitData.append("documento", formData.documento);
       submitData.append("pagina", formData.pagina);
-      submitData.append("dataRecebimento", formData.dataRecebimento);
-      submitData.append("horaRecebimento", formData.horaRecebimento);
+      // Data e Hora removidas, o backend preencherá sozinho
 
       if (formData.fotoFile) {
         submitData.append("foto", formData.fotoFile);
@@ -126,8 +134,8 @@ export default function Encomendas() {
         unidade: "",
         documento: "",
         pagina: "",
-        dataRecebimento: "",
-        horaRecebimento: "",
+        dataRecebimento: new Date().toISOString().split('T')[0],
+        horaRecebimento: new Date().toTimeString().split(' ')[0].substring(0, 5),
         foto: "",
         fotoFile: null
       });
@@ -499,7 +507,8 @@ export default function Encomendas() {
                 type="date"
                 name="dataRecebimento"
                 value={formData.dataRecebimento}
-                onChange={handleChange}
+                readOnly
+                className="readonly-input"
               />
             </div>
 
@@ -509,7 +518,8 @@ export default function Encomendas() {
                 type="time"
                 name="horaRecebimento"
                 value={formData.horaRecebimento}
-                onChange={handleChange}
+                readOnly
+                className="readonly-input"
               />
             </div>
 

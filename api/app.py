@@ -240,6 +240,17 @@ def criar_encomenda():
     data_recebimento = request.form.get("dataRecebimento")
     hora_recebimento = request.form.get("horaRecebimento")
 
+    # Se não for enviado, usa a data e hora atuais do servidor
+    if not data_recebimento:
+        obj_data = datetime.datetime.now().date()
+    else:
+        obj_data = datetime.datetime.strptime(data_recebimento, "%Y-%m-%d").date()
+
+    if not hora_recebimento:
+        obj_hora = datetime.datetime.now().time()
+    else:
+        obj_hora = datetime.datetime.strptime(hora_recebimento, "%H:%M").time()
+
     foto_path = ""
     if 'foto' in request.files:
         file = request.files['foto']
@@ -253,8 +264,8 @@ def criar_encomenda():
         unidade=unidade,
         documento=documento,
         pagina=pagina,
-        data_recebimento=datetime.datetime.strptime(data_recebimento, "%Y-%m-%d").date(),
-        hora_recebimento=datetime.datetime.strptime(hora_recebimento, "%H:%M").time(),
+        data_recebimento=obj_data,
+        hora_recebimento=obj_hora,
         foto=foto_path,
     )
 
