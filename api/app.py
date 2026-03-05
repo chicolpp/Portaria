@@ -12,8 +12,9 @@ UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'upload
 STATIC_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'dist')
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
-if not os.path.exists(UPLOAD_FOLDER):
-    os.makedirs(UPLOAD_FOLDER)
+# UPLOAD_FOLDER não é mais necessário para persistência em Base64
+# if not os.path.exists(UPLOAD_FOLDER):
+#     os.makedirs(UPLOAD_FOLDER)
 
 app = Flask(__name__)
 CORS(app)
@@ -326,13 +327,17 @@ def editar_encomenda(id):
 def retirar_encomenda(id):
     encomenda = Encomenda.query.get_or_404(id)
     
-    nome_retirada = request.form.get("nome_retirada")
-    
-    assinatura_base64 = ""
-    if 'assinatura' in request.files:
-        file = request.files['assinatura']
-        if file and file.filename:
-            assinatura_base64 = file_to_base64(file)
+    if request.is_json:
+        data = request.json
+        nome_retirada = data.get("nome_retirada")
+        assinatura_base64 = data.get("assinatura")
+    else:
+        nome_retirada = request.form.get("nome_retirada")
+        assinatura_base64 = ""
+        if 'assinatura' in request.files:
+            file = request.files['assinatura']
+            if file and file.filename:
+                assinatura_base64 = file_to_base64(file)
     
     encomenda.retirado = True
     encomenda.nome_retirada = nome_retirada
@@ -341,7 +346,6 @@ def retirar_encomenda(id):
     encomenda.hora_retirada = datetime.datetime.now().time()
     
     db.session.commit()
-    
     return {"message": "Encomenda retirada com sucesso", "encomenda": encomenda.to_dict()}, 200
 
 
