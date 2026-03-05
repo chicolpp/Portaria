@@ -6,6 +6,7 @@ import jwt
 import datetime
 import os
 from werkzeug.utils import secure_filename
+import base64
 
 UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads')
 STATIC_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'dist')
@@ -23,6 +24,20 @@ def health_check():
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+def file_to_base64(file):
+    if not file:
+        return ""
+    try:
+        file_content = file.read()
+        if not file_content:
+            return ""
+        base64_string = base64.b64encode(file_content).decode('utf-8')
+        mime_type = file.content_type or 'image/png'
+        return f"data:{mime_type};base64,{base64_string}"
+    except Exception as e:
+        print(f"Erro ao converter arquivo para Base64: {e}")
+        return ""
 
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get(
     "DATABASE_URL",
@@ -98,22 +113,18 @@ def register():
     if User.query.filter_by(email=email).first():
         return {"error": "Email já cadastrado"}, 400
 
-    foto_path = ""
+    foto_base64 = ""
     if 'foto' in request.files:
         file = request.files['foto']
         if file and file.filename and allowed_file(file.filename):
-            filename = secure_filename(
-                f"user_{datetime.datetime.now().timestamp()}_{file.filename}"
-            )
-            file.save(os.path.join(UPLOAD_FOLDER, filename))
-            foto_path = filename
+            foto_base64 = file_to_base64(file)
 
     user = User(
         nome=nome,
         sobrenome=sobrenome,
         email=email,
         cargo=cargo,
-        foto=foto_path,
+        foto=foto_base64,
         is_admin=is_admin,
     )
 
@@ -152,11 +163,7 @@ def editar_usuario(id):
         if 'foto' in request.files:
             file = request.files['foto']
             if file and file.filename and allowed_file(file.filename):
-                filename = secure_filename(
-                    f"user_{datetime.datetime.now().timestamp()}_{file.filename}"
-                )
-                file.save(os.path.join(UPLOAD_FOLDER, filename))
-                user.foto = filename
+                user.foto = file_to_base64(file)
     else:
         data = request.json or {}
         user.nome = data.get("nome", user.nome)
@@ -255,13 +262,11 @@ def criar_encomenda():
     else:
         obj_hora = datetime.datetime.strptime(hora_recebimento, "%H:%M").time()
 
-    foto_path = ""
+    foto_base64 = ""
     if 'foto' in request.files:
         file = request.files['foto']
         if file and file.filename and allowed_file(file.filename):
-            filename = secure_filename(f"{datetime.datetime.now().timestamp()}_{file.filename}")
-            file.save(os.path.join(UPLOAD_FOLDER, filename))
-            foto_path = filename
+            foto_base64 = file_to_base64(file)
 
     encomenda = Encomenda(
         nome=nome,
@@ -270,7 +275,7 @@ def criar_encomenda():
         pagina=pagina,
         data_recebimento=obj_data,
         hora_recebimento=obj_hora,
-        foto=foto_path,
+        foto=foto_base64,
     )
 
     db.session.add(encomenda)
@@ -310,9 +315,7 @@ def editar_encomenda(id):
     if 'foto' in request.files:
         file = request.files['foto']
         if file and file.filename and allowed_file(file.filename):
-            filename = secure_filename(f"{datetime.datetime.now().timestamp()}_{file.filename}")
-            file.save(os.path.join(UPLOAD_FOLDER, filename))
-            encomenda.foto = filename
+            encomenda.foto = file_to_base64(file)
     
     db.session.commit()
     
@@ -325,17 +328,15 @@ def retirar_encomenda(id):
     
     nome_retirada = request.form.get("nome_retirada")
     
-    assinatura_path = ""
+    assinatura_base64 = ""
     if 'assinatura' in request.files:
         file = request.files['assinatura']
         if file and file.filename:
-            filename = secure_filename(f"assinatura_{id}_{datetime.datetime.now().timestamp()}.png")
-            file.save(os.path.join(UPLOAD_FOLDER, filename))
-            assinatura_path = filename
+            assinatura_base64 = file_to_base64(file)
     
     encomenda.retirado = True
     encomenda.nome_retirada = nome_retirada
-    encomenda.assinatura = assinatura_path
+    encomenda.assinatura = assinatura_base64
     encomenda.data_retirada = datetime.datetime.now().date()
     encomenda.hora_retirada = datetime.datetime.now().time()
     
@@ -509,21 +510,18 @@ def retirar_chave(id):
         unidade = request.form.get("unidade")
         item_ids = request.form.getlist("item_id") # Pega lista de IDs
         
-        assinatura_path = ""
+        assinatura_base64 = ""
         if 'assinatura' in request.files:
             file = request.files['assinatura']
             if file and file.filename:
-                # Gera um nome seguro para o arquivo
-                filename = secure_filename(f"assinatura_chave_{id}_{datetime.datetime.now().timestamp()}.png")
-                file.save(os.path.join(UPLOAD_FOLDER, filename))
-                assinatura_path = filename
+                assinatura_base64 = file_to_base64(file)
     else:
         # Fallback para JSON
         data = request.json
         nome_retirada = data.get("retirado_por", "")
         unidade = data.get("unidade", "")
         item_ids = data.get("item_ids", [])
-        assinatura_path = ""
+        assinatura_base64 = ""
 
     # Buscar nomes de todos os itens vinculados
     item_nomes_list = []
@@ -538,7 +536,7 @@ def retirar_chave(id):
     chave.na_portaria = False
     chave.retirado_por = nome_retirada
     chave.unidade = unidade
-    chave.assinatura = assinatura_path
+    chave.assinatura = assinatura_base64
     chave.data_retirada = datetime.datetime.now()
     chave.data_devolucao = None
     
@@ -547,7 +545,7 @@ def retirar_chave(id):
         chave_id=chave.id,
         retirado_por=nome_retirada,
         unidade=unidade,
-        assinatura=assinatura_path,
+        assinatura=assinatura_base64,
         item_id=int(item_ids[0]) if item_ids and item_ids[0] else None, # Mantém o primeiro como ref se necessário
         item_nome=item_nome_final,
         data_retirada=datetime.datetime.now()
@@ -621,13 +619,11 @@ def retirar_item(id):
         nome_morador = request.form.get("nome_morador")
         apartamento = request.form.get("apartamento")
         bloco = request.form.get("bloco")
-        assinatura_path = ""
+        assinatura_base64 = ""
         if 'assinatura' in request.files:
             file = request.files['assinatura']
             if file and file.filename:
-                filename = secure_filename(f"assinatura_item_{id}_{datetime.datetime.now().timestamp()}.png")
-                file.save(os.path.join(UPLOAD_FOLDER, filename))
-                assinatura_path = filename
+                assinatura_base64 = file_to_base64(file)
     else:
         data = request.json
         nome_morador = data.get("nome_morador")
@@ -639,7 +635,7 @@ def retirar_item(id):
     item.retirado_por = nome_morador
     item.apartamento = apartamento
     item.bloco = bloco
-    item.assinatura = assinatura_path
+    item.assinatura = assinatura_base64
     item.data_retirada = datetime.datetime.now()
     
     # Criar registro de histórico
@@ -648,7 +644,7 @@ def retirar_item(id):
         retirado_por=nome_morador,
         apartamento=apartamento,
         bloco=bloco,
-        assinatura=assinatura_path,
+        assinatura=assinatura_base64,
         data_retirada=datetime.datetime.now()
     )
     db.session.add(log)

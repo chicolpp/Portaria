@@ -10,7 +10,7 @@ class User(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(255), nullable=False)
     cargo = db.Column(db.String(50), nullable=False, default="porteiro")
-    foto = db.Column(db.String(500), nullable=True)
+    foto = db.Column(db.Text, nullable=True)
     is_admin = db.Column(db.Boolean, default=False)
     ativo = db.Column(db.Boolean, default=True)
     data_criacao = db.Column(db.DateTime, default=db.func.now())
@@ -47,10 +47,10 @@ class Encomenda(db.Model):
     pagina = db.Column(db.String(50))
     data_recebimento = db.Column(db.Date, nullable=False)
     hora_recebimento = db.Column(db.Time, nullable=False)
-    foto = db.Column(db.String(500), nullable=True)
+    foto = db.Column(db.Text, nullable=True)
     retirado = db.Column(db.Boolean, default=False)
     nome_retirada = db.Column(db.String(200), nullable=True)
-    assinatura = db.Column(db.String(500), nullable=True)
+    assinatura = db.Column(db.Text, nullable=True)
     data_retirada = db.Column(db.Date, nullable=True)
     hora_retirada = db.Column(db.Time, nullable=True)
 
@@ -138,7 +138,7 @@ class Chave(db.Model):
     na_portaria = db.Column(db.Boolean, default=True)
     retirado_por = db.Column(db.String(200), nullable=True)
     unidade = db.Column(db.String(20), nullable=True) # Quem retirou (apartamento)
-    assinatura = db.Column(db.String(500), nullable=True) # Caminho da imagem
+    assinatura = db.Column(db.Text, nullable=True) # Dados Base64
     data_retirada = db.Column(db.DateTime, nullable=True)
     data_devolucao = db.Column(db.DateTime, nullable=True) # Histórico
 
@@ -154,7 +154,7 @@ class Chave(db.Model):
             "assinatura": self.assinatura or "",
             # Se tiver upload de assinatura, precisamos garantir que o frontend consiga acessar a URL
             # O ideal seria retornar a URL completa se existir
-            "assinatura_url": f"/uploads/{self.assinatura}" if self.assinatura else None,
+            "assinatura_url": self.assinatura if self.assinatura else None,
             "data_retirada": self.data_retirada.isoformat() if self.data_retirada else "",
             "data_devolucao": self.data_devolucao.isoformat() if self.data_devolucao else "",
         }
@@ -167,7 +167,7 @@ class MovimentacaoChave(db.Model):
     chave_id = db.Column(db.Integer, db.ForeignKey("chaves.id"), nullable=False)
     retirado_por = db.Column(db.String(200), nullable=False)
     unidade = db.Column(db.String(20), nullable=False)
-    assinatura = db.Column(db.String(500), nullable=True)
+    assinatura = db.Column(db.Text, nullable=True)
     item_id = db.Column(db.Integer, db.ForeignKey("itens_portaria.id"), nullable=True)
     item_nome = db.Column(db.String(200), nullable=True)
     data_retirada = db.Column(db.DateTime, default=db.func.now())
@@ -180,7 +180,7 @@ class MovimentacaoChave(db.Model):
             "retirado_por": self.retirado_por,
             "unidade": self.unidade,
             "assinatura": self.assinatura or "",
-            "assinatura_url": f"/uploads/{self.assinatura}" if self.assinatura else None,
+            "assinatura_url": self.assinatura if self.assinatura else None,
             "item_nome": self.item_nome or "",
             "data_retirada": self.data_retirada.isoformat() if self.data_retirada else "",
             "data_devolucao": self.data_devolucao.isoformat() if self.data_devolucao else "",
@@ -197,7 +197,7 @@ class ItemPortaria(db.Model):
     retirado_por = db.Column(db.String(200), nullable=True)
     apartamento = db.Column(db.String(20), nullable=True)
     bloco = db.Column(db.String(20), nullable=True)
-    assinatura = db.Column(db.String(500), nullable=True)
+    assinatura = db.Column(db.Text, nullable=True)
     data_retirada = db.Column(db.DateTime, nullable=True)
 
     def to_dict(self):
@@ -209,7 +209,7 @@ class ItemPortaria(db.Model):
             "retirado_por": self.retirado_por or "",
             "apartamento": self.apartamento or "",
             "bloco": self.bloco or "",
-            "assinatura_url": f"/uploads/{self.assinatura}" if self.assinatura else None,
+            "assinatura_url": self.assinatura if self.assinatura else None,
             "data_retirada": self.data_retirada.isoformat() if self.data_retirada else "",
         }
 
@@ -221,7 +221,7 @@ class MovimentacaoItem(db.Model):
     retirado_por = db.Column(db.String(200), nullable=False)
     apartamento = db.Column(db.String(20), nullable=False)
     bloco = db.Column(db.String(20), nullable=False)
-    assinatura = db.Column(db.String(500), nullable=True)
+    assinatura = db.Column(db.Text, nullable=True)
     data_retirada = db.Column(db.DateTime, default=db.func.now())
     data_devolucao = db.Column(db.DateTime, nullable=True)
 
@@ -232,7 +232,7 @@ class MovimentacaoItem(db.Model):
             "retirado_por": self.retirado_por,
             "apartamento": self.apartamento,
             "bloco": self.bloco,
-            "assinatura_url": f"/uploads/{self.assinatura}" if self.assinatura else None,
+            "assinatura_url": self.assinatura if self.assinatura else None,
             "data_retirada": self.data_retirada.isoformat() if self.data_retirada else "",
             "data_devolucao": self.data_devolucao.isoformat() if self.data_devolucao else "",
         }
