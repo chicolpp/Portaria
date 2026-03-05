@@ -17,7 +17,7 @@ if not os.path.exists(UPLOAD_FOLDER):
 app = Flask(__name__)
 CORS(app)
 
-@app.route("/")
+@app.route("/health")
 def health_check():
     return {"status": "ok", "message": "Portaria API is running"}, 200
 
@@ -703,5 +703,13 @@ def reservas_hoje():
     return {"reservas": [r.to_dict() for r in reservas]}
 
 
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def serve(path):
+    if path != "" and os.path.exists(os.path.join(STATIC_FOLDER, path)):
+        return send_from_directory(STATIC_FOLDER, path)
+    else:
+        return send_from_directory(STATIC_FOLDER, 'index.html')
+
 if __name__ == "__main__":
-    app.run(debug=True, port=5000)
+    app.run(debug=True, port=int(os.environ.get("PORT", 5000)))
