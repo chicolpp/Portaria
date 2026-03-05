@@ -58,6 +58,7 @@ export default function Encomendas() {
   });
   const [modalFoto, setModalFoto] = useState(null);
   const [isViewingSignature, setIsViewingSignature] = useState(false);
+  const [temLivroRegistro, setTemLivroRegistro] = useState(false);
   const [modalEditar, setModalEditar] = useState(null);
   const [editFormData, setEditFormData] = useState({});
   const [modalRetirada, setModalRetirada] = useState(null);
@@ -171,6 +172,7 @@ export default function Encomendas() {
         foto: "",
         fotoFile: null
       });
+      setTemLivroRegistro(false);
       fetchEncomendas();
     } catch (error) {
       const errorMsg = error.response?.data?.error || error.message || "Erro desconhecido";
@@ -398,15 +400,32 @@ export default function Encomendas() {
                 />
               </div>
 
-              <div className="editar-form-group">
-                <label>Página:</label>
-                <input
-                  type="text"
-                  name="pagina"
-                  value={editFormData.pagina}
-                  onChange={handleEditChange}
-                />
+              <div className="editar-form-group checkbox-group" style={{ marginBottom: '15px' }}>
+                <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', gap: '8px', color: '#cbd5e1' }}>
+                  <input
+                    type="checkbox"
+                    checked={editFormData.pagina ? true : false}
+                    onChange={(e) => {
+                      if (!e.target.checked) setEditFormData({ ...editFormData, pagina: "" });
+                      else setEditFormData({ ...editFormData, pagina: "1" }); // Fallback temporário ao marcar
+                    }}
+                    style={{ width: '18px', height: '18px', margin: 0, cursor: 'pointer' }}
+                  />
+                  <span>Tem livro de registro?</span>
+                </label>
               </div>
+
+              {editFormData.pagina !== undefined && editFormData.pagina !== "" && editFormData.pagina !== null && (
+                <div className="editar-form-group">
+                  <label>Página:</label>
+                  <input
+                    type="text"
+                    name="pagina"
+                    value={editFormData.pagina}
+                    onChange={handleEditChange}
+                  />
+                </div>
+              )}
 
               <div className="editar-form-group">
                 <label>Data de Recebimento:</label>
@@ -586,15 +605,34 @@ export default function Encomendas() {
               />
             </div>
 
-            <div className="form-group">
-              <label>Página:</label>
-              <input
-                type="text"
-                name="pagina"
-                value={formData.pagina}
-                onChange={handleChange}
-              />
+            <div className="form-group checkbox-group" style={{ marginBottom: '15px' }}>
+              <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', gap: '8px', color: '#cbd5e1' }}>
+                <input
+                  type="checkbox"
+                  checked={temLivroRegistro}
+                  onChange={(e) => {
+                    setTemLivroRegistro(e.target.checked);
+                    if (!e.target.checked) setFormData({ ...formData, pagina: "" });
+                  }}
+                  style={{ width: '18px', height: '18px', margin: 0, cursor: 'pointer' }}
+                />
+                <span>Tem livro de registro?</span>
+              </label>
             </div>
+
+            {temLivroRegistro && (
+              <div className="form-group slide-down">
+                <label>Página:</label>
+                <input
+                  type="text"
+                  name="pagina"
+                  value={formData.pagina}
+                  onChange={handleChange}
+                  placeholder="Ex: 12"
+                  autoFocus
+                />
+              </div>
+            )}
 
             <div className="form-group">
               <label>Data de Recebimento:</label>
