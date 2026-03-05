@@ -60,6 +60,7 @@ export default function EspacosServicos() {
 
   // Canvas Ref
   const canvasRef = useRef(null);
+  const lastPointRef = useRef(null);
   const [isDrawing, setIsDrawing] = useState(false);
 
   const [modalItemOpen, setModalItemOpen] = useState(false);
@@ -67,7 +68,6 @@ export default function EspacosServicos() {
   const [isSignatureZoomed, setIsSignatureZoomed] = useState(false);
   const [storedSignature, setStoredSignature] = useState(null);
   const [windowSize, setWindowSize] = useState({ width: window.innerWidth, height: window.innerHeight });
-  const canvasRef = useRef(null);
 
   useEffect(() => {
     const handleResize = () => {
