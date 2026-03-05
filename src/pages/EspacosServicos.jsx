@@ -977,13 +977,14 @@ export default function EspacosServicos() {
             {/* Botoes Flutuantes Pequenos */}
             <div className="zoom-floating-actions">
               <button className="float-btn clear" onClick={clearCanvas} title="Limpar">
-                🗑️
+                🗑️ <span className="pc-only-text">Limpar</span>
               </button>
               <button className="float-btn close" onClick={() => setIsSignatureZoomed(false)} title="Cancelar">
-                ✕
+                ✕ <span className="pc-only-text">Sair sem Salvar</span>
               </button>
               <button className="float-btn save" onClick={handleConcluirZoom} title="Confirmar">
-                ✅ Concluído
+                ✅ <span className="pc-only-text">Confirmar Assinatura</span>
+                <span className="mobile-only-text">Concluído</span>
               </button>
             </div>
           </div>
