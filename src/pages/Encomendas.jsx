@@ -57,6 +57,7 @@ export default function Encomendas() {
     fotoFile: null
   });
   const [modalFoto, setModalFoto] = useState(null);
+  const [isViewingSignature, setIsViewingSignature] = useState(false);
   const [modalEditar, setModalEditar] = useState(null);
   const [editFormData, setEditFormData] = useState({});
   const [modalRetirada, setModalRetirada] = useState(null);
@@ -180,8 +181,14 @@ export default function Encomendas() {
     }
   };
 
-  const openFotoModal = (foto) => setModalFoto(foto);
-  const closeFotoModal = () => setModalFoto(null);
+  const openFotoModal = (fotoUrl, isSignature = false) => {
+    setModalFoto(fotoUrl);
+    setIsViewingSignature(isSignature);
+  };
+  const closeFotoModal = () => {
+    setModalFoto(null);
+    setIsViewingSignature(false);
+  };
 
   const openEditarModal = (encomenda) => {
     setModalEditar(encomenda);
@@ -342,9 +349,10 @@ export default function Encomendas() {
       {/* MODAL FOTO */}
       {modalFoto && (
         <div className="enc-foto-modal-overlay" onClick={closeFotoModal}>
-          <div className="enc-foto-modal" onClick={(e) => e.stopPropagation()}>
+          <div className={`enc-foto-modal ${isViewingSignature ? 'is-signature' : ''}`} onClick={(e) => e.stopPropagation()}>
             <button className="enc-foto-modal-close" onClick={closeFotoModal}>✕</button>
-            <img src={modalFoto} alt="Foto da encomenda" />
+            {isViewingSignature && <h3>Assinatura do Morador</h3>}
+            <img src={modalFoto} alt="Visualização" className={isViewingSignature ? 'signature-img-zoom' : ''} />
           </div>
         </div>
       )}
@@ -733,7 +741,7 @@ export default function Encomendas() {
                                 <button
                                   type="button"
                                   className="admin-btn-small ver-btn"
-                                  onClick={() => openFotoModal(e.assinatura)}
+                                  onClick={() => openFotoModal(e.assinatura, true)}
                                   data-tooltip="Ver Assinatura"
                                 >
                                   <PencilIcon style={{ width: 14, height: 14 }} />

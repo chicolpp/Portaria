@@ -1099,7 +1099,7 @@ export default function EspacosServicos() {
         <div className="foto-modal-overlay" onClick={() => setAssinaturaVer(null)}>
           <div className="assinatura-zoom-container" onClick={e => e.stopPropagation()}>
             <button className="foto-modal-close" onClick={() => setAssinaturaVer(null)}>✕</button>
-            <h3>Assinatura</h3>
+            <h3>Assinatura do Morador/Responsável</h3>
             <img src={assinaturaVer} alt="Assinatura" className="assinatura-img-zoom" />
           </div>
         </div>

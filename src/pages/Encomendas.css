@@ -214,6 +214,35 @@
   display: block;
 }
 
+/* MODAL: MODO ASSINATURA */
+.enc-foto-modal.is-signature {
+  background: white !important;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 30px 20px;
+  width: 90%;
+  max-width: 500px;
+}
+
+.enc-foto-modal.is-signature h3 {
+  color: #0f172a;
+  margin-top: 0;
+  margin-bottom: 20px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  text-align: center;
+  width: 100%;
+}
+
+.enc-foto-modal.is-signature img {
+  max-height: 60vh;
+  object-fit: contain;
+  border: 1px dashed #cbd5e1;
+  border-radius: 8px;
+  padding: 10px;
+}
+
 .enc-foto-modal-close {
   position: absolute;
   top: -15px;
