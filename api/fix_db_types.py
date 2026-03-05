@@ -1,42 +1,49 @@
-from database import db
-from app import app
-from sqlalchemy import text
-import sys
 import os
-
-# Adiciona o diretório atual ao path para encontrar os módulos
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+import sys
+from sqlalchemy import text, create_engine
 
 def fix_columns():
-    with app.app_context():
-        try:
-            print("🔧 Iniciando alteração de colunas para TEXT (Suporte a Base64)...")
-            
-            # Lista de (tabela, coluna)
-            targets = [
-                ("users", "foto"),
-                ("encomendas", "foto"),
-                ("encomendas", "assinatura"),
-                ("chaves", "assinatura"),
-                ("movimentacoes_chaves", "assinatura"),
-                ("itens_portaria", "assinatura"),
-                ("movimentacoes_itens", "assinatura")
-            ]
-            
+    db_url = os.environ.get("DATABASE_URL")
+    if not db_url:
+        print("⚠️ DATABASE_URL não encontrada. Pulando migração.")
+        return
+
+    if db_url.startswith("postgres://"):
+        db_url = db_url.replace("postgres://", "postgresql://", 1)
+
+    try:
+        print(f"🔧 Conectando ao banco para migração...")
+        engine = create_engine(db_url)
+        
+        targets = [
+            ("users", "foto"),
+            ("encomendas", "foto"),
+            ("encomendas", "assinatura"),
+            ("chaves", "assinatura"),
+            ("movimentacoes_chaves", "assinatura"),
+            ("itens_portaria", "assinatura"),
+            ("movimentacoes_itens", "assinatura")
+        ]
+        
+        with engine.connect() as conn:
             for table, column in targets:
-                print(f"  - Alterando {table}.{column}...")
+                print(f"  - Alterando {table}.{column} para TEXT...")
                 try:
-                    db.session.execute(text(f"ALTER TABLE {table} ALTER COLUMN {column} TYPE TEXT"))
+                    # Verifica se a tabela existe antes
+                    check_table = conn.execute(text(f"SELECT EXISTS (SELECT FROM information_schema.tables WHERE table_name = '{table}')"))
+                    if not check_table.scalar():
+                        print(f"    ⏩ Tabela {table} não existe ainda. Pulando.")
+                        continue
+                        
+                    conn.execute(text(f"ALTER TABLE {table} ALTER COLUMN {column} TYPE TEXT"))
+                    conn.commit()
+                    print(f"    ✅ Sucesso.")
                 except Exception as inner_e:
-                    print(f"    ⚠️ Erro ao alterar {table}.{column} (pode já ser TEXT): {inner_e}")
-                    db.session.rollback()
-                    continue
+                    print(f"    ⚠️ Erro em {table}.{column}: {inner_e}")
             
-            db.session.commit()
-            print("✅ Todas as colunas foram migradas para TEXT com sucesso!")
-        except Exception as e:
-            print(f"❌ Erro fatal durante a migração: {e}")
-            db.session.rollback()
+        print("✅ Processo de migração concluído.")
+    except Exception as e:
+        print(f"❌ Erro fatal na migração: {e}")
 
 if __name__ == "__main__":
     fix_columns()

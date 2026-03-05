@@ -5,6 +5,8 @@ from models import User, Encomenda, Acesso, Ocorrencia, Chave, ItemPortaria, Res
 import jwt
 import datetime
 import os
+import sys
+from sqlalchemy import text, create_engine
 from werkzeug.utils import secure_filename
 import base64
 
@@ -40,10 +42,11 @@ def file_to_base64(file):
         print(f"Erro ao converter arquivo para Base64: {e}")
         return ""
 
-app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get(
-    "DATABASE_URL",
-    "postgresql+psycopg2://postgres:postgres@localhost:5432/app"
-)
+db_url = os.environ.get("DATABASE_URL")
+if db_url and db_url.startswith("postgres://"):
+    db_url = db_url.replace("postgres://", "postgresql://", 1)
+
+app.config["SQLALCHEMY_DATABASE_URI"] = db_url or "postgresql+psycopg2://postgres:postgres@localhost:5432/app"
 
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "CHAVE_SUPER_SECRETA_TROQUE_DEPOIS")
@@ -279,8 +282,12 @@ def criar_encomenda():
         foto=foto_base64,
     )
 
-    db.session.add(encomenda)
-    db.session.commit()
+    try:
+        db.session.add(encomenda)
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        return {"error": str(e)}, 500
 
     return {"message": "Encomenda cadastrada", "encomenda": encomenda.to_dict()}, 201
 
