@@ -110,6 +110,7 @@ export default function Encomendas() {
     nome: "",
     unidade: "",
     documento: "",
+    pagina: "",
     status: "todos", // todos, pendentes, retirados
     dataInicio: "",
     dataFim: ""
@@ -190,6 +191,7 @@ export default function Encomendas() {
       nome: "",
       unidade: "",
       documento: "",
+      pagina: "",
       status: "todos",
       dataInicio: "",
       dataFim: ""
@@ -199,9 +201,10 @@ export default function Encomendas() {
 
   const encomendasFiltradas = useMemo(() => {
     return encomendas.filter(e => {
-      const matchNome = !filtros.nome || e.nome.toLowerCase().includes(filtros.nome.toLowerCase());
-      const matchUnidade = !filtros.unidade || e.unidade.toLowerCase().includes(filtros.unidade.toLowerCase());
-      const matchDoc = !filtros.documento || e.documento.toLowerCase().includes(filtros.documento.toLowerCase());
+      const matchNome = !filtros.nome || e.nome?.toLowerCase().includes(filtros.nome.toLowerCase());
+      const matchUnidade = !filtros.unidade || e.unidade?.toLowerCase().includes(filtros.unidade.toLowerCase());
+      const matchDoc = !filtros.documento || e.documento?.toLowerCase().includes(filtros.documento.toLowerCase());
+      const matchPagina = !filtros.pagina || e.pagina?.toString().toLowerCase().includes(filtros.pagina.toLowerCase());
 
       let matchStatus = true;
       if (filtros.status === "pendentes") matchStatus = !e.retirado;
@@ -211,7 +214,7 @@ export default function Encomendas() {
       if (filtros.dataInicio) matchData = matchData && e.data_recebimento >= filtros.dataInicio;
       if (filtros.dataFim) matchData = matchData && e.data_recebimento <= filtros.dataFim;
 
-      return matchNome && matchUnidade && matchDoc && matchStatus && matchData;
+      return matchNome && matchUnidade && matchDoc && matchPagina && matchStatus && matchData;
     });
   }, [encomendas, filtros]);
 
@@ -1172,41 +1175,6 @@ export default function Encomendas() {
             </div>
 
             <div className="modal-form">
-              <div className="modal-form-row">
-                <div className="modal-field">
-                  <label className="modal-label">Nome do Destinatário</label>
-                  <input
-                    type="text"
-                    className="modal-input"
-                    value={filtros.nome}
-                    onChange={(e) => setFiltros({ ...filtros, nome: e.target.value })}
-                    placeholder="Filtrar por nome..."
-                  />
-                </div>
-                <div className="modal-field">
-                  <label className="modal-label">Unidade</label>
-                  <input
-                    type="text"
-                    className="modal-input"
-                    value={filtros.unidade}
-                    onChange={(e) => setFiltros({ ...filtros, unidade: e.target.value })}
-                    placeholder="Ex: 101"
-                  />
-                </div>
-              </div>
-
-              <div className="modal-field">
-                <label className="modal-label">Status</label>
-                <select
-                  className="modal-input"
-                  value={filtros.status}
-                  onChange={(e) => setFiltros({ ...filtros, status: e.target.value })}
-                >
-                  <option value="todos">Todos</option>
-                  <option value="pendentes">Pendentes (Aguardando Retirada)</option>
-                  <option value="retirados">Retirados</option>
-                </select>
-              </div>
 
               <div className="modal-form-row">
                 <div className="modal-field">
@@ -1214,8 +1182,8 @@ export default function Encomendas() {
                   <input
                     type="date"
                     className="modal-input"
-                    value={filtros.dataInicio}
-                    onChange={(e) => setFiltros({ ...filtros, dataInicio: e.target.value })}
+                    value={filtrosTemporarios.dataInicio}
+                    onChange={(e) => setFiltrosTemporarios({ ...filtrosTemporarios, dataInicio: e.target.value })}
                   />
                 </div>
                 <div className="modal-field">
@@ -1223,8 +1191,8 @@ export default function Encomendas() {
                   <input
                     type="date"
                     className="modal-input"
-                    value={filtros.dataFim}
-                    onChange={(e) => setFiltros({ ...filtros, dataFim: e.target.value })}
+                    value={filtrosTemporarios.dataFim}
+                    onChange={(e) => setFiltrosTemporarios({ ...filtrosTemporarios, dataFim: e.target.value })}
                   />
                 </div>
               </div>
