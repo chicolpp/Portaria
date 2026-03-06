@@ -273,23 +273,52 @@
 }
 
 /* === ESTILOS GLOBAIS PARA PICKERS (DATA/HORA) === */
+input[type="date"],
+input[type="time"] {
+  accent-color: #a855f7;
+  /* Roxo principal */
+  color-scheme: dark;
+}
+
 input[type="date"]::-webkit-calendar-picker-indicator,
 input[type="time"]::-webkit-calendar-picker-indicator {
-  filter: invert(1) sepia(100%) saturate(2000%) hue-rotate(240deg);
-  /* Roxo/Azul */
+  filter: invert(0.6) sepia(1) saturate(5) hue-rotate(240deg) brightness(1.2);
+  /* Roxo vibrante */
   cursor: pointer;
-  padding: 5px;
-  border-radius: 4px;
-  transition: all 0.2s;
+  padding: 8px;
+  margin-right: -5px;
+  border-radius: 8px;
+  background: rgba(168, 85, 247, 0.1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 input[type="date"]::-webkit-calendar-picker-indicator:hover,
 input[type="time"]::-webkit-calendar-picker-indicator:hover {
-  background: rgba(139, 92, 246, 0.2);
-  transform: scale(1.1);
+  background: rgba(168, 85, 247, 0.3);
+  transform: scale(1.15);
+  box-shadow: 0 0 15px rgba(168, 85, 247, 0.4);
 }
 
-input[type="date"],
-input[type="time"] {
-  color-scheme: dark;
+/* Estilização interna do campo de edição */
+input[type="date"]::-webkit-datetime-edit-fields-wrapper,
+input[type="time"]::-webkit-datetime-edit-fields-wrapper {
+  padding: 2px 5px;
+}
+
+input[type="date"]::-webkit-datetime-edit-text,
+input[type="time"]::-webkit-datetime-edit-text {
+  color: #a855f7;
+  padding: 0 2px;
+  font-weight: bold;
+}
+
+input[type="date"]::-webkit-datetime-edit-day-field:focus,
+input[type="date"]::-webkit-datetime-edit-month-field:focus,
+input[type="date"]::-webkit-datetime-edit-year-field:focus,
+input[type="time"]::-webkit-datetime-edit-hour-field:focus,
+input[type="time"]::-webkit-datetime-edit-minute-field:focus {
+  background: #a855f7;
+  color: white;
+  border-radius: 3px;
+  outline: none;
 }
