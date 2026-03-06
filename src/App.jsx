@@ -32,14 +32,15 @@ function App() {
     const handleNetworkError = () => {
       setIsNetworkError(true);
 
-      // Tenta pingar o servidor a cada 3 segundos para ver se voltou
+      // Tenta pingar o servidor a cada 5 segundos para ver se voltou
       const checkConnection = setInterval(async () => {
         try {
-          const response = await fetch(import.meta.env.VITE_API_URL + "/health");
+          // Usa o base URL do axios para consistência se disponível, ou fallback
+          const apiBase = import.meta.env.VITE_API_URL || "";
+          const response = await fetch(`${apiBase}/health`);
           if (response.ok) {
             setIsNetworkError(false);
             clearInterval(checkConnection);
-            // Opcional: window.location.reload() para recarregar o estado limpo
           }
         } catch (e) {
           // Continua caido

@@ -17,6 +17,7 @@ export default defineConfig({
       '/chaves': 'http://localhost:5000',
       '/itens': 'http://localhost:5000',
       '/reservas': 'http://localhost:5000',
+      '/health': 'http://localhost:5000',
     }
   }
 })

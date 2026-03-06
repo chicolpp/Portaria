@@ -1,6 +1,7 @@
 import { useEffect, useState, useMemo, useRef } from "react";
 import api from "../services/api";
 import { toast } from "sonner";
+import { formatDate, formatDateTime } from "../utils/formatters";
 import "./EspacosServicos.css";
 
 // --- ÍCONES (Simple SVGs) ---
@@ -920,15 +921,13 @@ export default function EspacosServicos() {
                 </div>
               )}
 
-              <div className="retirada-form-group">
-                <label>Data de Retirada:</label>
-                <input
-                  type="text"
-                  value={new Date().toLocaleString('pt-BR')}
-                  disabled
-                  style={{ background: '#334155', color: '#94a3b8' }}
-                />
-              </div>
+              <label>Data de Retirada:</label>
+              <input
+                type="text"
+                value={formatDateTime(new Date())}
+                disabled
+                style={{ background: '#334155', color: '#94a3b8' }}
+              />
 
               <div className="retirada-form-group">
                 <label>Assinatura do Morador (Obrigatório):</label>

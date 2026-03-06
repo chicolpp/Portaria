@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import api from "../services/api";
 import { toast } from "sonner";
+import { formatDate, formatDateTime, formatTime } from "../utils/formatters";
 import "./Encomendas.css";
 
 // Ícones SVG inline
@@ -983,7 +984,7 @@ export default function Encomendas() {
                         <td>{e.unidade}</td>
                         <td>{e.documento}</td>
                         <td>{e.pagina}</td>
-                        <td>{e.data_recebimento} {e.hora_recebimento}</td>
+                        <td>{formatDate(e.data_recebimento)} {formatTime(e.hora_recebimento)}</td>
                         <td>
                           {e.foto ? (
                             <button
@@ -1009,7 +1010,7 @@ export default function Encomendas() {
                           {e.retirado ? (
                             <div className="retirada-info-cell">
                               <span>{e.nome_retirada}</span>
-                              <span>{e.data_retirada} {e.hora_retirada}</span>
+                              <span>{formatDate(e.data_retirada)} {formatTime(e.hora_retirada)}</span>
                               {e.assinatura && (
                                 <button
                                   type="button"

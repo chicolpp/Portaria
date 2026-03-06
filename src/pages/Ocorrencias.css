@@ -204,6 +204,10 @@
   flex-wrap: wrap;
 }
 
+.ocorrencias-container .admin-btn-small {
+  color: #ffffff !important;
+}
+
 /* MODAIS */
 .foto-modal-overlay {
   position: fixed;

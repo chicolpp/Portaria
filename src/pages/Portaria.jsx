@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import api from "../services/api";
 import { toast } from "sonner";
+import { formatDateTime } from "../utils/formatters";
 import "./Portaria.css";
 
 // Ícones SVG inline
@@ -279,11 +280,11 @@ export default function Portaria() {
                         <td>{a.marca}</td>
                         <td>{a.modelo}</td>
                         <td>{a.cor}</td>
-                        <td>{a.data_entrada ? new Date(a.data_entrada).toLocaleString("pt-BR") : "-"}</td>
+                        <td>{formatDateTime(a.data_entrada)}</td>
                         <td>
                           {a.data_saida ? (
                             <span className="status-saida-registrada">
-                              ✓ {new Date(a.data_saida).toLocaleString("pt-BR")}
+                              ✓ {formatDateTime(a.data_saida)}
                             </span>
                           ) : (
                             <span className="status-presente">🟢 Presente</span>

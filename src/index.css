@@ -140,7 +140,7 @@ button:disabled {
 /* Botões de Ação (Pequenos) - PADRONIZADO 32px */
 .admin-btn-small {
   background: var(--primary);
-  color: white;
+  color: #ffffff !important;
   border: none;
   cursor: pointer;
   width: 32px;
@@ -153,6 +153,7 @@ button:disabled {
   justify-content: center;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
+
 
 .admin-btn-small:hover {
   transform: scale(1.1);

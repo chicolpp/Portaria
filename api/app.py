@@ -62,7 +62,7 @@ if db_url and db_url.startswith("postgres://"):
 app.config["SQLALCHEMY_DATABASE_URI"] = db_url or "postgresql+psycopg2://postgres:postgres@localhost:5432/app"
 
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "CHAVE_SUPER_SECRETA_TROQUE_DEPOIS")
+app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "dev_secret_key_change_in_production")
 
 
 db.init_app(app)
@@ -501,9 +501,9 @@ def deletar_ocorrencia(id):
 
 
 # Servir frontend React
-@app.route('/')
+@app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
-def serve_frontend(path=''):
+def serve(path):
     if path and os.path.exists(os.path.join(STATIC_FOLDER, path)):
         return send_from_directory(STATIC_FOLDER, path)
     return send_from_directory(STATIC_FOLDER, 'index.html')
@@ -756,13 +756,7 @@ def reservas_hoje():
     return {"reservas": [r.to_dict() for r in reservas]}
 
 
-@app.route('/', defaults={'path': ''})
-@app.route('/<path:path>')
-def serve(path):
-    if path != "" and os.path.exists(os.path.join(STATIC_FOLDER, path)):
-        return send_from_directory(STATIC_FOLDER, path)
-    else:
-        return send_from_directory(STATIC_FOLDER, 'index.html')
+# Redundant serve route removed (consolidated above)
 
 if __name__ == "__main__":
     app.run(debug=True, port=int(os.environ.get("PORT", 5000)))

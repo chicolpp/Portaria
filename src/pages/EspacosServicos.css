@@ -264,7 +264,7 @@
 /* BOTÕES DE ADMIN (EDITAR/EXCLUIR) - AGORA MENORES */
 .admin-btn-small {
   background: #8b5cf6;
-  color: white;
+  color: #ffffff !important;
   border: none;
   cursor: pointer;
   font-size: 0.75rem;
@@ -614,7 +614,7 @@
 .admin-btn-small {
   background: #8b5cf6;
   /* Roxo */
-  color: white;
+  color: #ffffff !important;
   border: none;
   cursor: pointer;
   font-size: 0.7rem;

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import api from "../services/api";
+import { formatDate, formatTime } from "../utils/formatters";
 import "./Ocorrencias.css";
 
 export default function Ocorrencias() {
@@ -66,8 +67,8 @@ export default function Ocorrencias() {
                   <tr key={o.id}>
                     <td>{o.id}</td>
                     <td>{o.descricao}</td>
-                    <td>{o.data}</td>
-                    <td>{o.hora}</td>
+                    <td>{formatDate(o.data)}</td>
+                    <td>{formatTime(o.hora)}</td>
                   </tr>
                 ))}
               </tbody>
