@@ -59,13 +59,16 @@ export default function Encomendas() {
   const [modalFoto, setModalFoto] = useState(null);
   const [isViewingSignature, setIsViewingSignature] = useState(false);
   const [temLivroRegistro, setTemLivroRegistro] = useState(false);
+  const [modalWebcam, setModalWebcam] = useState(false);
   const [modalEditar, setModalEditar] = useState(null);
   const [editFormData, setEditFormData] = useState({});
   const [modalRetirada, setModalRetirada] = useState(null);
   const [nomeRetirada, setNomeRetirada] = useState("");
   const cameraInputRef = useRef(null);
   const galleryInputRef = useRef(null);
-  const canvasRef = useRef(null); // Adicionado
+  const canvasRef = useRef(null);
+  const videoRef = useRef(null);
+  const streamRef = useRef(null);
   const [isDrawing, setIsDrawing] = useState(false); // Adicionado
   const [isSignatureZoomed, setIsSignatureZoomed] = useState(false);
   const [storedSignature, setStoredSignature] = useState(null);
@@ -143,6 +146,67 @@ export default function Encomendas() {
       };
       reader.readAsDataURL(file);
     }
+  };
+
+  // Funções de Webcam para o PC
+  const startCamera = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+      }
+      streamRef.current = stream;
+    } catch (err) {
+      console.error("Erro ao acessar a câmera: ", err);
+      toast.error("Não foi possível acessar a câmera do dispositivo.");
+      setModalWebcam(false);
+    }
+  };
+
+  const stopCamera = () => {
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(track => track.stop());
+      streamRef.current = null;
+    }
+  };
+
+  const capturePhoto = () => {
+    if (videoRef.current) {
+      const canvas = document.createElement("canvas");
+      canvas.width = videoRef.current.videoWidth;
+      canvas.height = videoRef.current.videoHeight;
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
+      const dataUrl = canvas.toDataURL("image/jpeg");
+
+      // Converte dataUrl para File
+      fetch(dataUrl)
+        .then(res => res.blob())
+        .then(blob => {
+          const file = new File([blob], "webcam_photo.jpg", { type: "image/jpeg" });
+          setFormData({
+            ...formData,
+            foto: dataUrl,
+            fotoFile: file
+          });
+          closeWebcamModal();
+        });
+    }
+  };
+
+  const openWebcamModal = () => {
+    const isTouchDevice = window.matchMedia("(any-pointer: coarse)").matches;
+    if (isTouchDevice) {
+      cameraInputRef.current?.click();
+    } else {
+      setModalWebcam(true);
+      startCamera();
+    }
+  };
+
+  const closeWebcamModal = () => {
+    stopCamera();
+    setModalWebcam(false);
   };
 
   const handleSubmit = async (e) => {
@@ -663,7 +727,7 @@ export default function Encomendas() {
                 <button
                   type="button"
                   className="photo-action-btn camera-btn"
-                  onClick={() => cameraInputRef.current?.click()}
+                  onClick={openWebcamModal}
                 >
                   📸 Tirar Foto
                 </button>
@@ -816,6 +880,21 @@ export default function Encomendas() {
           </div>
         )}
       </div>
+      {/* MODAL WEBCAM */}
+      {modalWebcam && (
+        <div className="enc-foto-modal-overlay" onClick={closeWebcamModal}>
+          <div className="enc-webcam-modal" onClick={(e) => e.stopPropagation()}>
+            <button className="enc-foto-modal-close" onClick={closeWebcamModal}>✕</button>
+            <h3>Tirar Foto (Webcam)</h3>
+            <div className="webcam-container">
+              <video ref={videoRef} autoPlay playsInline muted className="webcam-video" />
+            </div>
+            <button type="button" className="confirmar-retirada-btn-large" onClick={capturePhoto} style={{ marginTop: '20px' }}>
+              📸 Capturar Imagem
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
