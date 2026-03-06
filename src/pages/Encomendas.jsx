@@ -1,10 +1,10 @@
-// v1.0.1 - Reforce Cache Reset: 2026-03-05 09:00
+// v2.0.0 - Modal Standardization + Admin Delete + Date/Time Checkbox: 2026-03-06
 import React, { useState, useEffect, useRef } from "react";
 import api from "../services/api";
 import { toast } from "sonner";
 import "./Encomendas.css";
 
-// Ícones SVG inline para evitar dependência de lucide-react
+// Ícones SVG inline
 const PackageIcon = ({ className, style }) => (
   <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d="m7.5 4.27 9 5.15" />
@@ -51,7 +51,28 @@ const EyeIcon = ({ className, style }) => (
   </svg>
 );
 
-const BoxIcon = PackageIcon; // Reutilizando PackageIcon como BoxIcon
+const ClockIcon = ({ style }) => (
+  <svg style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="10" />
+    <polyline points="12 6 12 12 16 14" />
+  </svg>
+);
+
+const ImageIcon = ({ style }) => (
+  <svg style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+    <circle cx="9" cy="9" r="2" />
+    <polyline points="21 15 16 10 5 21" />
+  </svg>
+);
+
+const CheckIcon = ({ style }) => (
+  <svg style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="20 6 9 17 4 12" />
+  </svg>
+);
+
+const BoxIcon = PackageIcon;
 
 export default function Encomendas() {
   const [activeTab, setActiveTab] = useState("cadastro");
@@ -82,7 +103,7 @@ export default function Encomendas() {
   const canvasRef = useRef(null);
   const videoRef = useRef(null);
   const streamRef = useRef(null);
-  const [isDrawing, setIsDrawing] = useState(false); // Adicionado
+  const [isDrawing, setIsDrawing] = useState(false);
   const [isSignatureZoomed, setIsSignatureZoomed] = useState(false);
   const [storedSignature, setStoredSignature] = useState(null);
   const [isEditDataHora, setIsEditDataHora] = useState(false);
@@ -108,13 +129,11 @@ export default function Encomendas() {
     const timer = setInterval(() => {
       const agora = new Date();
 
-      // Formata data YYYY-MM-DD
       const an = agora.getFullYear();
       const ms = String(agora.getMonth() + 1).padStart(2, '0');
       const di = String(agora.getDate()).padStart(2, '0');
       const dataLocal = `${an}-${ms}-${di}`;
 
-      // Formata hora HH:mm:ss para ver a "contabilização"
       const horaLocal = agora.toLocaleTimeString('pt-BR', {
         hour: '2-digit',
         minute: '2-digit',
@@ -138,9 +157,7 @@ export default function Encomendas() {
     setFetchLoading(true);
     try {
       const response = await api.get("/encomendas");
-      // O backend retorna { "encomendas": [...] }
       const data = response.data.encomendas || [];
-      console.log("Encomendas carregadas:", data);
       setEncomendas(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error("Erro na API:", error);
@@ -163,7 +180,7 @@ export default function Encomendas() {
         setFormData({
           ...formData,
           foto: reader.result,
-          fotoFile: file // Salva o arquivo real para envio via FormData
+          fotoFile: file
         });
       };
       reader.readAsDataURL(file);
@@ -176,7 +193,7 @@ export default function Encomendas() {
     isEditDataHoraRef.current = checked;
   };
 
-  // Funções de Webcam para o PC
+  // Funções de Webcam
   const startCamera = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ video: true });
@@ -207,7 +224,6 @@ export default function Encomendas() {
       ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
       const dataUrl = canvas.toDataURL("image/jpeg");
 
-      // Converte dataUrl para File
       fetch(dataUrl)
         .then(res => res.blob())
         .then(blob => {
@@ -246,14 +262,13 @@ export default function Encomendas() {
       submitData.append("unidade", formData.unidade);
       submitData.append("documento", formData.documento);
       submitData.append("pagina", formData.pagina);
-      // Data e Hora removidas, o backend preencherá sozinho
 
       if (formData.fotoFile) {
         submitData.append("foto", formData.fotoFile);
       }
 
       await api.post("/encomendas", submitData);
-      alert("Encomenda cadastrada com sucesso!");
+      toast.success("Encomenda cadastrada com sucesso!");
       setFormData({
         nome: "",
         unidade: "",
@@ -265,11 +280,13 @@ export default function Encomendas() {
         fotoFile: null
       });
       setTemLivroRegistro(false);
+      setIsEditDataHora(false);
+      isEditDataHoraRef.current = false;
       fetchEncomendas();
     } catch (error) {
       const errorMsg = error.response?.data?.error || error.message || "Erro desconhecido";
       console.error(error);
-      alert(`Erro ao cadastrar encomenda: ${errorMsg}`);
+      toast.error(`Erro ao cadastrar encomenda: ${errorMsg}`);
     } finally {
       setLoading(false);
     }
@@ -292,7 +309,7 @@ export default function Encomendas() {
       documento: encomenda.documento,
       pagina: encomenda.pagina,
       dataRecebimento: encomenda.data_recebimento,
-      horaRecebimento: encomenda.hora_recebimento || "", // Fallback
+      horaRecebimento: encomenda.hora_recebimento || "",
     });
   };
 
@@ -318,9 +335,6 @@ export default function Encomendas() {
     try {
       await api.put(`/encomendas/${modalEditar.id}`, editFormData);
       toast.success("Encomenda atualizada!");
-      // Reseta refs
-      isEditDataHoraRef.current = false;
-      setIsEditDataHora(false);
       closeEditarModal();
       fetchEncomendas();
     } catch (error) {
@@ -333,7 +347,6 @@ export default function Encomendas() {
     if (!window.confirm("ATENÇÃO: Deseja realmente excluir esta encomenda? Esta ação não pode ser desfeita.")) {
       return;
     }
-
     try {
       await api.delete(`/encomendas/${id}`);
       toast.success("Encomenda excluída com sucesso!");
@@ -347,9 +360,13 @@ export default function Encomendas() {
   const openRetiradaModal = (encomenda) => {
     setModalRetirada(encomenda);
     setNomeRetirada("");
+    setStoredSignature(null);
   };
 
-  const closeRetiradaModal = () => setModalRetirada(null);
+  const closeRetiradaModal = () => {
+    setModalRetirada(null);
+    setStoredSignature(null);
+  };
 
   const getCoordinates = (e) => {
     const canvas = canvasRef.current;
@@ -357,8 +374,6 @@ export default function Encomendas() {
     const rect = canvas.getBoundingClientRect();
     const clientX = e.touches ? e.touches[0].clientX : e.clientX;
     const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-
-    // Scale coordinates based on buffer vs visual size
     return {
       x: (clientX - rect.left) * (canvas.width / rect.width),
       y: (clientY - rect.top) * (canvas.height / rect.height)
@@ -368,20 +383,16 @@ export default function Encomendas() {
   const startDraw = (e) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-
     const { x, y } = getCoordinates(e);
     const ctx = canvas.getContext("2d");
-
     ctx.beginPath();
     ctx.moveTo(x, y);
     ctx.lineWidth = 3.5;
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
     ctx.strokeStyle = "#000000";
-    // Efeito Caneta (suavização)
     ctx.shadowBlur = 1;
     ctx.shadowColor = "#000000";
-
     lastPointRef.current = { x, y };
     setIsDrawing(true);
     if (e.touches) e.preventDefault();
@@ -391,17 +402,14 @@ export default function Encomendas() {
     if (!isDrawing) return;
     const canvas = canvasRef.current;
     if (!canvas) return;
-
     const { x, y } = getCoordinates(e);
     const ctx = canvas.getContext("2d");
     const lastPoint = lastPointRef.current;
-
     if (lastPoint) {
       const midPoint = { x: (lastPoint.x + x) / 2, y: (lastPoint.y + y) / 2 };
       ctx.quadraticCurveTo(lastPoint.x, lastPoint.y, midPoint.x, midPoint.y);
       ctx.stroke();
     }
-
     lastPointRef.current = { x, y };
     if (e.touches) e.preventDefault();
   };
@@ -440,7 +448,6 @@ export default function Encomendas() {
       toast.error("O nome de quem retira é obrigatório");
       return;
     }
-
     try {
       await api.post(`/encomendas/${modalRetirada.id}/retirada`, {
         nome_retirada: nomeRetirada,
@@ -448,7 +455,6 @@ export default function Encomendas() {
       });
       toast.success("Retirada confirmada!");
       closeRetiradaModal();
-      setStoredSignature(null);
       fetchEncomendas();
     } catch (error) {
       toast.error("Erro ao confirmar retirada");
@@ -458,59 +464,99 @@ export default function Encomendas() {
 
   return (
     <div className="encomendas-container">
-      {/* MODAL FOTO */}
+
+      {/* ═══════════════════════════════════════════
+          MODAL — VISUALIZAR FOTO / ASSINATURA
+      ═══════════════════════════════════════════ */}
       {modalFoto && (
-        <div className="enc-foto-modal-overlay" onClick={closeFotoModal}>
-          <div className={`enc-foto-modal ${isViewingSignature ? 'is-signature' : ''}`} onClick={(e) => e.stopPropagation()}>
-            <button className="enc-foto-modal-close" onClick={closeFotoModal}>✕</button>
-            {isViewingSignature && <h3>Assinatura do Morador</h3>}
-            <img src={modalFoto} alt="Visualização" className={isViewingSignature ? 'signature-img-zoom' : ''} />
+        <div className="global-modal-overlay" onClick={closeFotoModal}>
+          <div
+            className={`global-modal enc-foto-modal-inner ${isViewingSignature ? 'is-signature-modal' : 'is-photo-modal'}`}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button className="global-modal-close" onClick={closeFotoModal}>✕</button>
+
+            {isViewingSignature ? (
+              <>
+                <div className="modal-header">
+                  <span className="modal-header-icon">✍️</span>
+                  <h3>Assinatura do Morador</h3>
+                </div>
+                <div className="modal-signature-view">
+                  <img src={modalFoto} alt="Assinatura" className="signature-img-zoom" />
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="modal-header">
+                  <span className="modal-header-icon">📦</span>
+                  <h3>Foto da Encomenda</h3>
+                </div>
+                <div className="modal-photo-view">
+                  <img src={modalFoto} alt="Foto da encomenda" />
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}
 
-      {/* MODAL EDITAR */}
+      {/* ═══════════════════════════════════════════
+          MODAL — EDITAR ENCOMENDA
+      ═══════════════════════════════════════════ */}
       {modalEditar && (
         <div className="global-modal-overlay" onClick={closeEditarModal}>
-          <div className="global-modal" onClick={(e) => e.stopPropagation()}>
+          <div className="global-modal enc-modal-wide" onClick={(e) => e.stopPropagation()}>
             <button className="global-modal-close" onClick={closeEditarModal}>✕</button>
-            <h3>Editar Encomenda #{modalEditar.id}</h3>
 
-            <form onSubmit={handleEditSubmit} className="editar-form">
-              <div className="editar-form-group">
-                <label>Nome:</label>
-                <input
-                  type="text"
-                  name="nome"
-                  value={editFormData.nome}
-                  onChange={handleEditChange}
-                  required
-                />
+            <div className="modal-header">
+              <span className="modal-header-icon">✏️</span>
+              <h3>Editar Encomenda</h3>
+            </div>
+            <div className="modal-badge">#{modalEditar.id} — {modalEditar.nome}</div>
+
+            <form onSubmit={handleEditSubmit} className="modal-form">
+              <div className="modal-form-row">
+                <div className="modal-field">
+                  <label className="modal-label">Nome do Destinatário</label>
+                  <input
+                    type="text"
+                    name="nome"
+                    value={editFormData.nome}
+                    onChange={handleEditChange}
+                    className="modal-input"
+                    placeholder="Nome completo"
+                    required
+                  />
+                </div>
+                <div className="modal-field">
+                  <label className="modal-label">Unidade</label>
+                  <input
+                    type="text"
+                    name="unidade"
+                    value={editFormData.unidade}
+                    onChange={handleEditChange}
+                    className="modal-input"
+                    placeholder="Ex: 101"
+                    required
+                  />
+                </div>
               </div>
 
-              <div className="editar-form-group">
-                <label>Unidade:</label>
-                <input
-                  type="text"
-                  name="unidade"
-                  value={editFormData.unidade}
-                  onChange={handleEditChange}
-                  required
-                />
-              </div>
-
-              <div className="editar-form-group">
-                <label>Codigo de Rastreamento:</label>
+              <div className="modal-field">
+                <label className="modal-label">Código de Rastreamento</label>
                 <input
                   type="text"
                   name="documento"
                   value={editFormData.documento}
                   onChange={handleEditChange}
+                  className="modal-input"
+                  placeholder="Código de rastreamento"
                   required
                 />
               </div>
 
-              <div className="editar-form-group" style={{ marginBottom: '15px' }}>
+              <div className="modal-field">
                 <label className="custom-checkbox-wrapper">
                   <input
                     type="checkbox"
@@ -518,7 +564,7 @@ export default function Encomendas() {
                     checked={editFormData.pagina ? true : false}
                     onChange={(e) => {
                       if (!e.target.checked) setEditFormData({ ...editFormData, pagina: "" });
-                      else setEditFormData({ ...editFormData, pagina: "1" }); // Fallback temporário ao marcar
+                      else setEditFormData({ ...editFormData, pagina: "1" });
                     }}
                   />
                   <span className="custom-checkbox-box"></span>
@@ -527,66 +573,84 @@ export default function Encomendas() {
               </div>
 
               {editFormData.pagina !== undefined && editFormData.pagina !== "" && editFormData.pagina !== null && (
-                <div className="editar-form-group">
-                  <label>Página:</label>
+                <div className="modal-field slide-down">
+                  <label className="modal-label">Página</label>
                   <input
                     type="text"
                     name="pagina"
                     value={editFormData.pagina}
                     onChange={handleEditChange}
+                    className="modal-input"
+                    placeholder="Número da página"
                   />
                 </div>
               )}
 
-              <div className="editar-form-group">
-                <label>Data de Recebimento:</label>
-                <input
-                  type="date"
-                  name="dataRecebimento"
-                  value={editFormData.dataRecebimento}
-                  onChange={handleEditChange}
-                  required
-                />
+              <div className="modal-divider">
+                <ClockIcon style={{ width: 14, height: 14 }} />
+                <span>Data e Hora de Recebimento</span>
               </div>
 
-              <div className="editar-form-group">
-                <label>Hora de Recebimento:</label>
-                <input
-                  type="time"
-                  name="horaRecebimento"
-                  value={editFormData.horaRecebimento}
-                  onChange={handleEditChange}
-                  required
-                />
+              <div className="modal-form-row">
+                <div className="modal-field">
+                  <label className="modal-label">Data</label>
+                  <input
+                    type="date"
+                    name="dataRecebimento"
+                    value={editFormData.dataRecebimento}
+                    onChange={handleEditChange}
+                    className="modal-input"
+                    required
+                  />
+                </div>
+                <div className="modal-field">
+                  <label className="modal-label">Hora</label>
+                  <input
+                    type="time"
+                    name="horaRecebimento"
+                    value={editFormData.horaRecebimento}
+                    onChange={handleEditChange}
+                    className="modal-input"
+                    required
+                  />
+                </div>
               </div>
 
-              <div className="editar-form-group">
-                <label>Nova Foto (opcional):</label>
+              <div className="modal-field">
+                <label className="modal-label">Nova Foto <span className="modal-label-optional">(opcional)</span></label>
                 <input
                   type="file"
                   accept="image/*"
                   onChange={handleEditFotoChange}
+                  className="modal-file-input"
                 />
               </div>
 
-              <button type="submit" className="salvar-edicao-btn">
-                💾 Salvar Alterações
+              <button type="submit" className="modal-btn modal-btn-primary">
+                <CheckIcon style={{ width: 16, height: 16 }} />
+                Salvar Alterações
               </button>
             </form>
           </div>
         </div>
       )}
 
-      {/* MODAL RETIRADA */}
+      {/* ═══════════════════════════════════════════
+          MODAL — CONFIRMAR RETIRADA
+      ═══════════════════════════════════════════ */}
       {modalRetirada && (
         <div className="global-modal-overlay" onClick={closeRetiradaModal}>
           <div className="global-modal" onClick={(e) => e.stopPropagation()}>
             <button className="global-modal-close" onClick={closeRetiradaModal}>✕</button>
-            <h3>Confirmar Retirada</h3>
-            <p className="retirada-info">Encomenda #{modalRetirada.id} - {modalRetirada.nome}</p>
 
-            <div className="retirada-form-group">
-              <label>Assinatura Digital:</label>
+            <div className="modal-header">
+              <span className="modal-header-icon">📬</span>
+              <h3>Confirmar Retirada</h3>
+            </div>
+            <div className="modal-badge">#{modalRetirada.id} — {modalRetirada.nome}</div>
+
+            <div className="modal-field" style={{ marginTop: '20px' }}>
+              <label className="modal-label">Assinatura Digital</label>
               <div className="signature-status-container">
                 {storedSignature ? (
                   <div className="signature-preview-signed" onClick={() => setIsSignatureZoomed(true)}>
@@ -601,27 +665,30 @@ export default function Encomendas() {
               </div>
             </div>
 
-            <div className="retirada-form-group">
-              <label>Nome de quem está retirando:</label>
+            <div className="modal-field" style={{ marginTop: '20px' }}>
+              <label className="modal-label">Nome de quem está retirando</label>
               <input
                 type="text"
                 value={nomeRetirada}
                 onChange={(e) => setNomeRetirada(e.target.value)}
                 placeholder="Digite o nome completo"
+                className="modal-input"
               />
             </div>
 
-            <button type="button" className="confirmar-retirada-btn-large" onClick={confirmarRetirada}>
-              ✓ Confirmar Retirada
+            <button type="button" className="modal-btn modal-btn-success" style={{ marginTop: '24px' }} onClick={confirmarRetirada}>
+              <CheckIcon style={{ width: 16, height: 16 }} />
+              Confirmar Retirada
             </button>
           </div>
         </div>
       )}
 
-      {/* --- MODAL DE ASSINATURA AMPLIADA (ZOOM TELA CHEIA) --- */}
+      {/* ═══════════════════════════════════════════
+          MODAL — ASSINATURA TELA CHEIA
+      ═══════════════════════════════════════════ */}
       {isSignatureZoomed && (
         <div className="signature-zoom-overlay">
-          {/* Aviso de Rotacionar Tela (Apenas Mobile Portrait) */}
           <div className="orientation-warning">
             <div className="warning-content">
               <span className="warning-icon">🔄</span>
@@ -645,7 +712,6 @@ export default function Encomendas() {
               onTouchEnd={stopDraw}
             />
 
-            {/* Botoes Flutuantes Pequenos */}
             <div className="zoom-floating-actions">
               <button className="float-btn clear" onClick={clearCanvas} title="Limpar">
                 🗑️ <span className="pc-only-text">Limpar</span>
@@ -662,7 +728,33 @@ export default function Encomendas() {
         </div>
       )}
 
-      {/* TABS NAVIGATION */}
+      {/* ═══════════════════════════════════════════
+          MODAL — WEBCAM
+      ═══════════════════════════════════════════ */}
+      {modalWebcam && (
+        <div className="global-modal-overlay" onClick={closeWebcamModal}>
+          <div className="global-modal enc-modal-wide" onClick={(e) => e.stopPropagation()}>
+            <button className="global-modal-close" onClick={closeWebcamModal}>✕</button>
+
+            <div className="modal-header">
+              <span className="modal-header-icon">📸</span>
+              <h3>Tirar Foto (Webcam)</h3>
+            </div>
+
+            <div className="webcam-container" style={{ marginTop: '20px' }}>
+              <video ref={videoRef} autoPlay playsInline muted className="webcam-video" />
+            </div>
+
+            <button type="button" className="modal-btn modal-btn-primary" style={{ marginTop: '20px' }} onClick={capturePhoto}>
+              📸 Capturar Imagem
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* ═══════════════════════════════════════════
+          TABS NAVIGATION
+      ═══════════════════════════════════════════ */}
       <div className="encomendas-tabs">
         <button
           type="button"
@@ -680,8 +772,12 @@ export default function Encomendas() {
         </button>
       </div>
 
-      {/* TAB CONTENT */}
+      {/* ═══════════════════════════════════════════
+          TAB CONTENT
+      ═══════════════════════════════════════════ */}
       <div className="tab-content" key={activeTab}>
+
+        {/* ─── ABA: CADASTRO ─── */}
         {activeTab === "cadastro" && (
           <form className="cadastro-form" onSubmit={handleSubmit} noValidate>
             <h2><PackageIcon className="section-icon" style={{ width: 22, height: 22 }} /> Cadastro de Encomendas</h2>
@@ -716,6 +812,7 @@ export default function Encomendas() {
               />
             </div>
 
+            {/* Livro de registro */}
             <div className="form-group" style={{ marginBottom: '15px' }}>
               <label className="custom-checkbox-wrapper">
                 <input
@@ -746,7 +843,8 @@ export default function Encomendas() {
               </div>
             )}
 
-            <div className="form-group" style={{ marginBottom: '15px', marginTop: '10px' }}>
+            {/* ── Checkbox: editar data/hora ── */}
+            <div className="form-group datetime-edit-toggle">
               <label className="custom-checkbox-wrapper">
                 <input
                   type="checkbox"
@@ -757,8 +855,15 @@ export default function Encomendas() {
                 <span className="custom-checkbox-box"></span>
                 <span className="custom-checkbox-text">Deseja editar o horário e a data?</span>
               </label>
+              {!isEditDataHora && (
+                <p className="datetime-auto-hint">
+                  <ClockIcon style={{ width: 12, height: 12, display: 'inline', verticalAlign: 'middle', marginRight: '4px' }} />
+                  Preenchido automaticamente pelo relógio do sistema
+                </p>
+              )}
             </div>
 
+            {/* Data de Recebimento */}
             <div className="form-group">
               <label>Data de Recebimento:</label>
               <input
@@ -771,6 +876,7 @@ export default function Encomendas() {
               />
             </div>
 
+            {/* Hora de Recebimento */}
             <div className="form-group">
               <label>Hora de Recebimento:</label>
               <input
@@ -783,6 +889,7 @@ export default function Encomendas() {
               />
             </div>
 
+            {/* Foto */}
             <div className="form-group full-width photo-selection-group">
               <label>Foto da Encomenda:</label>
 
@@ -841,6 +948,7 @@ export default function Encomendas() {
           </form>
         )}
 
+        {/* ─── ABA: VISUALIZAÇÃO ─── */}
         {activeTab === "visualizacao" && (
           <div className="visualizacao">
             <h2><BoxIcon className="section-icon" style={{ width: 22, height: 22 }} /> Visualização de Encomendas</h2>
@@ -887,14 +995,14 @@ export default function Encomendas() {
                               <EyeIcon style={{ width: 14, height: 14 }} />
                             </button>
                           ) : (
-                            "-"
+                            "—"
                           )}
                         </td>
                         <td>
                           {e.retirado ? (
                             <span className="status-retirado">✓ Retirado</span>
                           ) : (
-                            <span className="status-aguardando">⏳ Aguardando Retirada</span>
+                            <span className="status-aguardando">⏳ Aguardando</span>
                           )}
                         </td>
                         <td>
@@ -925,7 +1033,7 @@ export default function Encomendas() {
                           )}
                         </td>
                         <td>
-                          <div style={{ display: 'flex', gap: '5px' }}>
+                          <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
                             <button
                               type="button"
                               className="admin-btn-small edit-btn"
@@ -940,8 +1048,7 @@ export default function Encomendas() {
                                 type="button"
                                 className="admin-btn-small delete-btn"
                                 onClick={() => handleDeletar(e.id)}
-                                data-tooltip="Excluir"
-                                style={{ backgroundColor: '#ef4444', color: 'white', border: 'none' }}
+                                data-tooltip="Excluir (Admin)"
                               >
                                 <TrashIcon style={{ width: 14, height: 14 }} />
                               </button>
@@ -957,21 +1064,6 @@ export default function Encomendas() {
           </div>
         )}
       </div>
-      {/* MODAL WEBCAM */}
-      {modalWebcam && (
-        <div className="global-modal-overlay" onClick={closeWebcamModal}>
-          <div className="global-modal" onClick={(e) => e.stopPropagation()}>
-            <button className="global-modal-close" onClick={closeWebcamModal}>✕</button>
-            <h3>Tirar Foto (Webcam)</h3>
-            <div className="webcam-container">
-              <video ref={videoRef} autoPlay playsInline muted className="webcam-video" />
-            </div>
-            <button type="button" className="confirmar-retirada-btn-large" onClick={capturePhoto} style={{ marginTop: '20px' }}>
-              📸 Capturar Imagem
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
