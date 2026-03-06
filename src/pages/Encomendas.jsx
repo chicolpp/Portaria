@@ -1221,6 +1221,65 @@ export default function Encomendas() {
 
             <div className="modal-form">
 
+              <div className="modal-field">
+                <label className="modal-label">Nome do Destinatário</label>
+                <input
+                  type="text"
+                  className="modal-input"
+                  value={filtrosTemporarios.nome}
+                  onChange={(e) => setFiltrosTemporarios({ ...filtrosTemporarios, nome: e.target.value })}
+                  placeholder="Filtrar por nome..."
+                />
+              </div>
+
+              <div className="modal-form-row">
+                <div className="modal-field">
+                  <label className="modal-label">Unidade</label>
+                  <input
+                    type="text"
+                    className="modal-input"
+                    value={filtrosTemporarios.unidade}
+                    onChange={(e) => setFiltrosTemporarios({ ...filtrosTemporarios, unidade: e.target.value })}
+                    placeholder="Ex: 101-A"
+                  />
+                </div>
+                <div className="modal-field">
+                  <label className="modal-label">Cod. Rastreamento</label>
+                  <input
+                    type="text"
+                    className="modal-input"
+                    value={filtrosTemporarios.documento}
+                    onChange={(e) => setFiltrosTemporarios({ ...filtrosTemporarios, documento: e.target.value })}
+                    placeholder="Ex: BR123..."
+                  />
+                </div>
+              </div>
+
+              <div className="modal-form-row">
+                <div className="modal-field">
+                  <label className="modal-label">Página</label>
+                  <input
+                    type="text"
+                    className="modal-input"
+                    value={filtrosTemporarios.pagina}
+                    onChange={(e) => setFiltrosTemporarios({ ...filtrosTemporarios, pagina: e.target.value })}
+                    placeholder="Ex: 12"
+                  />
+                </div>
+                <div className="modal-field">
+                  <label className="modal-label">Status</label>
+                  <select
+                    className="modal-input"
+                    value={filtrosTemporarios.status}
+                    onChange={(e) => setFiltrosTemporarios({ ...filtrosTemporarios, status: e.target.value })}
+                  >
+                    <option value="todos">Todos</option>
+                    <option value="pendente">Pendente (Na Portaria)</option>
+                    <option value="entregue">Entregue (Retirado)</option>
+                  </select>
+                </div>
+              </div>
+
               <div className="modal-form-row">
                 <div className="modal-field">
                   <label className="modal-label">Data Início</label>
