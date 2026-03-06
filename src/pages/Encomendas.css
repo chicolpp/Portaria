@@ -182,6 +182,33 @@
   min-width: 100%;
 }
 
+.visualizacao-header {
+  margin-bottom: 15px;
+}
+
+.filter-standard-bar {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 25px;
+  padding: 12px 20px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+}
+
+.filter-active-badge {
+  background: var(--primary);
+  color: white;
+  padding: 2px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 0 10px var(--glow-color);
+}
+
 /* ═══════════════════════════════════════════
    TABLE
 ═══════════════════════════════════════════ */
@@ -369,6 +396,28 @@
   font-weight: 600;
   cursor: pointer;
   font-size: 12px;
+}
+
+.edit-photo-selection {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-top: 5px;
+}
+
+.modal-photo-preview-small {
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 2px solid var(--primary);
+  flex-shrink: 0;
+}
+
+.modal-photo-preview-small img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 /* ─── Action Buttons inside modals ─── */

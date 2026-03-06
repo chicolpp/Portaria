@@ -602,16 +602,21 @@ export default function CadastroUsuarios() {
 
         {activeTab === "visualizacao" && (
           <div className="visualizacao">
-            <div className="visualizacao-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-              <h2 style={{ margin: 0 }}>Gerenciamento de Usuários</h2>
+            <div className="visualizacao-header">
+              <h2>Gerenciamento de Usuários</h2>
+            </div>
+
+            <div className="filter-standard-bar">
               <button
-                className="admin-btn-small"
+                className="admin-btn-small ver-btn"
                 onClick={() => setModalFiltro(true)}
-                style={{ width: 'auto', padding: '0 15px', gap: '8px', background: '#3b82f6' }}
               >
                 <FilterIcon style={{ width: 16, height: 16 }} />
                 <span>Filtrar</span>
               </button>
+              {Object.values(filtros).some(v => v !== "" && v !== "todos") && (
+                <span className="filter-active-badge">Filtro Ativo</span>
+              )}
             </div>
             {usuarios.length === 0 ? (
               <p>Nenhum usuário cadastrado ainda.</p>

@@ -85,6 +85,16 @@ export default function Portaria() {
     dataInicio: "",
     dataFim: ""
   });
+  const [modalEditar, setModalEditar] = useState(null);
+  const [editFormData, setEditFormData] = useState({
+    nome: "",
+    sobrenome: "",
+    documento: "",
+    placa: "",
+    marca: "",
+    modelo: "",
+    cor: "",
+  });
   const [formData, setFormData] = useState({
     nome: "",
     sobrenome: "",
@@ -115,6 +125,32 @@ export default function Portaria() {
       fetchAcessos();
     } catch (error) {
       toast.error("Erro ao registrar saída");
+      console.error(error);
+    }
+  };
+
+  const openEditarModal = (acesso) => {
+    setModalEditar(acesso);
+    setEditFormData({
+      nome: acesso.nome,
+      sobrenome: acesso.sobrenome,
+      documento: acesso.documento,
+      placa: acesso.placa || "",
+      marca: acesso.marca || "",
+      modelo: acesso.modelo || "",
+      cor: acesso.cor || "",
+    });
+  };
+
+  const handleEditSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await api.put(`/acessos/${modalEditar.id}`, editFormData);
+      toast.success("Acesso atualizado!");
+      setModalEditar(null);
+      fetchAcessos();
+    } catch (error) {
+      toast.error("Erro ao atualizar acesso");
       console.error(error);
     }
   };
@@ -293,16 +329,21 @@ export default function Portaria() {
 
         {activeTab === "visualizacao" && (
           <div className="visualizacao">
-            <div className="visualizacao-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-              <h2 style={{ margin: 0 }}><ListIcon className="section-icon" /> Visualização de Acessos</h2>
+            <div className="visualizacao-header">
+              <h2><ListIcon className="section-icon" /> Visualização de Acessos</h2>
+            </div>
+
+            <div className="filter-standard-bar">
               <button
-                className="admin-btn-small edit-btn"
+                className="admin-btn-small ver-btn"
                 onClick={() => setModalFiltro(true)}
-                style={{ width: 'auto', padding: '0 15px', gap: '8px' }}
               >
                 <FilterIcon style={{ width: 16, height: 16 }} />
                 <span>Filtrar</span>
               </button>
+              {Object.values(filtros).some(v => v !== "" && v !== "todos") && (
+                <span className="filter-active-badge">Filtro Ativo</span>
+              )}
             </div>
             {acessos.length === 0 ? (
               <p>Nenhum acesso cadastrado ainda.</p>
@@ -346,20 +387,30 @@ export default function Portaria() {
                           )}
                         </td>
                         <td>
-                          {a.data_saida ? (
-                            <span className="admin-btn-small delete-btn" style={{ opacity: 0.5 }} title="Saída registrada">
-                              <LockIcon style={{ width: 14, height: 14 }} />
-                            </span>
-                          ) : (
+                          <div style={{ display: 'flex', gap: '6px' }}>
                             <button
                               type="button"
                               className="admin-btn-small edit-btn"
-                              onClick={() => registrarSaida(a.id)}
-                              data-tooltip="Registrar Saída"
+                              onClick={() => openEditarModal(a)}
+                              data-tooltip="Editar"
                             >
-                              <LogOutIcon style={{ width: 14, height: 14 }} />
+                              <PencilIcon style={{ width: 14, height: 14 }} />
                             </button>
-                          )}
+                            {a.data_saida ? (
+                              <span className="admin-btn-small delete-btn" style={{ opacity: 0.5 }} title="Saída registrada">
+                                <LockIcon style={{ width: 14, height: 14 }} />
+                              </span>
+                            ) : (
+                              <button
+                                type="button"
+                                className="admin-btn-small edit-btn"
+                                onClick={() => registrarSaida(a.id)}
+                                data-tooltip="Registrar Saída"
+                              >
+                                <LogOutIcon style={{ width: 14, height: 14 }} />
+                              </button>
+                            )}
+                          </div>
                         </td>
                       </tr>
                     ))}
@@ -377,6 +428,102 @@ export default function Portaria() {
           </div>
         )}
       </div>
+
+      {/* MODAL EDITAR ACESSO */}
+      {modalEditar && (
+        <div className="global-modal-overlay" onClick={() => setModalEditar(null)}>
+          <div className="global-modal" onClick={(e) => e.stopPropagation()}>
+            <button className="global-modal-close" onClick={() => setModalEditar(null)}>✕</button>
+            <div className="modal-header">
+              <PencilIcon style={{ width: 22, height: 22, marginRight: '10px' }} />
+              <h3>Editar Acesso</h3>
+            </div>
+
+            <form onSubmit={handleEditSubmit} className="modal-form">
+              <div className="modal-form-row">
+                <div className="modal-field">
+                  <label className="modal-label">Nome</label>
+                  <input
+                    type="text"
+                    className="modal-input"
+                    value={editFormData.nome}
+                    onChange={(e) => setEditFormData({ ...editFormData, nome: e.target.value })}
+                    required
+                  />
+                </div>
+                <div className="modal-field">
+                  <label className="modal-label">Sobrenome</label>
+                  <input
+                    type="text"
+                    className="modal-input"
+                    value={editFormData.sobrenome}
+                    onChange={(e) => setEditFormData({ ...editFormData, sobrenome: e.target.value })}
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="modal-field">
+                <label className="modal-label">Documento</label>
+                <input
+                  type="text"
+                  className="modal-input"
+                  value={editFormData.documento}
+                  onChange={(e) => setEditFormData({ ...editFormData, documento: e.target.value })}
+                  required
+                />
+              </div>
+
+              <div className="modal-form-row">
+                <div className="modal-field">
+                  <label className="modal-label">Placa</label>
+                  <input
+                    type="text"
+                    className="modal-input"
+                    value={editFormData.placa}
+                    onChange={(e) => setEditFormData({ ...editFormData, placa: e.target.value })}
+                  />
+                </div>
+                <div className="modal-field">
+                  <label className="modal-label">Cor</label>
+                  <input
+                    type="text"
+                    className="modal-input"
+                    value={editFormData.cor}
+                    onChange={(e) => setEditFormData({ ...editFormData, cor: e.target.value })}
+                  />
+                </div>
+              </div>
+
+              <div className="modal-form-row">
+                <div className="modal-field">
+                  <label className="modal-label">Marca</label>
+                  <input
+                    type="text"
+                    className="modal-input"
+                    value={editFormData.marca}
+                    onChange={(e) => setEditFormData({ ...editFormData, marca: e.target.value })}
+                  />
+                </div>
+                <div className="modal-field">
+                  <label className="modal-label">Modelo</label>
+                  <input
+                    type="text"
+                    className="modal-input"
+                    value={editFormData.modelo}
+                    onChange={(e) => setEditFormData({ ...editFormData, modelo: e.target.value })}
+                  />
+                </div>
+              </div>
+
+              <button type="submit" className="submit-btn" style={{ marginTop: '20px' }}>
+                Salvar Alterações
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+
       {/* Modal de Filtro */}
       {modalFiltro && (
         <div className="global-modal-overlay" onClick={() => setModalFiltro(false)}>

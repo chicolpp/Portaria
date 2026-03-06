@@ -439,6 +439,22 @@ def registrar_saida(id):
     db.session.commit()
     
     return {"message": "Saída registrada com sucesso", "acesso": acesso.to_dict()}, 200
+    
+@app.route("/acessos/<int:id>", methods=["PUT"])
+def editar_acesso(id):
+    acesso = Acesso.query.get_or_404(id)
+    data = request.json
+    
+    acesso.nome = data.get("nome", acesso.nome)
+    acesso.sobrenome = data.get("sobrenome", acesso.sobrenome)
+    acesso.documento = data.get("documento", acesso.documento)
+    acesso.placa = data.get("placa", acesso.placa)
+    acesso.marca = data.get("marca", acesso.marca)
+    acesso.modelo = data.get("modelo", acesso.modelo)
+    acesso.cor = data.get("cor", acesso.cor)
+    
+    db.session.commit()
+    return {"message": "Acesso atualizado", "acesso": acesso.to_dict()}, 200
 
 
 # ========== OCORRÊNCIAS ==========

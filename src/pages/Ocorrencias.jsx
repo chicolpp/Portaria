@@ -8,9 +8,30 @@ export default function Ocorrencias() {
   const [activeTab, setActiveTab] = useState("cadastro");
   const [modalFiltro, setModalFiltro] = useState(false);
   const [filtros, setFiltros] = useState({
-    descricao: "",
+    motivo: "",
     dataInicio: "",
     dataFim: ""
+  });
+  const [modalEditar, setModalEditar] = useState(null);
+  const [modalVisualizar, setModalVisualizar] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [editFormData, setEditFormData] = useState({
+    data: "",
+    hora: "",
+    unidade_infratante: "",
+    nome_morador: "",
+    registrada_por: "Morador", // Padrão
+    quem_registrou: "",
+    motivo_ocorrencia: "",
+  });
+  const [formData, setFormData] = useState({
+    data: new Date().toISOString().split('T')[0],
+    hora: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+    unidade_infratante: "",
+    nome_morador: "",
+    registrada_por: "Morador",
+    quem_registrou: "",
+    motivo_ocorrencia: "",
   });
 
   const fetchOcorrencias = async () => {
@@ -32,21 +53,72 @@ export default function Ocorrencias() {
 
   const clearFiltros = () => {
     setFiltros({
-      descricao: "",
+      motivo: "",
       dataInicio: "",
       dataFim: ""
     });
   };
 
+  const handleCreateSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      await api.post("/ocorrencias", formData);
+      toast.success("Ocorrência registrada!");
+      setFormData({
+        data: new Date().toISOString().split('T')[0],
+        hora: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+        unidade_infratante: "",
+        nome_morador: "",
+        registrada_por: "Morador",
+        quem_registrou: "",
+        motivo_ocorrencia: "",
+      });
+      fetchOcorrencias();
+      setActiveTab("visualizacao");
+    } catch (error) {
+      toast.error("Erro ao registrar ocorrência");
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const openEditarModal = (o) => {
+    setModalEditar(o);
+    setEditFormData({
+      data: o.data,
+      hora: o.hora ? o.hora.substring(0, 5) : "",
+      unidade_infratante: o.unidade_infratante,
+      nome_morador: o.nome_morador,
+      registrada_por: o.registrada_por,
+      quem_registrou: o.quem_registrou,
+      motivo_ocorrencia: o.motivo_ocorrencia,
+    });
+  };
+
+  const handleEditSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await api.put(`/ocorrencias/${modalEditar.id}`, editFormData);
+      toast.success("Ocorrência atualizada!");
+      setModalEditar(null);
+      fetchOcorrencias();
+    } catch (error) {
+      toast.error("Erro ao atualizar ocorrência");
+      console.error(error);
+    }
+  };
+
   const ocorrenciasFiltradas = useMemo(() => {
     return ocorrencias.filter(o => {
-      const matchDesc = !filtros.descricao || o.descricao.toLowerCase().includes(filtros.descricao.toLowerCase());
+      const matchMotivo = !filtros.motivo || o.motivo_ocorrencia.toLowerCase().includes(filtros.motivo.toLowerCase()) || o.nome_morador.toLowerCase().includes(filtros.motivo.toLowerCase());
 
       let matchData = true;
       if (filtros.dataInicio) matchData = matchData && o.data >= filtros.dataInicio;
       if (filtros.dataFim) matchData = matchData && o.data <= filtros.dataFim;
 
-      return matchDesc && matchData;
+      return matchMotivo && matchData;
     });
   }, [ocorrencias, filtros]);
 
@@ -77,23 +149,63 @@ export default function Ocorrencias() {
       {/* TAB CONTENT */}
       <div className="tab-content">
         {activeTab === "cadastro" && (
-          <div className="cadastro-form">
-            <h2>Cadastro de Ocorrencias</h2>
-            {/* Aqui você pode adicionar o formulário de cadastro de ocorrencias */}
-          </div>
+          <form className="cadastro-form" onSubmit={handleCreateSubmit}>
+            <h2>Cadastro de Ocorrências</h2>
+            <div className="form-group">
+              <label>Data:</label>
+              <input type="date" value={formData.data} onChange={(e) => setFormData({ ...formData, data: e.target.value })} required />
+            </div>
+            <div className="form-group">
+              <label>Hora:</label>
+              <input type="time" value={formData.hora} onChange={(e) => setFormData({ ...formData, hora: e.target.value })} required />
+            </div>
+            <div className="form-group">
+              <label>Unidade Infratora:</label>
+              <input type="text" value={formData.unidade_infratante} onChange={(e) => setFormData({ ...formData, unidade_infratante: e.target.value })} placeholder="Ex: Bloco A, 102" required />
+            </div>
+            <div className="form-group">
+              <label>Nome do Morador:</label>
+              <input type="text" value={formData.nome_morador} onChange={(e) => setFormData({ ...formData, nome_morador: e.target.value })} placeholder="Nome completo" required />
+            </div>
+            <div className="form-group">
+              <label>Registrado Por:</label>
+              <select value={formData.registrada_por} onChange={(e) => setFormData({ ...formData, registrada_por: e.target.value })}>
+                <option value="Morador">Morador</option>
+                <option value="Segurança">Segurança</option>
+                <option value="Portaria">Portaria</option>
+                <option value="Sindico">Síndico</option>
+              </select>
+            </div>
+            <div className="form-group">
+              <label>Quem registrou (Nome):</label>
+              <input type="text" value={formData.quem_registrou} onChange={(e) => setFormData({ ...formData, quem_registrou: e.target.value })} placeholder="Seu nome" required />
+            </div>
+            <div className="form-group full-width">
+              <label>Motivo / Descrição:</label>
+              <textarea value={formData.motivo_ocorrencia} onChange={(e) => setFormData({ ...formData, motivo_ocorrencia: e.target.value })} placeholder="Descreva os detalhes da ocorrência..." required />
+            </div>
+            <button type="submit" className="submit-btn" disabled={loading}>
+              {loading ? "Registrando..." : "Registrar Ocorrência"}
+            </button>
+          </form>
         )}
         {activeTab === "visualizacao" && (
           <div className="visualizacao">
-            <div className="visualizacao-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-              <h2 style={{ margin: 0 }}>Visualização de Ocorrencias</h2>
+            <div className="visualizacao-header">
+              <h2>Visualização de Ocorrências</h2>
+            </div>
+
+            <div className="filter-standard-bar">
               <button
-                className="admin-btn-small"
+                className="admin-btn-small ver-btn"
                 onClick={() => setModalFiltro(true)}
-                style={{ width: 'auto', padding: '0 15px', gap: '8px', background: '#3b82f6' }}
               >
                 <FilterIcon style={{ width: 16, height: 16 }} />
                 <span>Filtrar</span>
               </button>
+              {Object.values(filtros).some(v => v !== "" && v !== "todos") && (
+                <span className="filter-active-badge">Filtro Ativo</span>
+              )}
             </div>
             <table className="ocorrencias-table">
               <thead>
@@ -108,9 +220,19 @@ export default function Ocorrencias() {
                 {ocorrenciasFiltradas.map((o) => (
                   <tr key={o.id}>
                     <td>{o.id}</td>
-                    <td>{o.descricao}</td>
+                    <td>{o.unidade_infratante} - {o.nome_morador}</td>
                     <td>{formatDate(o.data)}</td>
                     <td>{formatTime(o.hora)}</td>
+                    <td>
+                      <div className="acoes-cell">
+                        <button className="admin-btn-small ver-btn" onClick={() => setModalVisualizar(o)} title="Visualizar">
+                          <svg style={{ width: 14, height: 14 }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" /></svg>
+                        </button>
+                        <button className="admin-btn-small edit-btn" onClick={() => openEditarModal(o)} title="Editar">
+                          <svg style={{ width: 14, height: 14 }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" /><path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z" /></svg>
+                        </button>
+                      </div>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -131,13 +253,13 @@ export default function Ocorrencias() {
 
             <div className="modal-form">
               <div className="modal-field">
-                <label className="modal-label">Descrição</label>
+                <label className="modal-label">Pesquisar (Motivo ou Morador)</label>
                 <input
                   type="text"
                   className="modal-input"
-                  value={filtros.descricao}
-                  onChange={(e) => setFiltros({ ...filtros, descricao: e.target.value })}
-                  placeholder="Pesquisar na descrição..."
+                  value={filtros.motivo}
+                  onChange={(e) => setFiltros({ ...filtros, motivo: e.target.value })}
+                  placeholder="Pesquisar..."
                 />
               </div>
 
@@ -179,6 +301,68 @@ export default function Ocorrencias() {
                 </button>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Visualizar */}
+      {modalVisualizar && (
+        <div className="global-modal-overlay" onClick={() => setModalVisualizar(null)}>
+          <div className="visualizar-modal" onClick={(e) => e.stopPropagation()}>
+            <button className="foto-modal-close" onClick={() => setModalVisualizar(null)}>✕</button>
+            <h3>Dados da Ocorrência</h3>
+            <div className="visualizar-info">
+              <p><strong>Unidade:</strong> {modalVisualizar.unidade_infratante}</p>
+              <p><strong>Morador:</strong> {modalVisualizar.nome_morador}</p>
+              <p><strong>Data/Hora:</strong> {formatDate(modalVisualizar.data)} às {formatTime(modalVisualizar.hora)}</p>
+              <p><strong>Registrado por:</strong> {modalVisualizar.registrada_por} ({modalVisualizar.quem_registrou})</p>
+              <div className="motivo-box" style={{ marginTop: '20px' }}>
+                <label>Motivo / Descrição</label>
+                <p className="motivo-texto">{modalVisualizar.motivo_ocorrencia}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Editar */}
+      {modalEditar && (
+        <div className="global-modal-overlay" onClick={() => setModalEditar(null)}>
+          <div className="global-modal" onClick={(e) => e.stopPropagation()}>
+            <button className="global-modal-close" onClick={() => setModalEditar(null)}>✕</button>
+            <div className="modal-header">
+              <h3>Editar Ocorrência</h3>
+            </div>
+            <form onSubmit={handleEditSubmit} className="modal-form">
+              <div className="modal-form-row">
+                <div className="modal-field">
+                  <label className="modal-label">Data</label>
+                  <input type="date" className="modal-input" value={editFormData.data} onChange={(e) => setEditFormData({ ...editFormData, data: e.target.value })} required />
+                </div>
+                <div className="modal-field">
+                  <label className="modal-label">Hora</label>
+                  <input type="time" className="modal-input" value={editFormData.hora} onChange={(e) => setEditFormData({ ...editFormData, hora: e.target.value })} required />
+                </div>
+              </div>
+
+              <div className="modal-form-row">
+                <div className="modal-field">
+                  <label className="modal-label">Unidade</label>
+                  <input type="text" className="modal-input" value={editFormData.unidade_infratante} onChange={(e) => setEditFormData({ ...editFormData, unidade_infratante: e.target.value })} required />
+                </div>
+                <div className="modal-field">
+                  <label className="modal-label">Morador</label>
+                  <input type="text" className="modal-input" value={editFormData.nome_morador} onChange={(e) => setEditFormData({ ...editFormData, nome_morador: e.target.value })} required />
+                </div>
+              </div>
+
+              <div className="modal-field">
+                <label className="modal-label">Motivo</label>
+                <textarea className="modal-input" style={{ minHeight: '100px' }} value={editFormData.motivo_ocorrencia} onChange={(e) => setEditFormData({ ...editFormData, motivo_ocorrencia: e.target.value })} required />
+              </div>
+
+              <button type="submit" className="submit-btn" style={{ width: '100%', marginTop: '15px' }}>Salvar Alterações</button>
+            </form>
           </div>
         </div>
       )}

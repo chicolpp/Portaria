@@ -367,18 +367,32 @@ export default function Encomendas() {
   const handleEditFotoChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setEditFormData({ ...editFormData, foto: reader.result });
-      };
-      reader.readAsDataURL(file);
+      setEditFormData({
+        ...editFormData,
+        fotoFile: file,
+        fotoPreview: URL.createObjectURL(file)
+      });
     }
   };
 
   const handleEditSubmit = async (e) => {
     e.preventDefault();
     try {
-      await api.put(`/encomendas/${modalEditar.id}`, editFormData);
+      const data = new FormData();
+      data.append("nome", editFormData.nome);
+      data.append("unidade", editFormData.unidade);
+      data.append("documento", editFormData.documento);
+      data.append("pagina", editFormData.pagina || "");
+      data.append("dataRecebimento", editFormData.dataRecebimento);
+      data.append("horaRecebimento", editFormData.horaRecebimento);
+
+      if (editFormData.fotoFile) {
+        data.append("foto", editFormData.fotoFile);
+      }
+
+      await api.put(`/encomendas/${modalEditar.id}`, data, {
+        headers: { "Content-Type": "multipart/form-data" }
+      });
       toast.success("Encomenda atualizada!");
       closeEditarModal();
       fetchEncomendas();
@@ -663,12 +677,19 @@ export default function Encomendas() {
 
               <div className="modal-field">
                 <label className="modal-label">Nova Foto <span className="modal-label-optional">(opcional)</span></label>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleEditFotoChange}
-                  className="modal-file-input"
-                />
+                <div className="edit-photo-selection">
+                  {editFormData.fotoPreview && (
+                    <div className="modal-photo-preview-small">
+                      <img src={editFormData.fotoPreview} alt="Preview" />
+                    </div>
+                  )}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleEditFotoChange}
+                    className="modal-file-input"
+                  />
+                </div>
               </div>
 
               <button type="submit" className="modal-btn modal-btn-primary">
@@ -996,16 +1017,21 @@ export default function Encomendas() {
         {/* ─── ABA: VISUALIZAÇÃO ─── */}
         {activeTab === "visualizacao" && (
           <div className="visualizacao">
-            <div className="visualizacao-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-              <h2 style={{ margin: 0 }}><BoxIcon className="section-icon" style={{ width: 22, height: 22 }} /> Visualização de Encomendas</h2>
+            <div className="visualizacao-header">
+              <h2><BoxIcon className="section-icon" style={{ width: 22, height: 22 }} /> Visualização de Encomendas</h2>
+            </div>
+
+            <div className="filter-standard-bar">
               <button
                 className="admin-btn-small ver-btn"
                 onClick={() => setModalFiltro(true)}
-                style={{ width: 'auto', padding: '0 15px', gap: '8px' }}
               >
                 <FilterIcon style={{ width: 16, height: 16 }} />
                 <span>Filtrar</span>
               </button>
+              {Object.values(filtros).some(v => v !== "" && v !== "todos") && (
+                <span className="filter-active-badge">Filtro Ativo</span>
+              )}
             </div>
             {fetchLoading ? (
               <div className="loading-container" style={{ textAlign: 'center', padding: '40px' }}>
