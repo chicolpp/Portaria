@@ -975,6 +975,13 @@
 /* ═══════════════════════════════════════════
    RESPONSIVE — MOBILE
 ═══════════════════════════════════════════ */
+.no-page {
+  color: var(--text-muted);
+  font-style: italic;
+  font-size: 0.9em;
+  opacity: 0.7;
+}
+
 @media (max-width: 768px) {
   .encomendas-container {
     padding: 10px;

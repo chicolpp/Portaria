@@ -871,7 +871,7 @@ export default function Encomendas() {
             </div>
 
             <div className="form-group">
-              <label>Código de Rastreamento:</label>
+              <label>Cod. Rastreamento:</label>
               <input
                 type="text"
                 name="documento"
@@ -1072,7 +1072,7 @@ export default function Encomendas() {
                         <td>{e.nome}</td>
                         <td>{e.unidade}</td>
                         <td>{e.documento}</td>
-                        <td>{e.pagina}</td>
+                        <td className="pagina-cell">{e.pagina || <span className="no-page">não tem</span>}</td>
                         <td>{formatDate(e.data_recebimento)} {formatTime(e.hora_recebimento)}</td>
                         <td>
                           {e.foto ? (
