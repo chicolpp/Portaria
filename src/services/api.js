@@ -18,15 +18,7 @@ api.interceptors.request.use((config) => {
 // Interceptor: Lida com Erros de Rede/Queda do Servidor
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
-    // Se for erro de rede (Network Error) ou falha catastrófica (500/502/503)
-    if (!error.response || error.code === 'ERR_NETWORK') {
-      window.dispatchEvent(new CustomEvent('networkError'));
-    } else if (error.response.status >= 500) {
-      window.dispatchEvent(new CustomEvent('networkError'));
-    }
     return Promise.reject(error);
-  }
 );
 
 // Helper para URL de uploads

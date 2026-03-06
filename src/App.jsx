@@ -25,51 +25,8 @@ function Layout({ children }) {
 }
 
 function App() {
-  const [isNetworkError, setIsNetworkError] = useState(false);
-
-  useEffect(() => {
-    // Escuta o evento customizado disparado pelo interceptor do Axios
-    const handleNetworkError = () => {
-      setIsNetworkError(true);
-
-      // Tenta pingar o servidor a cada 5 segundos para ver se voltou
-      const checkConnection = setInterval(async () => {
-        try {
-          // Usa o base URL do axios para consistência se disponível, ou fallback
-          const apiBase = import.meta.env.VITE_API_URL || "";
-          const response = await fetch(`${apiBase}/health`);
-          if (response.ok) {
-            setIsNetworkError(false);
-            clearInterval(checkConnection);
-          }
-        } catch (e) {
-          // Continua caido
-        }
-      }, 5000);
-    };
-
-    window.addEventListener('networkError', handleNetworkError);
-
-    return () => {
-      window.removeEventListener('networkError', handleNetworkError);
-    };
-  }, []);
-
   return (
     <BrowserRouter>
-      {/* OVERLAY DE ERRO DE CONEXÃO GLOBAL */}
-      {isNetworkError && (
-        <div className="global-network-error-overlay">
-          <div className="network-error-card">
-            <div className="network-error-icon">📡❌</div>
-            <h2>Conexão Perdida</h2>
-            <p>Não foi possível conectar ao servidor ou banco de dados.</p>
-            <p className="network-pulse">Aguardando reconexão automática...</p>
-            <div className="network-spinner"></div>
-          </div>
-        </div>
-      )}
-
       <Toaster position="top-right" richColors />
       <Routes>
         {/* Redireciona a raiz "/" para "/login" */}
