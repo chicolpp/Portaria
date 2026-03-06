@@ -274,45 +274,62 @@
 
 /* === ESTILOS GLOBAIS PARA PICKERS (FLATPICKR) === */
 .flatpickr-calendar {
-  background: rgba(30, 41, 59, 0.95) !important;
+  background: #1e293b !important;
+  /* Fundo sólido para evitar transparência excessiva */
   backdrop-filter: blur(20px) !important;
-  border: 1px solid rgba(168, 85, 247, 0.4) !important;
-  border-radius: 16px !important;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7) !important;
+  border: 1px solid rgba(168, 85, 247, 0.5) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8) !important;
   font-family: inherit !important;
-  color: #fff !important;
+  color: #ffffff !important;
 }
 
 .flatpickr-day {
-  color: rgba(255, 255, 255, 0.95) !important;
-  transition: all 0.2s ease !important;
+  color: #ffffff !important;
+  /* Branco puro para máxima visibilidade */
+  font-weight: 500 !important;
 }
 
 .flatpickr-day.prevMonthDay,
-.flatpickr-day.nextMonthDay {
-  color: rgba(255, 255, 255, 0.3) !important;
+.flatpickr-day.nextMonthDay,
+.flatpickr-day.flatpickr-disabled {
+  color: rgba(255, 255, 255, 0.2) !important;
 }
 
 .flatpickr-day:hover {
-  background: rgba(168, 85, 247, 0.4) !important;
+  background: #a855f7 !important;
   color: #fff !important;
-  transform: scale(1.1);
 }
 
 .flatpickr-day.selected {
   background: #a855f7 !important;
   color: #fff !important;
   border-color: #a855f7 !important;
-  box-shadow: 0 0 15px rgba(168, 85, 247, 0.5);
 }
 
+/* Estilização do Dropdown de Mês e Ano */
 .flatpickr-months .flatpickr-month,
 .flatpickr-current-month,
-.flatpickr-current-month .flatpickr-monthDropdown-months,
-.flatpickr-weekday {
-  background: transparent !important;
-  color: #fff !important;
-  fill: #fff !important;
+.flatpickr-monthDropdown-months {
+  background: #1e293b !important;
+  color: #ffffff !important;
+}
+
+.flatpickr-monthDropdown-months {
+  border: 1px solid rgba(168, 85, 247, 0.3) !important;
+  border-radius: 4px !important;
+  padding: 2px 5px !important;
+  cursor: pointer !important;
+}
+
+.flatpickr-monthDropdown-months:hover {
+  background: rgba(168, 85, 247, 0.2) !important;
+}
+
+/* Forçar as cores dentro das opções do select (mesmo sendo nativo) */
+.flatpickr-monthDropdown-month {
+  background-color: #1e293b !important;
+  color: #ffffff !important;
 }
 
 .flatpickr-weekday {
@@ -320,20 +337,25 @@
   font-weight: bold !important;
 }
 
-/* Fix para a parte de Horas (remover fundo branco) */
-.numInputWrapper input,
+/* Fix para a parte de Horas (remover fundo branco teimoso) */
 .flatpickr-time,
 .flatpickr-time-separator,
-.flatpickr-time input {
+.flatpickr-time input,
+.numInputWrapper,
+.numInput {
   background: transparent !important;
-  color: #fff !important;
+  color: #ffffff !important;
   border: none !important;
-  box-shadow: none !important;
 }
 
 .flatpickr-time input:hover,
 .flatpickr-time .numInputWrapper:hover {
   background: rgba(168, 85, 247, 0.2) !important;
+}
+
+/* Setas e outros elementos */
+.flatpickr-am-pm {
+  color: #fff !important;
 }
 
 .flatpickr-current-month .numInputWrapper span.arrowUp:after {
@@ -344,14 +366,13 @@
   border-top-color: #fff !important;
 }
 
-/* Adicionando uma borda roxa sutil no input alternativo que o flatpickr cria */
-.flatpickr-input-custom+input {
-  border: 1px solid rgba(168, 85, 247, 0.2) !important;
+.flatpickr-doubleArrow {
+  color: #a855f7 !important;
 }
 
-.flatpickr-calendar.arrowTop:before,
-.flatpickr-calendar.arrowTop:after {
-  border-bottom-color: rgba(168, 85, 247, 0.4) !important;
+.flatpickr-prev-month svg,
+.flatpickr-next-month svg {
+  fill: #fff !important;
 }
 
 /* === ESTILOS GLOBAIS PARA PICKERS (DATA/HORA) === */
