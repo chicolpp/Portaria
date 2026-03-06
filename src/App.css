@@ -206,7 +206,6 @@
 .global-modal-close:hover {
   background: #ef4444;
   color: white;
-  transform: rotate(90deg);
 }
 
 .global-modal h3 {
