@@ -12,6 +12,7 @@ export default function Ocorrencias() {
     dataInicio: "",
     dataFim: ""
   });
+  const [filtrosTemporarios, setFiltrosTemporarios] = useState({ ...filtros });
   const [modalEditar, setModalEditar] = useState(null);
   const [modalVisualizar, setModalVisualizar] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -52,11 +53,12 @@ export default function Ocorrencias() {
   };
 
   const clearFiltros = () => {
-    setFiltros({
+    const limpo = {
       motivo: "",
       dataInicio: "",
       dataFim: ""
-    });
+    };
+    setFiltrosTemporarios(limpo);
   };
 
   const handleCreateSubmit = async (e) => {
@@ -264,8 +266,8 @@ export default function Ocorrencias() {
                 <input
                   type="text"
                   className="modal-input"
-                  value={filtros.motivo}
-                  onChange={(e) => setFiltros({ ...filtros, motivo: e.target.value })}
+                  value={filtrosTemporarios.motivo}
+                  onChange={(e) => setFiltrosTemporarios({ ...filtrosTemporarios, motivo: e.target.value })}
                   placeholder="Pesquisar..."
                 />
               </div>
@@ -276,8 +278,8 @@ export default function Ocorrencias() {
                   <input
                     type="date"
                     className="modal-input"
-                    value={filtros.dataInicio}
-                    onChange={(e) => setFiltros({ ...filtros, dataInicio: e.target.value })}
+                    value={filtrosTemporarios.dataInicio}
+                    onChange={(e) => setFiltrosTemporarios({ ...filtrosTemporarios, dataInicio: e.target.value })}
                   />
                 </div>
                 <div className="modal-field">
@@ -285,8 +287,8 @@ export default function Ocorrencias() {
                   <input
                     type="date"
                     className="modal-input"
-                    value={filtros.dataFim}
-                    onChange={(e) => setFiltros({ ...filtros, dataFim: e.target.value })}
+                    value={filtrosTemporarios.dataFim}
+                    onChange={(e) => setFiltrosTemporarios({ ...filtrosTemporarios, dataFim: e.target.value })}
                   />
                 </div>
               </div>
@@ -294,7 +296,10 @@ export default function Ocorrencias() {
               <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
                 <button
                   className="submit-btn"
-                  onClick={() => setModalFiltro(false)}
+                  onClick={() => {
+                    setFiltros(filtrosTemporarios);
+                    setModalFiltro(false);
+                  }}
                   style={{ flex: 1 }}
                 >
                   Aplicar Filtros

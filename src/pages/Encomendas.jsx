@@ -114,6 +114,7 @@ export default function Encomendas() {
     dataInicio: "",
     dataFim: ""
   });
+  const [filtrosTemporarios, setFiltrosTemporarios] = useState({ ...filtros });
   const cameraInputRef = useRef(null);
   const galleryInputRef = useRef(null);
   const canvasRef = useRef(null);
@@ -185,14 +186,15 @@ export default function Encomendas() {
   };
 
   const clearFiltros = () => {
-    setFiltros({
+    const limpo = {
       nome: "",
       unidade: "",
       documento: "",
       status: "todos",
       dataInicio: "",
       dataFim: ""
-    });
+    };
+    setFiltrosTemporarios(limpo);
   };
 
   const encomendasFiltradas = useMemo(() => {
@@ -603,7 +605,7 @@ export default function Encomendas() {
               </div>
 
               <div className="modal-field">
-                <label className="modal-label">Código de Rastreamento</label>
+                <label className="modal-label">Cod. Rastreamento</label>
                 <input
                   type="text"
                   name="documento"
@@ -1054,7 +1056,7 @@ export default function Encomendas() {
                       <th>ID</th>
                       <th>Nome</th>
                       <th>Unidade</th>
-                      <th>Documento</th>
+                      <th>Cod. Rastreamento</th>
                       <th>Página</th>
                       <th>Data/Hora Recebimento</th>
                       <th>Foto</th>

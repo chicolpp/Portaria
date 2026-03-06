@@ -62,6 +62,7 @@ export default function CadastroUsuarios() {
     status: "todos", // todos, ativo, inativo
     permissao: "todos" // todos, admin, usuario
   });
+  const [filtrosTemporarios, setFiltrosTemporarios] = useState({ ...filtros });
   const [formData, setFormData] = useState({
     nome: "",
     sobrenome: "",
@@ -269,13 +270,14 @@ export default function CadastroUsuarios() {
   };
 
   const clearFiltros = () => {
-    setFiltros({
+    const limpo = {
       nome: "",
       email: "",
       cargo: "todos",
       status: "todos",
       permissao: "todos"
-    });
+    };
+    setFiltrosTemporarios(limpo);
   };
 
   const usuariosFiltrados = useMemo(() => {
@@ -717,8 +719,8 @@ export default function CadastroUsuarios() {
                   <input
                     type="text"
                     className="modal-input"
-                    value={filtros.nome}
-                    onChange={(e) => setFiltros({ ...filtros, nome: e.target.value })}
+                    value={filtrosTemporarios.nome}
+                    onChange={(e) => setFiltrosTemporarios({ ...filtrosTemporarios, nome: e.target.value })}
                     placeholder="Filtrar por nome..."
                   />
                 </div>
@@ -727,8 +729,8 @@ export default function CadastroUsuarios() {
                   <input
                     type="text"
                     className="modal-input"
-                    value={filtros.email}
-                    onChange={(e) => setFiltros({ ...filtros, email: e.target.value })}
+                    value={filtrosTemporarios.email}
+                    onChange={(e) => setFiltrosTemporarios({ ...filtrosTemporarios, email: e.target.value })}
                     placeholder="Filtrar por email..."
                   />
                 </div>
@@ -739,8 +741,8 @@ export default function CadastroUsuarios() {
                   <label className="modal-label">Cargo</label>
                   <select
                     className="modal-input"
-                    value={filtros.cargo}
-                    onChange={(e) => setFiltros({ ...filtros, cargo: e.target.value })}
+                    value={filtrosTemporarios.cargo}
+                    onChange={(e) => setFiltrosTemporarios({ ...filtrosTemporarios, cargo: e.target.value })}
                   >
                     <option value="todos">Todos</option>
                     {cargos.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
@@ -750,8 +752,8 @@ export default function CadastroUsuarios() {
                   <label className="modal-label">Status</label>
                   <select
                     className="modal-input"
-                    value={filtros.status}
-                    onChange={(e) => setFiltros({ ...filtros, status: e.target.value })}
+                    value={filtrosTemporarios.status}
+                    onChange={(e) => setFiltrosTemporarios({ ...filtrosTemporarios, status: e.target.value })}
                   >
                     <option value="todos">Todos</option>
                     <option value="ativo">Ativo</option>
@@ -764,8 +766,8 @@ export default function CadastroUsuarios() {
                 <label className="modal-label">Permissão</label>
                 <select
                   className="modal-input"
-                  value={filtros.permissao}
-                  onChange={(e) => setFiltros({ ...filtros, permissao: e.target.value })}
+                  value={filtrosTemporarios.permissao}
+                  onChange={(e) => setFiltrosTemporarios({ ...filtrosTemporarios, permissao: e.target.value })}
                 >
                   <option value="todos">Todos</option>
                   <option value="admin">Administrador</option>
@@ -776,7 +778,10 @@ export default function CadastroUsuarios() {
               <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
                 <button
                   className="submit-btn"
-                  onClick={() => setModalFiltro(false)}
+                  onClick={() => {
+                    setFiltros(filtrosTemporarios);
+                    setModalFiltro(false);
+                  }}
                   style={{ flex: 1 }}
                 >
                   Aplicar Filtros

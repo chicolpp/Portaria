@@ -85,6 +85,7 @@ export default function Portaria() {
     dataInicio: "",
     dataFim: ""
   });
+  const [filtrosTemporarios, setFiltrosTemporarios] = useState({ ...filtros });
   const [modalEditar, setModalEditar] = useState(null);
   const [editFormData, setEditFormData] = useState({
     nome: "",
@@ -156,14 +157,15 @@ export default function Portaria() {
   };
 
   const clearFiltros = () => {
-    setFiltros({
+    const limpo = {
       nome: "",
       documento: "",
       placa: "",
       status: "todos",
       dataInicio: "",
       dataFim: ""
-    });
+    };
+    setFiltrosTemporarios(limpo);
   };
 
   const acessosFiltrados = useMemo(() => {
@@ -547,8 +549,8 @@ export default function Portaria() {
                 <input
                   type="text"
                   className="modal-input"
-                  value={filtros.nome}
-                  onChange={(e) => setFiltros({ ...filtros, nome: e.target.value })}
+                  value={filtrosTemporarios.nome}
+                  onChange={(e) => setFiltrosTemporarios({ ...filtrosTemporarios, nome: e.target.value })}
                   placeholder="Filtrar por nome..."
                 />
               </div>
@@ -559,8 +561,8 @@ export default function Portaria() {
                   <input
                     type="text"
                     className="modal-input"
-                    value={filtros.documento}
-                    onChange={(e) => setFiltros({ ...filtros, documento: e.target.value })}
+                    value={filtrosTemporarios.documento}
+                    onChange={(e) => setFiltrosTemporarios({ ...filtrosTemporarios, documento: e.target.value })}
                     placeholder="RG ou CPF"
                   />
                 </div>
@@ -569,8 +571,8 @@ export default function Portaria() {
                   <input
                     type="text"
                     className="modal-input"
-                    value={filtros.placa}
-                    onChange={(e) => setFiltros({ ...filtros, placa: e.target.value })}
+                    value={filtrosTemporarios.placa}
+                    onChange={(e) => setFiltrosTemporarios({ ...filtrosTemporarios, placa: e.target.value })}
                     placeholder="ABC-1234"
                   />
                 </div>
@@ -580,8 +582,8 @@ export default function Portaria() {
                 <label className="modal-label">Status</label>
                 <select
                   className="modal-input"
-                  value={filtros.status}
-                  onChange={(e) => setFiltros({ ...filtros, status: e.target.value })}
+                  value={filtrosTemporarios.status}
+                  onChange={(e) => setFiltrosTemporarios({ ...filtrosTemporarios, status: e.target.value })}
                 >
                   <option value="todos">Todos</option>
                   <option value="presente">Presente (No Condomínio)</option>
@@ -595,8 +597,8 @@ export default function Portaria() {
                   <input
                     type="date"
                     className="modal-input"
-                    value={filtros.dataInicio}
-                    onChange={(e) => setFiltros({ ...filtros, dataInicio: e.target.value })}
+                    value={filtrosTemporarios.dataInicio}
+                    onChange={(e) => setFiltrosTemporarios({ ...filtrosTemporarios, dataInicio: e.target.value })}
                   />
                 </div>
                 <div className="modal-field">
@@ -604,8 +606,8 @@ export default function Portaria() {
                   <input
                     type="date"
                     className="modal-input"
-                    value={filtros.dataFim}
-                    onChange={(e) => setFiltros({ ...filtros, dataFim: e.target.value })}
+                    value={filtrosTemporarios.dataFim}
+                    onChange={(e) => setFiltrosTemporarios({ ...filtrosTemporarios, dataFim: e.target.value })}
                   />
                 </div>
               </div>
@@ -613,7 +615,10 @@ export default function Portaria() {
               <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
                 <button
                   className="submit-btn"
-                  onClick={() => setModalFiltro(false)}
+                  onClick={() => {
+                    setFiltros(filtrosTemporarios);
+                    setModalFiltro(false);
+                  }}
                   style={{ flex: 1 }}
                 >
                   Aplicar Filtros
