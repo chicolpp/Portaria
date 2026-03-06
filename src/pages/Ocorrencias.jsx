@@ -167,7 +167,7 @@ export default function Ocorrencias() {
             </div>
             <div className="form-group">
               <label>Nome do Morador:</label>
-              <input type="text" value={formData.nome_morador} onChange={(e) => setFormData({ ...formData, nome_morador: e.target.value })} placeholder="Nome completo" required />
+              <input type="text" value={formData.nome_morador} onChange={(e) => setFormData({ ...formData, nome_morador: e.target.value })} placeholder="Ex: João Silva" required />
             </div>
             <div className="form-group">
               <label>Registrado Por:</label>
@@ -180,7 +180,7 @@ export default function Ocorrencias() {
             </div>
             <div className="form-group">
               <label>Quem registrou (Nome):</label>
-              <input type="text" value={formData.quem_registrou} onChange={(e) => setFormData({ ...formData, quem_registrou: e.target.value })} placeholder="Seu nome" required />
+              <input type="text" value={formData.quem_registrou} onChange={(e) => setFormData({ ...formData, quem_registrou: e.target.value })} placeholder="Ex: Porteiro Carlos" required />
             </div>
             <div className="form-group full-width">
               <label>Motivo / Descrição:</label>
@@ -360,11 +360,11 @@ export default function Ocorrencias() {
               <div className="modal-form-row">
                 <div className="modal-field">
                   <label className="modal-label">Unidade</label>
-                  <input type="text" className="modal-input" value={editFormData.unidade_infratante} onChange={(e) => setEditFormData({ ...editFormData, unidade_infratante: e.target.value })} required />
+                  <input type="text" className="modal-input" value={editFormData.unidade_infratante} onChange={(e) => setEditFormData({ ...editFormData, unidade_infratante: e.target.value })} placeholder="Ex: Bloco A, 102" required />
                 </div>
                 <div className="modal-field">
                   <label className="modal-label">Morador</label>
-                  <input type="text" className="modal-input" value={editFormData.nome_morador} onChange={(e) => setEditFormData({ ...editFormData, nome_morador: e.target.value })} required />
+                  <input type="text" className="modal-input" value={editFormData.nome_morador} onChange={(e) => setEditFormData({ ...editFormData, nome_morador: e.target.value })} placeholder="Ex: João Silva" required />
                 </div>
               </div>
 

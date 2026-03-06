@@ -343,6 +343,7 @@ export default function CadastroUsuarios() {
                     name="nome"
                     value={editFormData.nome}
                     onChange={handleEditChange}
+                    placeholder="Ex: João"
                     required
                   />
                 </div>
@@ -353,6 +354,7 @@ export default function CadastroUsuarios() {
                     name="sobrenome"
                     value={editFormData.sobrenome}
                     onChange={handleEditChange}
+                    placeholder="Ex: Silva"
                     required
                   />
                 </div>
@@ -365,6 +367,7 @@ export default function CadastroUsuarios() {
                   name="email"
                   value={editFormData.email}
                   onChange={handleEditChange}
+                  placeholder="Ex: joao@email.com"
                   required
                 />
               </div>
@@ -492,6 +495,7 @@ export default function CadastroUsuarios() {
                     name="nome"
                     value={formData.nome}
                     onChange={handleChange}
+                    placeholder="Ex: João"
                     required
                   />
                 </div>
@@ -502,6 +506,7 @@ export default function CadastroUsuarios() {
                     name="sobrenome"
                     value={formData.sobrenome}
                     onChange={handleChange}
+                    placeholder="Ex: Silva"
                     required
                   />
                 </div>
@@ -517,6 +522,7 @@ export default function CadastroUsuarios() {
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
+                  placeholder="Ex: joao@email.com"
                   required
                 />
               </div>

@@ -257,6 +257,7 @@ export default function Portaria() {
                 name="nome"
                 value={formData.nome}
                 onChange={handleChange}
+                placeholder="Ex: João"
                 required
               />
             </div>
@@ -268,6 +269,7 @@ export default function Portaria() {
                 name="sobrenome"
                 value={formData.sobrenome}
                 onChange={handleChange}
+                placeholder="Ex: Silva"
                 required
               />
             </div>
@@ -279,6 +281,7 @@ export default function Portaria() {
                 name="documento"
                 value={formData.documento}
                 onChange={handleChange}
+                placeholder="Ex: 12.345.678-9"
                 required
               />
             </div>
@@ -290,6 +293,7 @@ export default function Portaria() {
                 name="placa"
                 value={formData.placa}
                 onChange={handleChange}
+                placeholder="Ex: ABC-1234"
               />
             </div>
 
@@ -300,6 +304,7 @@ export default function Portaria() {
                 name="marca"
                 value={formData.marca}
                 onChange={handleChange}
+                placeholder="Ex: Toyota"
               />
             </div>
 
@@ -310,6 +315,7 @@ export default function Portaria() {
                 name="modelo"
                 value={formData.modelo}
                 onChange={handleChange}
+                placeholder="Ex: Corolla"
               />
             </div>
 
@@ -320,6 +326,7 @@ export default function Portaria() {
                 name="cor"
                 value={formData.cor}
                 onChange={handleChange}
+                placeholder="Ex: Prata"
               />
             </div>
 
@@ -457,6 +464,7 @@ export default function Portaria() {
                     className="modal-input"
                     value={editFormData.nome}
                     onChange={(e) => setEditFormData({ ...editFormData, nome: e.target.value })}
+                    placeholder="Ex: João"
                     required
                   />
                 </div>
@@ -467,6 +475,7 @@ export default function Portaria() {
                     className="modal-input"
                     value={editFormData.sobrenome}
                     onChange={(e) => setEditFormData({ ...editFormData, sobrenome: e.target.value })}
+                    placeholder="Ex: Silva"
                     required
                   />
                 </div>
@@ -479,6 +488,7 @@ export default function Portaria() {
                   className="modal-input"
                   value={editFormData.documento}
                   onChange={(e) => setEditFormData({ ...editFormData, documento: e.target.value })}
+                  placeholder="Ex: 12.345.678-9"
                   required
                 />
               </div>
@@ -491,6 +501,7 @@ export default function Portaria() {
                     className="modal-input"
                     value={editFormData.placa}
                     onChange={(e) => setEditFormData({ ...editFormData, placa: e.target.value })}
+                    placeholder="Ex: ABC-1234"
                   />
                 </div>
                 <div className="modal-field">

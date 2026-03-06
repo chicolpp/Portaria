@@ -582,7 +582,7 @@ export default function EspacosServicos() {
               <form className="chaves-form" onSubmit={handleCriarChave}>
                 <input
                   type="text"
-                  placeholder="Nome da Área"
+                  placeholder="Ex: Salão de Festas"
                   value={novaChave.area_nome}
                   onChange={e => setNovaChave({ ...novaChave, area_nome: e.target.value })}
                 />
@@ -712,7 +712,7 @@ export default function EspacosServicos() {
               <form className="chaves-form" onSubmit={handleCriarItem}>
                 <input
                   type="text"
-                  placeholder="Nome do Item (ex: Carrinho 1)"
+                  placeholder="Ex: Carrinho 1"
                   value={novoItem.nome}
                   onChange={e => setNovoItem({ ...novoItem, nome: e.target.value })}
                 />
@@ -849,23 +849,23 @@ export default function EspacosServicos() {
               <h3>Retirar Chave: {selectedChave?.area_nome}</h3>
 
               <div className="retirada-form-group">
-                <label>Nome do Morador / Responsável:</label>
+                <label>Nome do Morador/Funcionário:</label>
                 <input
                   autoFocus
                   type="text"
                   value={retiradaChaveForm.nome}
                   onChange={e => setRetiradaChaveForm({ ...retiradaChaveForm, nome: e.target.value })}
-                  placeholder="Ex: João Silva"
+                  placeholder="Ex: Carlos Oliveira"
                 />
               </div>
 
               <div className="retirada-form-group">
-                <label>Número da Unidade:</label>
+                <label>Unidade (Apto/Bloco):</label>
                 <input
                   type="text"
                   value={retiradaChaveForm.unidade}
                   onChange={e => setRetiradaChaveForm({ ...retiradaChaveForm, unidade: e.target.value })}
-                  placeholder="Ex: 101 Bloco A"
+                  placeholder="Ex: 102 - Bloco B"
                 />
               </div>
 
@@ -1004,6 +1004,7 @@ export default function EspacosServicos() {
                 type="text"
                 value={retiradaItemForm.nome_morador}
                 onChange={e => setRetiradaItemForm({ ...retiradaItemForm, nome_morador: e.target.value })}
+                placeholder="Ex: João da Silva"
               />
             </div>
 
@@ -1014,6 +1015,7 @@ export default function EspacosServicos() {
                   type="text"
                   value={retiradaItemForm.apartamento}
                   onChange={e => setRetiradaItemForm({ ...retiradaItemForm, apartamento: e.target.value })}
+                  placeholder="Ex: 101"
                 />
               </div>
               <div className="retirada-form-group half">
@@ -1022,6 +1024,7 @@ export default function EspacosServicos() {
                   type="text"
                   value={retiradaItemForm.bloco}
                   onChange={e => setRetiradaItemForm({ ...retiradaItemForm, bloco: e.target.value })}
+                  placeholder="Ex: A"
                 />
               </div>
             </div>
