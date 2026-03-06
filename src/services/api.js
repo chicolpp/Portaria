@@ -18,7 +18,7 @@ api.interceptors.request.use((config) => {
 // Interceptor: Lida com Erros de Rede/Queda do Servidor
 api.interceptors.response.use(
   (response) => response,
-    return Promise.reject(error);
+  (error) => Promise.reject(error)
 );
 
 // Helper para URL de uploads
