@@ -495,7 +495,9 @@
 }
 
 .enc-foto-modal-inner.is-photo-modal {
-  max-width: 800px;
+  max-width: 90vw;
+  width: fit-content !important;
+  min-width: 320px;
 }
 
 .enc-foto-modal-inner.is-signature-modal {
@@ -507,13 +509,16 @@
   border-radius: 12px;
   overflow: hidden;
   background: rgba(0, 0, 0, 0.2);
+  display: flex;
+  justify-content: center;
 }
 
 .modal-photo-view img {
   max-width: 100%;
-  max-height: 72vh;
+  max-height: 80vh;
   border-radius: 12px;
   display: block;
+  object-fit: contain;
 }
 
 .modal-signature-view {
