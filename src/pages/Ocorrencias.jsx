@@ -333,7 +333,8 @@ export default function Ocorrencias() {
                       dateFormat: "Y-m-d",
                       altInput: true,
                       altFormat: "d/m/Y",
-                      disableMobile: "true"
+                      disableMobile: "true",
+                      static: true
                     }}
                     className="modal-input flatpickr-input-custom"
                     placeholder="Data inicial"
@@ -358,7 +359,8 @@ export default function Ocorrencias() {
                       dateFormat: "Y-m-d",
                       altInput: true,
                       altFormat: "d/m/Y",
-                      disableMobile: "true"
+                      disableMobile: "true",
+                      static: true
                     }}
                     className="modal-input flatpickr-input-custom"
                     placeholder="Data final"
@@ -437,7 +439,8 @@ export default function Ocorrencias() {
                       dateFormat: "Y-m-d",
                       altInput: true,
                       altFormat: "d/m/Y",
-                      disableMobile: "true"
+                      disableMobile: "true",
+                      static: true
                     }}
                     className="modal-input flatpickr-input-custom"
                   />
@@ -458,7 +461,8 @@ export default function Ocorrencias() {
                       noCalendar: true,
                       dateFormat: "H:i",
                       time_24hr: true,
-                      disableMobile: "true"
+                      disableMobile: "true",
+                      static: true
                     }}
                     className="modal-input flatpickr-input-custom"
                   />

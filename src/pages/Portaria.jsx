@@ -625,7 +625,8 @@ export default function Portaria() {
                       dateFormat: "Y-m-d",
                       altInput: true,
                       altFormat: "d/m/Y",
-                      disableMobile: "true"
+                      disableMobile: "true",
+                      static: true
                     }}
                     className="modal-input flatpickr-input-custom"
                     placeholder="Data inicial"
@@ -650,7 +651,8 @@ export default function Portaria() {
                       dateFormat: "Y-m-d",
                       altInput: true,
                       altFormat: "d/m/Y",
-                      disableMobile: "true"
+                      disableMobile: "true",
+                      static: true
                     }}
                     className="modal-input flatpickr-input-custom"
                     placeholder="Data final"

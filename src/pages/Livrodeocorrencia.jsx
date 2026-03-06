@@ -263,7 +263,8 @@ export default function LivroDeOcorrencia() {
                     dateFormat: "Y-m-d",
                     altInput: true,
                     altFormat: "d/m/Y",
-                    disableMobile: "true"
+                    disableMobile: "true",
+                    static: true
                   }}
                   className="modal-input flatpickr-input-custom"
                 />
@@ -412,7 +413,8 @@ export default function LivroDeOcorrencia() {
                   dateFormat: "Y-m-d",
                   altInput: true,
                   altFormat: "d/m/Y",
-                  disableMobile: "true"
+                  disableMobile: "true",
+                  static: true
                 }}
                 className="flatpickr-input-custom"
                 required
@@ -435,7 +437,8 @@ export default function LivroDeOcorrencia() {
                   noCalendar: true,
                   dateFormat: "H:i",
                   time_24hr: true,
-                  disableMobile: "true"
+                  disableMobile: "true",
+                  static: true
                 }}
                 className="flatpickr-input-custom"
                 required

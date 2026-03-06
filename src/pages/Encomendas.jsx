@@ -676,7 +676,8 @@ export default function Encomendas() {
                       dateFormat: "Y-m-d",
                       altInput: true,
                       altFormat: "d/m/Y",
-                      disableMobile: "true"
+                      disableMobile: "true",
+                      static: true
                     }}
                     className="modal-input flatpickr-input-custom"
                   />
@@ -697,7 +698,8 @@ export default function Encomendas() {
                       noCalendar: true,
                       dateFormat: "H:i",
                       time_24hr: true,
-                      disableMobile: "true"
+                      disableMobile: "true",
+                      static: true
                     }}
                     className="modal-input flatpickr-input-custom"
                   />
@@ -1300,7 +1302,8 @@ export default function Encomendas() {
                       dateFormat: "Y-m-d",
                       altInput: true,
                       altFormat: "d/m/Y",
-                      disableMobile: "true"
+                      disableMobile: "true",
+                      static: true
                     }}
                     className="modal-input flatpickr-input-custom"
                     placeholder="Selecione data inicial"
@@ -1325,7 +1328,8 @@ export default function Encomendas() {
                       dateFormat: "Y-m-d",
                       altInput: true,
                       altFormat: "d/m/Y",
-                      disableMobile: "true"
+                      disableMobile: "true",
+                      static: true
                     }}
                     className="modal-input flatpickr-input-custom"
                     placeholder="Selecione data final"
