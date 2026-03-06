@@ -1019,9 +1019,16 @@ export default function Encomendas() {
           <div className="visualizacao">
             <div className="visualizacao-header">
               <h2><BoxIcon className="section-icon" style={{ width: 22, height: 22 }} /> Visualização de Encomendas</h2>
+              <button
+                className="admin-btn-small ver-btn header-filter-btn"
+                onClick={() => setModalFiltro(true)}
+              >
+                <FilterIcon style={{ width: 16, height: 16 }} />
+                <span>Filtrar</span>
+              </button>
             </div>
 
-            <div className="filter-standard-bar">
+            <div className="filter-standard-bar mobile-only-filter">
               <button
                 className="admin-btn-small ver-btn"
                 onClick={() => setModalFiltro(true)}
