@@ -842,9 +842,9 @@ export default function EspacosServicos() {
       {/* --- MODAL DE RETIRADA DE CHAVE --- */}
       {
         modalChaveOpen && (
-          <div className="foto-modal-overlay" onClick={() => setModalChaveOpen(false)}>
-            <div className="retirada-modal" onClick={e => e.stopPropagation()}>
-              <button className="foto-modal-close" onClick={() => setModalChaveOpen(false)}>✕</button>
+          <div className="global-modal-overlay" onClick={() => setModalChaveOpen(false)}>
+            <div className="global-modal" onClick={e => e.stopPropagation()}>
+              <button className="global-modal-close" onClick={() => setModalChaveOpen(false)}>✕</button>
               <h3>Retirar Chave: {selectedChave?.area_nome}</h3>
 
               <div className="retirada-form-group">
@@ -1045,9 +1045,9 @@ export default function EspacosServicos() {
 
       {/* Modal de Histórico */}
       {modalHistorico && (
-        <div className="foto-modal-overlay">
-          <div className="retirada-modal historico-modal">
-            <button className="foto-modal-close" onClick={() => setModalHistorico(null)}>✕</button>
+        <div className="global-modal-overlay" onClick={() => setModalHistorico(null)}>
+          <div className="global-modal historico-modal" onClick={e => e.stopPropagation()}>
+            <button className="global-modal-close" onClick={() => setModalHistorico(null)}>✕</button>
             <h3>Histórico: {modalHistorico.area_nome || modalHistorico.nome}</h3>
 
             <div className="historico-table-container">
@@ -1096,9 +1096,9 @@ export default function EspacosServicos() {
 
       {/* Modal de Assinatura (Zoom) */}
       {assinaturaVer && (
-        <div className="foto-modal-overlay" onClick={() => setAssinaturaVer(null)}>
-          <div className="assinatura-zoom-container" onClick={e => e.stopPropagation()}>
-            <button className="foto-modal-close" onClick={() => setAssinaturaVer(null)}>✕</button>
+        <div className="global-modal-overlay" onClick={() => setAssinaturaVer(null)}>
+          <div className="global-modal assinatura-zoom-container" onClick={e => e.stopPropagation()}>
+            <button className="global-modal-close" onClick={() => setAssinaturaVer(null)}>✕</button>
             <h3>Assinatura do Morador/Responsável</h3>
             <img src={assinaturaVer} alt="Assinatura" className="assinatura-img-zoom" />
           </div>
@@ -1107,11 +1107,11 @@ export default function EspacosServicos() {
 
       {/* Modal de Edição Customizado */}
       {modalEditOpen && (
-        <div className="modal-overlay">
-          <div className="modal-container edit-modal">
+        <div className="global-modal-overlay" onClick={() => setModalEditOpen(false)}>
+          <div className="global-modal edit-modal" onClick={e => e.stopPropagation()}>
             <div className="modal-header">
               <h3>Editar {editType === 'chave' ? 'Chave' : 'Item'}</h3>
-              <button className="modal-close" onClick={() => setModalEditOpen(false)}>✕</button>
+              <button className="global-modal-close" onClick={() => setModalEditOpen(false)}>✕</button>
             </div>
             <div className="modal-body">
               <div className="retirada-form-group">
@@ -1135,11 +1135,11 @@ export default function EspacosServicos() {
 
       {/* Modal de Confirmação Unificado (Devolução/Exclusão) */}
       {modalConfirmOpen && (
-        <div className="modal-overlay danger">
-          <div className={`modal-container confirm-modal ${confirmConfig.type}`}>
+        <div className="global-modal-overlay danger" onClick={() => setModalConfirmOpen(false)}>
+          <div className={`global-modal confirm-modal ${confirmConfig.type}`} onClick={e => e.stopPropagation()}>
             <div className="modal-header">
               <h3>{confirmConfig.title}</h3>
-              <button className="modal-close" onClick={() => setModalConfirmOpen(false)}>✕</button>
+              <button className="global-modal-close" onClick={() => setModalConfirmOpen(false)}>✕</button>
             </div>
             <div className="modal-body">
               <p style={{ color: '#94a3b8', fontSize: '1.1rem', lineHeight: '1.6' }}>

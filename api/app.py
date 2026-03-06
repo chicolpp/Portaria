@@ -369,6 +369,13 @@ def editar_encomenda(id):
     return {"message": "Encomenda atualizada", "encomenda": encomenda.to_dict()}, 200
 
 
+@app.route("/encomendas/<int:id>", methods=["DELETE"])
+def deletar_encomenda(id):
+    encomenda = Encomenda.query.get_or_404(id)
+    db.session.delete(encomenda)
+    db.session.commit()
+    return {"message": "Encomenda deletada com sucesso"}, 200
+
 @app.route("/encomendas/<int:id>/retirada", methods=["POST"])
 def retirar_encomenda(id):
     encomenda = Encomenda.query.get_or_404(id)

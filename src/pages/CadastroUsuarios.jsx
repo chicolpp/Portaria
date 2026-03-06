@@ -264,9 +264,9 @@ export default function CadastroUsuarios() {
     <div className="usuarios-container">
       {/* MODAL EDITAR */}
       {modalEditar && (
-        <div className="modal-overlay" onClick={closeEditarModal}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <button className="modal-close" onClick={closeEditarModal}>✕</button>
+        <div className="global-modal-overlay" onClick={closeEditarModal}>
+          <div className="global-modal" onClick={(e) => e.stopPropagation()}>
+            <button className="global-modal-close" onClick={closeEditarModal}>✕</button>
             <h3>Editar Usuário</h3>
             <form className="modal-form" onSubmit={handleEditSubmit}>
               <div className="form-group foto-edit-group">

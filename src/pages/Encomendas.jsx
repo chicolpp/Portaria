@@ -31,6 +31,19 @@ const ListIcon = ({ className, style }) => (
   </svg>
 );
 
+const EditIcon = ({ className, style }) => (
+  <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+  </svg>
+);
+
+const TrashIcon = ({ className, style }) => (
+  <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M10 11v6M14 11v6" />
+  </svg>
+);
+
 const EyeIcon = ({ className, style }) => (
   <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
@@ -72,7 +85,13 @@ export default function Encomendas() {
   const [isDrawing, setIsDrawing] = useState(false); // Adicionado
   const [isSignatureZoomed, setIsSignatureZoomed] = useState(false);
   const [storedSignature, setStoredSignature] = useState(null);
+  const [isEditDataHora, setIsEditDataHora] = useState(false);
+  const isEditDataHoraRef = useRef(false);
   const [windowSize, setWindowSize] = useState({ width: window.innerWidth, height: window.innerHeight });
+
+  // Checar se o usuário logado é admin
+  const userData = JSON.parse(localStorage.getItem('user') || '{}');
+  const isAdmin = userData.is_admin === true;
 
   useEffect(() => {
     const handleResize = () => {
@@ -102,11 +121,14 @@ export default function Encomendas() {
         second: '2-digit'
       });
 
-      setFormData(prev => ({
-        ...prev,
-        dataRecebimento: dataLocal,
-        horaRecebimento: horaLocal
-      }));
+      setFormData(prev => {
+        if (isEditDataHoraRef.current) return prev;
+        return {
+          ...prev,
+          dataRecebimento: dataLocal,
+          horaRecebimento: horaLocal
+        };
+      });
     }, 1000);
 
     return () => clearInterval(timer);
@@ -146,6 +168,12 @@ export default function Encomendas() {
       };
       reader.readAsDataURL(file);
     }
+  };
+
+  const handleEditDataHoraToggle = (e) => {
+    const checked = e.target.checked;
+    setIsEditDataHora(checked);
+    isEditDataHoraRef.current = checked;
   };
 
   // Funções de Webcam para o PC
@@ -290,10 +318,28 @@ export default function Encomendas() {
     try {
       await api.put(`/encomendas/${modalEditar.id}`, editFormData);
       toast.success("Encomenda atualizada!");
+      // Reseta refs
+      isEditDataHoraRef.current = false;
+      setIsEditDataHora(false);
       closeEditarModal();
       fetchEncomendas();
     } catch (error) {
       toast.error("Erro ao atualizar encomenda");
+      console.error(error);
+    }
+  };
+
+  const handleDeletar = async (id) => {
+    if (!window.confirm("ATENÇÃO: Deseja realmente excluir esta encomenda? Esta ação não pode ser desfeita.")) {
+      return;
+    }
+
+    try {
+      await api.delete(`/encomendas/${id}`);
+      toast.success("Encomenda excluída com sucesso!");
+      fetchEncomendas();
+    } catch (error) {
+      toast.error("Erro ao excluir encomenda");
       console.error(error);
     }
   };
@@ -425,9 +471,9 @@ export default function Encomendas() {
 
       {/* MODAL EDITAR */}
       {modalEditar && (
-        <div className="enc-foto-modal-overlay" onClick={closeEditarModal}>
-          <div className="enc-editar-modal" onClick={(e) => e.stopPropagation()}>
-            <button className="enc-foto-modal-close" onClick={closeEditarModal}>✕</button>
+        <div className="global-modal-overlay" onClick={closeEditarModal}>
+          <div className="global-modal" onClick={(e) => e.stopPropagation()}>
+            <button className="global-modal-close" onClick={closeEditarModal}>✕</button>
             <h3>Editar Encomenda #{modalEditar.id}</h3>
 
             <form onSubmit={handleEditSubmit} className="editar-form">
@@ -533,9 +579,9 @@ export default function Encomendas() {
 
       {/* MODAL RETIRADA */}
       {modalRetirada && (
-        <div className="enc-foto-modal-overlay" onClick={closeRetiradaModal}>
-          <div className="enc-retirada-modal" onClick={(e) => e.stopPropagation()}>
-            <button className="enc-foto-modal-close" onClick={closeRetiradaModal}>✕</button>
+        <div className="global-modal-overlay" onClick={closeRetiradaModal}>
+          <div className="global-modal" onClick={(e) => e.stopPropagation()}>
+            <button className="global-modal-close" onClick={closeRetiradaModal}>✕</button>
             <h3>Confirmar Retirada</h3>
             <p className="retirada-info">Encomenda #{modalRetirada.id} - {modalRetirada.nome}</p>
 
@@ -700,14 +746,28 @@ export default function Encomendas() {
               </div>
             )}
 
+            <div className="form-group" style={{ marginBottom: '15px', marginTop: '10px' }}>
+              <label className="custom-checkbox-wrapper">
+                <input
+                  type="checkbox"
+                  className="custom-checkbox-input"
+                  checked={isEditDataHora}
+                  onChange={handleEditDataHoraToggle}
+                />
+                <span className="custom-checkbox-box"></span>
+                <span className="custom-checkbox-text">Deseja editar o horário e a data?</span>
+              </label>
+            </div>
+
             <div className="form-group">
               <label>Data de Recebimento:</label>
               <input
                 type="date"
                 name="dataRecebimento"
                 value={formData.dataRecebimento}
-                readOnly
-                className="readonly-input"
+                onChange={handleChange}
+                readOnly={!isEditDataHora}
+                className={!isEditDataHora ? "readonly-input" : ""}
               />
             </div>
 
@@ -717,8 +777,9 @@ export default function Encomendas() {
                 type="text"
                 name="horaRecebimento"
                 value={formData.horaRecebimento}
-                readOnly
-                className="readonly-input"
+                onChange={handleChange}
+                readOnly={!isEditDataHora}
+                className={!isEditDataHora ? "readonly-input" : ""}
               />
             </div>
 
@@ -864,14 +925,28 @@ export default function Encomendas() {
                           )}
                         </td>
                         <td>
-                          <button
-                            type="button"
-                            className="admin-btn-small edit-btn"
-                            onClick={() => openEditarModal(e)}
-                            data-tooltip="Editar"
-                          >
-                            <PencilIcon style={{ width: 14, height: 14 }} />
-                          </button>
+                          <div style={{ display: 'flex', gap: '5px' }}>
+                            <button
+                              type="button"
+                              className="admin-btn-small edit-btn"
+                              onClick={() => openEditarModal(e)}
+                              data-tooltip="Editar"
+                            >
+                              <PencilIcon style={{ width: 14, height: 14 }} />
+                            </button>
+
+                            {isAdmin && (
+                              <button
+                                type="button"
+                                className="admin-btn-small delete-btn"
+                                onClick={() => handleDeletar(e.id)}
+                                data-tooltip="Excluir"
+                                style={{ backgroundColor: '#ef4444', color: 'white', border: 'none' }}
+                              >
+                                <TrashIcon style={{ width: 14, height: 14 }} />
+                              </button>
+                            )}
+                          </div>
                         </td>
                       </tr>
                     ))}
@@ -884,9 +959,9 @@ export default function Encomendas() {
       </div>
       {/* MODAL WEBCAM */}
       {modalWebcam && (
-        <div className="enc-foto-modal-overlay" onClick={closeWebcamModal}>
-          <div className="enc-webcam-modal" onClick={(e) => e.stopPropagation()}>
-            <button className="enc-foto-modal-close" onClick={closeWebcamModal}>✕</button>
+        <div className="global-modal-overlay" onClick={closeWebcamModal}>
+          <div className="global-modal" onClick={(e) => e.stopPropagation()}>
+            <button className="global-modal-close" onClick={closeWebcamModal}>✕</button>
             <h3>Tirar Foto (Webcam)</h3>
             <div className="webcam-container">
               <video ref={videoRef} autoPlay playsInline muted className="webcam-video" />
