@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import api from "../services/api";
 import { toast } from "sonner";
 import "./CadastroUsuarios.css";
@@ -54,6 +54,14 @@ export default function CadastroUsuarios() {
   const [usuarios, setUsuarios] = useState([]);
   const [loading, setLoading] = useState(false);
   const [modalEditar, setModalEditar] = useState(null);
+  const [modalFiltro, setModalFiltro] = useState(false);
+  const [filtros, setFiltros] = useState({
+    nome: "",
+    email: "",
+    cargo: "todos",
+    status: "todos", // todos, ativo, inativo
+    permissao: "todos" // todos, admin, usuario
+  });
   const [formData, setFormData] = useState({
     nome: "",
     sobrenome: "",
@@ -259,6 +267,41 @@ export default function CadastroUsuarios() {
       console.error(error);
     }
   };
+
+  const clearFiltros = () => {
+    setFiltros({
+      nome: "",
+      email: "",
+      cargo: "todos",
+      status: "todos",
+      permissao: "todos"
+    });
+  };
+
+  const usuariosFiltrados = useMemo(() => {
+    return usuarios.filter(u => {
+      const nomeCompleto = `${u.nome} ${u.sobrenome}`.toLowerCase();
+      const matchNome = !filtros.nome || nomeCompleto.includes(filtros.nome.toLowerCase());
+      const matchEmail = !filtros.email || u.email.toLowerCase().includes(filtros.email.toLowerCase());
+      const matchCargo = filtros.cargo === "todos" || u.cargo === filtros.cargo;
+
+      let matchStatus = true;
+      if (filtros.status === "ativo") matchStatus = u.ativo;
+      else if (filtros.status === "inativo") matchStatus = !u.ativo;
+
+      let matchPermissao = true;
+      if (filtros.permissao === "admin") matchPermissao = u.is_admin;
+      else if (filtros.permissao === "usuario") matchPermissao = !u.is_admin;
+
+      return matchNome && matchEmail && matchCargo && matchStatus && matchPermissao;
+    });
+  }, [usuarios, filtros]);
+
+  const FilterIcon = ({ className, style }) => (
+    <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
+    </svg>
+  );
 
   return (
     <div className="usuarios-container">
@@ -559,7 +602,17 @@ export default function CadastroUsuarios() {
 
         {activeTab === "visualizacao" && (
           <div className="visualizacao">
-            <h2>Gerenciamento de Usuários</h2>
+            <div className="visualizacao-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+              <h2 style={{ margin: 0 }}>Gerenciamento de Usuários</h2>
+              <button
+                className="admin-btn-small"
+                onClick={() => setModalFiltro(true)}
+                style={{ width: 'auto', padding: '0 15px', gap: '8px', background: '#3b82f6' }}
+              >
+                <FilterIcon style={{ width: 16, height: 16 }} />
+                <span>Filtrar</span>
+              </button>
+            </div>
             {usuarios.length === 0 ? (
               <p>Nenhum usuário cadastrado ainda.</p>
             ) : (
@@ -577,7 +630,7 @@ export default function CadastroUsuarios() {
                   </tr>
                 </thead>
                 <tbody>
-                  {usuarios.map((u) => (
+                  {usuariosFiltrados.map((u) => (
                     <tr key={u.id} className={!u.ativo ? "usuario-inativo" : ""}>
                       <td>{u.id}</td>
                       <td>{u.nome} {u.sobrenome}</td>
@@ -634,6 +687,100 @@ export default function CadastroUsuarios() {
           </div>
         )}
       </div>
+
+      {/* Modal de Filtro */}
+      {modalFiltro && (
+        <div className="global-modal-overlay" onClick={() => setModalFiltro(false)}>
+          <div className="global-modal" onClick={(e) => e.stopPropagation()}>
+            <button className="global-modal-close" onClick={() => setModalFiltro(false)}>✕</button>
+            <div className="modal-header">
+              <FilterIcon style={{ width: 20, height: 20, marginRight: '10px' }} />
+              <h3>Filtrar Usuários</h3>
+            </div>
+
+            <div className="modal-form">
+              <div className="modal-form-row">
+                <div className="modal-field">
+                  <label className="modal-label">Nome</label>
+                  <input
+                    type="text"
+                    className="modal-input"
+                    value={filtros.nome}
+                    onChange={(e) => setFiltros({ ...filtros, nome: e.target.value })}
+                    placeholder="Filtrar por nome..."
+                  />
+                </div>
+                <div className="modal-field">
+                  <label className="modal-label">Email</label>
+                  <input
+                    type="text"
+                    className="modal-input"
+                    value={filtros.email}
+                    onChange={(e) => setFiltros({ ...filtros, email: e.target.value })}
+                    placeholder="Filtrar por email..."
+                  />
+                </div>
+              </div>
+
+              <div className="modal-form-row">
+                <div className="modal-field">
+                  <label className="modal-label">Cargo</label>
+                  <select
+                    className="modal-input"
+                    value={filtros.cargo}
+                    onChange={(e) => setFiltros({ ...filtros, cargo: e.target.value })}
+                  >
+                    <option value="todos">Todos</option>
+                    {cargos.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
+                  </select>
+                </div>
+                <div className="modal-field">
+                  <label className="modal-label">Status</label>
+                  <select
+                    className="modal-input"
+                    value={filtros.status}
+                    onChange={(e) => setFiltros({ ...filtros, status: e.target.value })}
+                  >
+                    <option value="todos">Todos</option>
+                    <option value="ativo">Ativo</option>
+                    <option value="inativo">Inativo</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="modal-field">
+                <label className="modal-label">Permissão</label>
+                <select
+                  className="modal-input"
+                  value={filtros.permissao}
+                  onChange={(e) => setFiltros({ ...filtros, permissao: e.target.value })}
+                >
+                  <option value="todos">Todos</option>
+                  <option value="admin">Administrador</option>
+                  <option value="usuario">Usuário Comum</option>
+                </select>
+              </div>
+
+              <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
+                <button
+                  className="submit-btn"
+                  onClick={() => setModalFiltro(false)}
+                  style={{ flex: 1 }}
+                >
+                  Aplicar Filtros
+                </button>
+                <button
+                  className="photo-action-btn gallery-btn"
+                  onClick={clearFiltros}
+                  style={{ flex: 1, background: '#475569' }}
+                >
+                  Limpar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

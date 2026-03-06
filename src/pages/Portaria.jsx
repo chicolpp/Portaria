@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import api from "../services/api";
 import { toast } from "sonner";
 import { formatDateTime } from "../utils/formatters";
@@ -66,10 +66,25 @@ const ShieldCheckIcon = ({ className, style }) => (
   </svg>
 );
 
+const FilterIcon = ({ className, style }) => (
+  <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
+  </svg>
+);
+
 export default function Portaria() {
   const [activeTab, setActiveTab] = useState("cadastro");
   const [acessos, setAcessos] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [modalFiltro, setModalFiltro] = useState(false);
+  const [filtros, setFiltros] = useState({
+    nome: "",
+    documento: "",
+    placa: "",
+    status: "todos", // todos, presente, saiu
+    dataInicio: "",
+    dataFim: ""
+  });
   const [formData, setFormData] = useState({
     nome: "",
     sobrenome: "",
@@ -103,6 +118,37 @@ export default function Portaria() {
       console.error(error);
     }
   };
+
+  const clearFiltros = () => {
+    setFiltros({
+      nome: "",
+      documento: "",
+      placa: "",
+      status: "todos",
+      dataInicio: "",
+      dataFim: ""
+    });
+  };
+
+  const acessosFiltrados = useMemo(() => {
+    const { useMemo } = require("react"); // ensure useMemo is imported
+    return acessos.filter(a => {
+      const nomeCompleto = `${a.nome} ${a.sobrenome}`.toLowerCase();
+      const matchNome = !filtros.nome || nomeCompleto.includes(filtros.nome.toLowerCase());
+      const matchDoc = !filtros.documento || a.documento.toLowerCase().includes(filtros.documento.toLowerCase());
+      const matchPlaca = !filtros.placa || (a.placa && a.placa.toLowerCase().includes(filtros.placa.toLowerCase()));
+
+      let matchStatus = true;
+      if (filtros.status === "presente") matchStatus = !a.data_saida;
+      else if (filtros.status === "saiu") matchStatus = !!a.data_saida;
+
+      let matchData = true;
+      if (filtros.dataInicio) matchData = matchData && a.data_entrada >= filtros.dataInicio;
+      if (filtros.dataFim) matchData = matchData && a.data_entrada <= filtros.dataFim;
+
+      return matchNome && matchDoc && matchPlaca && matchStatus && matchData;
+    });
+  }, [acessos, filtros]);
 
   useEffect(() => {
     if (activeTab === "visualizacao") {
@@ -248,7 +294,17 @@ export default function Portaria() {
 
         {activeTab === "visualizacao" && (
           <div className="visualizacao">
-            <h2><ListIcon className="section-icon" /> Visualização de Acessos</h2>
+            <div className="visualizacao-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+              <h2 style={{ margin: 0 }}><ListIcon className="section-icon" /> Visualização de Acessos</h2>
+              <button
+                className="admin-btn-small edit-btn"
+                onClick={() => setModalFiltro(true)}
+                style={{ width: 'auto', padding: '0 15px', gap: '8px' }}
+              >
+                <FilterIcon style={{ width: 16, height: 16 }} />
+                <span>Filtrar</span>
+              </button>
+            </div>
             {acessos.length === 0 ? (
               <p>Nenhum acesso cadastrado ainda.</p>
             ) : (
@@ -270,7 +326,7 @@ export default function Portaria() {
                     </tr>
                   </thead>
                   <tbody>
-                    {acessos.map((a) => (
+                    {acessosFiltrados.map((a) => (
                       <tr key={a.id}>
                         <td>{a.id}</td>
                         <td>{a.nome}</td>
@@ -322,6 +378,105 @@ export default function Portaria() {
           </div>
         )}
       </div>
+      {/* Modal de Filtro */}
+      {modalFiltro && (
+        <div className="global-modal-overlay" onClick={() => setModalFiltro(false)}>
+          <div className="global-modal" onClick={(e) => e.stopPropagation()}>
+            <button className="global-modal-close" onClick={() => setModalFiltro(false)}>✕</button>
+            <div className="modal-header">
+              <FilterIcon style={{ width: 20, height: 20, marginRight: '10px' }} />
+              <h3>Filtrar Acessos</h3>
+            </div>
+
+            <div className="modal-form">
+              <div className="modal-field">
+                <label className="modal-label">Nome do Visitante</label>
+                <input
+                  type="text"
+                  className="modal-input"
+                  value={filtros.nome}
+                  onChange={(e) => setFiltros({ ...filtros, nome: e.target.value })}
+                  placeholder="Filtrar por nome..."
+                />
+              </div>
+
+              <div className="modal-form-row">
+                <div className="modal-field">
+                  <label className="modal-label">Documento</label>
+                  <input
+                    type="text"
+                    className="modal-input"
+                    value={filtros.documento}
+                    onChange={(e) => setFiltros({ ...filtros, documento: e.target.value })}
+                    placeholder="RG ou CPF"
+                  />
+                </div>
+                <div className="modal-field">
+                  <label className="modal-label">Placa</label>
+                  <input
+                    type="text"
+                    className="modal-input"
+                    value={filtros.placa}
+                    onChange={(e) => setFiltros({ ...filtros, placa: e.target.value })}
+                    placeholder="ABC-1234"
+                  />
+                </div>
+              </div>
+
+              <div className="modal-field">
+                <label className="modal-label">Status</label>
+                <select
+                  className="modal-input"
+                  value={filtros.status}
+                  onChange={(e) => setFiltros({ ...filtros, status: e.target.value })}
+                >
+                  <option value="todos">Todos</option>
+                  <option value="presente">Presente (No Condomínio)</option>
+                  <option value="saiu">Saída Registrada</option>
+                </select>
+              </div>
+
+              <div className="modal-form-row">
+                <div className="modal-field">
+                  <label className="modal-label">Data Início</label>
+                  <input
+                    type="date"
+                    className="modal-input"
+                    value={filtros.dataInicio}
+                    onChange={(e) => setFiltros({ ...filtros, dataInicio: e.target.value })}
+                  />
+                </div>
+                <div className="modal-field">
+                  <label className="modal-label">Data Fim</label>
+                  <input
+                    type="date"
+                    className="modal-input"
+                    value={filtros.dataFim}
+                    onChange={(e) => setFiltros({ ...filtros, dataFim: e.target.value })}
+                  />
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
+                <button
+                  className="submit-btn"
+                  onClick={() => setModalFiltro(false)}
+                  style={{ flex: 1 }}
+                >
+                  Aplicar Filtros
+                </button>
+                <button
+                  className="photo-action-btn gallery-btn"
+                  onClick={clearFiltros}
+                  style={{ flex: 1, background: '#475569' }}
+                >
+                  Limpar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

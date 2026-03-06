@@ -73,6 +73,12 @@ const CheckIcon = ({ style }) => (
   </svg>
 );
 
+const FilterIcon = ({ className, style }) => (
+  <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
+  </svg>
+);
+
 const BoxIcon = PackageIcon;
 
 export default function Encomendas() {
@@ -99,6 +105,15 @@ export default function Encomendas() {
   const [editFormData, setEditFormData] = useState({});
   const [modalRetirada, setModalRetirada] = useState(null);
   const [nomeRetirada, setNomeRetirada] = useState("");
+  const [modalFiltro, setModalFiltro] = useState(false);
+  const [filtros, setFiltros] = useState({
+    nome: "",
+    unidade: "",
+    documento: "",
+    status: "todos", // todos, pendentes, retirados
+    dataInicio: "",
+    dataFim: ""
+  });
   const cameraInputRef = useRef(null);
   const galleryInputRef = useRef(null);
   const canvasRef = useRef(null);
@@ -168,6 +183,35 @@ export default function Encomendas() {
       setFetchLoading(false);
     }
   };
+
+  const clearFiltros = () => {
+    setFiltros({
+      nome: "",
+      unidade: "",
+      documento: "",
+      status: "todos",
+      dataInicio: "",
+      dataFim: ""
+    });
+  };
+
+  const encomendasFiltradas = useMemo(() => {
+    return encomendas.filter(e => {
+      const matchNome = !filtros.nome || e.nome.toLowerCase().includes(filtros.nome.toLowerCase());
+      const matchUnidade = !filtros.unidade || e.unidade.toLowerCase().includes(filtros.unidade.toLowerCase());
+      const matchDoc = !filtros.documento || e.documento.toLowerCase().includes(filtros.documento.toLowerCase());
+
+      let matchStatus = true;
+      if (filtros.status === "pendentes") matchStatus = !e.retirado;
+      else if (filtros.status === "retirados") matchStatus = e.retirado;
+
+      let matchData = true;
+      if (filtros.dataInicio) matchData = matchData && e.data_recebimento >= filtros.dataInicio;
+      if (filtros.dataFim) matchData = matchData && e.data_recebimento <= filtros.dataFim;
+
+      return matchNome && matchUnidade && matchDoc && matchStatus && matchData;
+    });
+  }, [encomendas, filtros]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -952,7 +996,17 @@ export default function Encomendas() {
         {/* ─── ABA: VISUALIZAÇÃO ─── */}
         {activeTab === "visualizacao" && (
           <div className="visualizacao">
-            <h2><BoxIcon className="section-icon" style={{ width: 22, height: 22 }} /> Visualização de Encomendas</h2>
+            <div className="visualizacao-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+              <h2 style={{ margin: 0 }}><BoxIcon className="section-icon" style={{ width: 22, height: 22 }} /> Visualização de Encomendas</h2>
+              <button
+                className="admin-btn-small ver-btn"
+                onClick={() => setModalFiltro(true)}
+                style={{ width: 'auto', padding: '0 15px', gap: '8px' }}
+              >
+                <FilterIcon style={{ width: 16, height: 16 }} />
+                <span>Filtrar</span>
+              </button>
+            </div>
             {fetchLoading ? (
               <div className="loading-container" style={{ textAlign: 'center', padding: '40px' }}>
                 <p>Carregando encomendas...</p>
@@ -977,7 +1031,7 @@ export default function Encomendas() {
                     </tr>
                   </thead>
                   <tbody>
-                    {encomendas.map((e) => (
+                    {encomendasFiltradas.map((e) => (
                       <tr key={e.id}>
                         <td>{e.id}</td>
                         <td>{e.nome}</td>
@@ -1065,6 +1119,96 @@ export default function Encomendas() {
           </div>
         )}
       </div>
+      {/* ═══════════════════════════════════════════
+          MODAL — FILTRO
+      ═══════════════════════════════════════════ */}
+      {modalFiltro && (
+        <div className="global-modal-overlay" onClick={() => setModalFiltro(false)}>
+          <div className="global-modal" onClick={(e) => e.stopPropagation()}>
+            <button className="global-modal-close" onClick={() => setModalFiltro(false)}>✕</button>
+            <div className="modal-header">
+              <FilterIcon style={{ width: 20, height: 20, marginRight: '10px' }} />
+              <h3>Filtrar Encomendas</h3>
+            </div>
+
+            <div className="modal-form">
+              <div className="modal-form-row">
+                <div className="modal-field">
+                  <label className="modal-label">Nome do Destinatário</label>
+                  <input
+                    type="text"
+                    className="modal-input"
+                    value={filtros.nome}
+                    onChange={(e) => setFiltros({ ...filtros, nome: e.target.value })}
+                    placeholder="Filtrar por nome..."
+                  />
+                </div>
+                <div className="modal-field">
+                  <label className="modal-label">Unidade</label>
+                  <input
+                    type="text"
+                    className="modal-input"
+                    value={filtros.unidade}
+                    onChange={(e) => setFiltros({ ...filtros, unidade: e.target.value })}
+                    placeholder="Ex: 101"
+                  />
+                </div>
+              </div>
+
+              <div className="modal-field">
+                <label className="modal-label">Status</label>
+                <select
+                  className="modal-input"
+                  value={filtros.status}
+                  onChange={(e) => setFiltros({ ...filtros, status: e.target.value })}
+                >
+                  <option value="todos">Todos</option>
+                  <option value="pendentes">Pendentes (Aguardando Retirada)</option>
+                  <option value="retirados">Retirados</option>
+                </select>
+              </div>
+
+              <div className="modal-form-row">
+                <div className="modal-field">
+                  <label className="modal-label">Data Início</label>
+                  <input
+                    type="date"
+                    className="modal-input"
+                    value={filtros.dataInicio}
+                    onChange={(e) => setFiltros({ ...filtros, dataInicio: e.target.value })}
+                  />
+                </div>
+                <div className="modal-field">
+                  <label className="modal-label">Data Fim</label>
+                  <input
+                    type="date"
+                    className="modal-input"
+                    value={filtros.dataFim}
+                    onChange={(e) => setFiltros({ ...filtros, dataFim: e.target.value })}
+                  />
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
+                <button
+                  className="submit-btn"
+                  onClick={() => setModalFiltro(false)}
+                  style={{ flex: 1 }}
+                >
+                  Aplicar Filtros
+                </button>
+                <button
+                  className="photo-action-btn gallery-btn"
+                  onClick={clearFiltros}
+                  style={{ flex: 1, background: '#475569' }}
+                >
+                  Limpar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

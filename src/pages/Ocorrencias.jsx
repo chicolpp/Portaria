@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import api from "../services/api";
 import { formatDate, formatTime } from "../utils/formatters";
 import "./Ocorrencias.css";
@@ -6,6 +6,12 @@ import "./Ocorrencias.css";
 export default function Ocorrencias() {
   const [ocorrencias, setOcorrencias] = useState([]);
   const [activeTab, setActiveTab] = useState("cadastro");
+  const [modalFiltro, setModalFiltro] = useState(false);
+  const [filtros, setFiltros] = useState({
+    descricao: "",
+    dataInicio: "",
+    dataFim: ""
+  });
 
   const fetchOcorrencias = async () => {
     try {
@@ -23,6 +29,32 @@ export default function Ocorrencias() {
   const handleTabClick = (tab) => {
     setActiveTab(tab);
   };
+
+  const clearFiltros = () => {
+    setFiltros({
+      descricao: "",
+      dataInicio: "",
+      dataFim: ""
+    });
+  };
+
+  const ocorrenciasFiltradas = useMemo(() => {
+    return ocorrencias.filter(o => {
+      const matchDesc = !filtros.descricao || o.descricao.toLowerCase().includes(filtros.descricao.toLowerCase());
+
+      let matchData = true;
+      if (filtros.dataInicio) matchData = matchData && o.data >= filtros.dataInicio;
+      if (filtros.dataFim) matchData = matchData && o.data <= filtros.dataFim;
+
+      return matchDesc && matchData;
+    });
+  }, [ocorrencias, filtros]);
+
+  const FilterIcon = ({ className, style }) => (
+    <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
+    </svg>
+  );
 
   return (
     <div className="ocorrencias-container">
@@ -52,7 +84,17 @@ export default function Ocorrencias() {
         )}
         {activeTab === "visualizacao" && (
           <div className="visualizacao">
-            <h2>Visualização de Ocorrencias</h2>
+            <div className="visualizacao-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+              <h2 style={{ margin: 0 }}>Visualização de Ocorrencias</h2>
+              <button
+                className="admin-btn-small"
+                onClick={() => setModalFiltro(true)}
+                style={{ width: 'auto', padding: '0 15px', gap: '8px', background: '#3b82f6' }}
+              >
+                <FilterIcon style={{ width: 16, height: 16 }} />
+                <span>Filtrar</span>
+              </button>
+            </div>
             <table className="ocorrencias-table">
               <thead>
                 <tr>
@@ -63,7 +105,7 @@ export default function Ocorrencias() {
                 </tr>
               </thead>
               <tbody>
-                {ocorrencias.map((o) => (
+                {ocorrenciasFiltradas.map((o) => (
                   <tr key={o.id}>
                     <td>{o.id}</td>
                     <td>{o.descricao}</td>
@@ -76,6 +118,70 @@ export default function Ocorrencias() {
           </div>
         )}
       </div>
+
+      {/* Modal de Filtro */}
+      {modalFiltro && (
+        <div className="global-modal-overlay" onClick={() => setModalFiltro(false)}>
+          <div className="global-modal" onClick={(e) => e.stopPropagation()}>
+            <button className="global-modal-close" onClick={() => setModalFiltro(false)}>✕</button>
+            <div className="modal-header">
+              <FilterIcon style={{ width: 20, height: 20, marginRight: '10px' }} />
+              <h3>Filtrar Ocorrências</h3>
+            </div>
+
+            <div className="modal-form">
+              <div className="modal-field">
+                <label className="modal-label">Descrição</label>
+                <input
+                  type="text"
+                  className="modal-input"
+                  value={filtros.descricao}
+                  onChange={(e) => setFiltros({ ...filtros, descricao: e.target.value })}
+                  placeholder="Pesquisar na descrição..."
+                />
+              </div>
+
+              <div className="modal-form-row">
+                <div className="modal-field">
+                  <label className="modal-label">Data Início</label>
+                  <input
+                    type="date"
+                    className="modal-input"
+                    value={filtros.dataInicio}
+                    onChange={(e) => setFiltros({ ...filtros, dataInicio: e.target.value })}
+                  />
+                </div>
+                <div className="modal-field">
+                  <label className="modal-label">Data Fim</label>
+                  <input
+                    type="date"
+                    className="modal-input"
+                    value={filtros.dataFim}
+                    onChange={(e) => setFiltros({ ...filtros, dataFim: e.target.value })}
+                  />
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
+                <button
+                  className="submit-btn"
+                  onClick={() => setModalFiltro(false)}
+                  style={{ flex: 1 }}
+                >
+                  Aplicar Filtros
+                </button>
+                <button
+                  className="photo-action-btn gallery-btn"
+                  onClick={clearFiltros}
+                  style={{ flex: 1, background: '#475569' }}
+                >
+                  Limpar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
