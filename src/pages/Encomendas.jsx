@@ -623,7 +623,7 @@ export default function Encomendas() {
                 />
               </div>
 
-              <div className="modal-field">
+              <div className="modal-field datetime-edit-toggle">
                 <label className="custom-checkbox-wrapper">
                   <input
                     type="checkbox"
@@ -911,7 +911,7 @@ export default function Encomendas() {
             </div>
 
             {/* Livro de registro */}
-            <div className="form-group" style={{ marginBottom: '15px' }}>
+            <div className="form-group datetime-edit-toggle">
               <label className="custom-checkbox-wrapper">
                 <input
                   type="checkbox"

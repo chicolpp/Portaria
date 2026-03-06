@@ -774,8 +774,8 @@
    CHECKBOX CUSTOMIZADO PREMIUM
 ═══════════════════════════════════════════ */
 .custom-checkbox-wrapper {
-  display: inline-flex;
-  align-items: center;
+  display: flex !important;
+  align-items: center !important;
   cursor: pointer;
   gap: 12px;
   color: #cbd5e1;
