@@ -464,18 +464,19 @@ export default function Encomendas() {
                 />
               </div>
 
-              <div className="editar-form-group checkbox-group" style={{ marginBottom: '15px' }}>
-                <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', gap: '8px', color: '#cbd5e1' }}>
+              <div className="editar-form-group" style={{ marginBottom: '15px' }}>
+                <label className="custom-checkbox-wrapper">
                   <input
                     type="checkbox"
+                    className="custom-checkbox-input"
                     checked={editFormData.pagina ? true : false}
                     onChange={(e) => {
                       if (!e.target.checked) setEditFormData({ ...editFormData, pagina: "" });
                       else setEditFormData({ ...editFormData, pagina: "1" }); // Fallback temporário ao marcar
                     }}
-                    style={{ width: '18px', height: '18px', margin: 0, cursor: 'pointer' }}
                   />
-                  <span>Tem livro de registro?</span>
+                  <span className="custom-checkbox-box"></span>
+                  <span className="custom-checkbox-text">Tem livro de registro?</span>
                 </label>
               </div>
 
@@ -669,18 +670,19 @@ export default function Encomendas() {
               />
             </div>
 
-            <div className="form-group checkbox-group" style={{ marginBottom: '15px' }}>
-              <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', gap: '8px', color: '#cbd5e1' }}>
+            <div className="form-group" style={{ marginBottom: '15px' }}>
+              <label className="custom-checkbox-wrapper">
                 <input
                   type="checkbox"
+                  className="custom-checkbox-input"
                   checked={temLivroRegistro}
                   onChange={(e) => {
                     setTemLivroRegistro(e.target.checked);
                     if (!e.target.checked) setFormData({ ...formData, pagina: "" });
                   }}
-                  style={{ width: '18px', height: '18px', margin: 0, cursor: 'pointer' }}
                 />
-                <span>Tem livro de registro?</span>
+                <span className="custom-checkbox-box"></span>
+                <span className="custom-checkbox-text">Tem livro de registro?</span>
               </label>
             </div>
 

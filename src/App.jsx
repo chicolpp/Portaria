@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
@@ -24,8 +25,50 @@ function Layout({ children }) {
 }
 
 function App() {
+  const [isNetworkError, setIsNetworkError] = useState(false);
+
+  useEffect(() => {
+    // Escuta o evento customizado disparado pelo interceptor do Axios
+    const handleNetworkError = () => {
+      setIsNetworkError(true);
+
+      // Tenta pingar o servidor a cada 3 segundos para ver se voltou
+      const checkConnection = setInterval(async () => {
+        try {
+          const response = await fetch(import.meta.env.VITE_API_URL + "/health");
+          if (response.ok) {
+            setIsNetworkError(false);
+            clearInterval(checkConnection);
+            // Opcional: window.location.reload() para recarregar o estado limpo
+          }
+        } catch (e) {
+          // Continua caido
+        }
+      }, 5000);
+    };
+
+    window.addEventListener('networkError', handleNetworkError);
+
+    return () => {
+      window.removeEventListener('networkError', handleNetworkError);
+    };
+  }, []);
+
   return (
     <BrowserRouter>
+      {/* OVERLAY DE ERRO DE CONEXÃO GLOBAL */}
+      {isNetworkError && (
+        <div className="global-network-error-overlay">
+          <div className="network-error-card">
+            <div className="network-error-icon">📡❌</div>
+            <h2>Conexão Perdida</h2>
+            <p>Não foi possível conectar ao servidor ou banco de dados.</p>
+            <p className="network-pulse">Aguardando reconexão automática...</p>
+            <div className="network-spinner"></div>
+          </div>
+        </div>
+      )}
+
       <Toaster position="top-right" richColors />
       <Routes>
         {/* Redireciona a raiz "/" para "/login" */}

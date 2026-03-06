@@ -667,6 +667,60 @@
   color: #94a3b8;
 }
 
+/* CHECKBOX CUSTOMIZADO PREMIUM */
+.custom-checkbox-wrapper {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  gap: 12px;
+  color: #cbd5e1;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: color 0.2s ease;
+  user-select: none;
+  padding: 5px 0;
+}
+
+.custom-checkbox-wrapper:hover {
+  color: #ffffff;
+}
+
+.custom-checkbox-input {
+  display: none;
+  /* Esconde o visual padrao mas mantem a logica html */
+}
+
+.custom-checkbox-box {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  border: 2px solid #475569;
+  background: rgba(255, 255, 255, 0.03);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.custom-checkbox-wrapper:hover .custom-checkbox-box {
+  border-color: #8b5cf6;
+  background: rgba(139, 92, 246, 0.1);
+}
+
+.custom-checkbox-input:checked+.custom-checkbox-box {
+  background: #8b5cf6;
+  border-color: #8b5cf6;
+  box-shadow: 0 0 12px rgba(139, 92, 246, 0.5);
+}
+
+.custom-checkbox-input:checked+.custom-checkbox-box::after {
+  content: "✓";
+  color: white;
+  font-size: 16px;
+  font-weight: 800;
+}
+
 /* ANIMAÇÃO PARA O CAMPO CONDICIONAL */
 @keyframes slideDown {
   from {

@@ -21,6 +21,19 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 app = Flask(__name__)
 CORS(app)
 
+@app.before_request
+def intercept_html_requests():
+    # Ignora a rota raiz, arquivos estáticos e de assets
+    if request.path == '/' or request.path.startswith('/assets/') or '.' in request.path:
+        return
+        
+    # Se o cliente (navegador) pedir explicitamente HTML (como num F5) em qualquer rota (ex: /encomendas)
+    # Servimos o index.html do React em vez de renderizar o endpoint JSON da API com o mesmo nome
+    accept = request.headers.get('Accept', '')
+    if request.method == 'GET' and 'text/html' in accept:
+        if os.path.exists(os.path.join(STATIC_FOLDER, 'index.html')):
+            return send_from_directory(STATIC_FOLDER, 'index.html')
+
 @app.route("/health")
 def health_check():
     return {"status": "ok", "message": "Portaria API is running"}, 200
