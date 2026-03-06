@@ -586,7 +586,7 @@ export default function Encomendas() {
                     value={editFormData.nome}
                     onChange={handleEditChange}
                     className="modal-input"
-                    placeholder="Nome completo"
+                    placeholder="Ex: João Silva"
                     required
                   />
                 </div>
@@ -668,10 +668,11 @@ export default function Encomendas() {
                   <label className="modal-label">Hora</label>
                   <input
                     type="time"
-                    name="horaRecebimento"
-                    value={editFormData.horaRecebimento}
+                    name="hora_recebimento"
+                    value={editFormData.hora_recebimento}
                     onChange={handleEditChange}
                     className="modal-input"
+                    step="1"
                     required
                   />
                 </div>
@@ -857,6 +858,7 @@ export default function Encomendas() {
                 name="nome"
                 value={formData.nome}
                 onChange={handleChange}
+                placeholder="Ex: João Silva"
               />
             </div>
 
@@ -867,6 +869,7 @@ export default function Encomendas() {
                 name="unidade"
                 value={formData.unidade}
                 onChange={handleChange}
+                placeholder="Ex: 101-A"
               />
             </div>
 
@@ -877,6 +880,7 @@ export default function Encomendas() {
                 name="documento"
                 value={formData.documento}
                 onChange={handleChange}
+                placeholder="Ex: BR123456789BR"
               />
             </div>
 
@@ -948,12 +952,13 @@ export default function Encomendas() {
             <div className="form-group">
               <label>Hora de Recebimento:</label>
               <input
-                type="text"
+                type="time"
                 name="horaRecebimento"
                 value={formData.horaRecebimento}
                 onChange={handleChange}
                 readOnly={!isEditDataHora}
                 className={!isEditDataHora ? "readonly-input" : ""}
+                step="2"
               />
             </div>
 

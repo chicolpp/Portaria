@@ -128,6 +128,29 @@
   box-shadow: 0 0 20px var(--glow-color);
 }
 
+/* Customizing Pickers (Date/Time) */
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="time"]::-webkit-calendar-picker-indicator {
+  filter: invert(1) sepia(100%) saturate(2000%) hue-rotate(240deg);
+  /* Faz o ícone ficar roxo/azul */
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator:hover,
+input[type="time"]::-webkit-calendar-picker-indicator:hover {
+  background: rgba(139, 92, 246, 0.2);
+  transform: scale(1.1);
+}
+
+/* Garante que o texto dentro do picker no mobile também seja legível */
+input[type="date"],
+input[type="time"] {
+  color-scheme: dark;
+}
+
 /* ─── Readonly Input (data/hora automáticos) ─── */
 .readonly-input {
   opacity: 0.55;
