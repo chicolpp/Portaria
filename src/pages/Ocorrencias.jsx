@@ -316,55 +316,63 @@ export default function Ocorrencias() {
               <div className="modal-form-row">
                 <div className="modal-field">
                   <label className="modal-label">Data Início</label>
-                  <Flatpickr
-                    value={filtrosTemporarios.dataInicio}
-                    onChange={([date]) => {
-                      if (date) {
-                        const year = date.getFullYear();
-                        const month = String(date.getMonth() + 1).padStart(2, '0');
-                        const day = String(date.getDate()).padStart(2, '0');
-                        setFiltrosTemporarios({ ...filtrosTemporarios, dataInicio: `${year}-${month}-${day}` });
-                      } else {
-                        setFiltrosTemporarios({ ...filtrosTemporarios, dataInicio: "" });
-                      }
-                    }}
-                    options={{
-                      locale: Portuguese,
-                      dateFormat: "Y-m-d",
-                      altInput: true,
-                      altFormat: "d/m/Y",
-                      disableMobile: "true",
-                      static: true
-                    }}
-                    className="modal-input flatpickr-input-custom"
-                    placeholder="Data inicial"
-                  />
+                  <div className="flatpickr-interactive-wrapper" onClick={(e) => e.stopPropagation()} onMouseDown={(e) => e.stopPropagation()}>
+                    <Flatpickr
+                      value={filtrosTemporarios.dataInicio}
+                      onChange={([date]) => {
+                        if (date) {
+                          const year = date.getFullYear();
+                          const month = String(date.getMonth() + 1).padStart(2, '0');
+                          const day = String(date.getDate()).padStart(2, '0');
+                          setFiltrosTemporarios({ ...filtrosTemporarios, dataInicio: `${year}-${month}-${day}` });
+                        } else {
+                          setFiltrosTemporarios({ ...filtrosTemporarios, dataInicio: "" });
+                        }
+                      }}
+                      options={{
+                        locale: Portuguese,
+                        dateFormat: "Y-m-d",
+                        altInput: true,
+                        altFormat: "d/m/Y",
+                        disableMobile: "true",
+                        static: true,
+                        clickOpens: true,
+                        allowInput: true
+                      }}
+                      className="modal-input flatpickr-input-custom"
+                      placeholder="Data inicial"
+                    />
+                  </div>
                 </div>
                 <div className="modal-field">
                   <label className="modal-label">Data Fim</label>
-                  <Flatpickr
-                    value={filtrosTemporarios.dataFim}
-                    onChange={([date]) => {
-                      if (date) {
-                        const year = date.getFullYear();
-                        const month = String(date.getMonth() + 1).padStart(2, '0');
-                        const day = String(date.getDate()).padStart(2, '0');
-                        setFiltrosTemporarios({ ...filtrosTemporarios, dataFim: `${year}-${month}-${day}` });
-                      } else {
-                        setFiltrosTemporarios({ ...filtrosTemporarios, dataFim: "" });
-                      }
-                    }}
-                    options={{
-                      locale: Portuguese,
-                      dateFormat: "Y-m-d",
-                      altInput: true,
-                      altFormat: "d/m/Y",
-                      disableMobile: "true",
-                      static: true
-                    }}
-                    className="modal-input flatpickr-input-custom"
-                    placeholder="Data final"
-                  />
+                  <div className="flatpickr-interactive-wrapper" onClick={(e) => e.stopPropagation()} onMouseDown={(e) => e.stopPropagation()}>
+                    <Flatpickr
+                      value={filtrosTemporarios.dataFim}
+                      onChange={([date]) => {
+                        if (date) {
+                          const year = date.getFullYear();
+                          const month = String(date.getMonth() + 1).padStart(2, '0');
+                          const day = String(date.getDate()).padStart(2, '0');
+                          setFiltrosTemporarios({ ...filtrosTemporarios, dataFim: `${year}-${month}-${day}` });
+                        } else {
+                          setFiltrosTemporarios({ ...filtrosTemporarios, dataFim: "" });
+                        }
+                      }}
+                      options={{
+                        locale: Portuguese,
+                        dateFormat: "Y-m-d",
+                        altInput: true,
+                        altFormat: "d/m/Y",
+                        disableMobile: "true",
+                        static: true,
+                        clickOpens: true,
+                        allowInput: true
+                      }}
+                      className="modal-input flatpickr-input-custom"
+                      placeholder="Data final"
+                    />
+                  </div>
                 </div>
               </div>
 
@@ -424,48 +432,56 @@ export default function Ocorrencias() {
               <div className="modal-form-row">
                 <div className="modal-field">
                   <label className="modal-label">Data</label>
-                  <Flatpickr
-                    value={editFormData.data}
-                    onChange={([date]) => {
-                      if (date) {
-                        const year = date.getFullYear();
-                        const month = String(date.getMonth() + 1).padStart(2, '0');
-                        const day = String(date.getDate()).padStart(2, '0');
-                        setEditFormData({ ...editFormData, data: `${year}-${month}-${day}` });
-                      }
-                    }}
-                    options={{
-                      locale: Portuguese,
-                      dateFormat: "Y-m-d",
-                      altInput: true,
-                      altFormat: "d/m/Y",
-                      disableMobile: "true",
-                      static: true
-                    }}
-                    className="modal-input flatpickr-input-custom"
-                  />
+                  <div className="flatpickr-interactive-wrapper" onClick={(e) => e.stopPropagation()} onMouseDown={(e) => e.stopPropagation()}>
+                    <Flatpickr
+                      value={editFormData.data}
+                      onChange={([date]) => {
+                        if (date) {
+                          const year = date.getFullYear();
+                          const month = String(date.getMonth() + 1).padStart(2, '0');
+                          const day = String(date.getDate()).padStart(2, '0');
+                          setEditFormData({ ...editFormData, data: `${year}-${month}-${day}` });
+                        }
+                      }}
+                      options={{
+                        locale: Portuguese,
+                        dateFormat: "Y-m-d",
+                        altInput: true,
+                        altFormat: "d/m/Y",
+                        disableMobile: "true",
+                        static: true,
+                        clickOpens: true,
+                        allowInput: true
+                      }}
+                      className="modal-input flatpickr-input-custom"
+                    />
+                  </div>
                 </div>
                 <div className="modal-field">
                   <label className="modal-label">Hora</label>
-                  <Flatpickr
-                    value={editFormData.hora}
-                    onChange={([date]) => {
-                      if (date) {
-                        const hours = String(date.getHours()).padStart(2, '0');
-                        const minutes = String(date.getMinutes()).padStart(2, '0');
-                        setEditFormData({ ...editFormData, hora: `${hours}:${minutes}` });
-                      }
-                    }}
-                    options={{
-                      enableTime: true,
-                      noCalendar: true,
-                      dateFormat: "H:i",
-                      time_24hr: true,
-                      disableMobile: "true",
-                      static: true
-                    }}
-                    className="modal-input flatpickr-input-custom"
-                  />
+                  <div className="flatpickr-interactive-wrapper" onClick={(e) => e.stopPropagation()} onMouseDown={(e) => e.stopPropagation()}>
+                    <Flatpickr
+                      value={editFormData.hora}
+                      onChange={([date]) => {
+                        if (date) {
+                          const hours = String(date.getHours()).padStart(2, '0');
+                          const minutes = String(date.getMinutes()).padStart(2, '0');
+                          setEditFormData({ ...editFormData, hora: `${hours}:${minutes}` });
+                        }
+                      }}
+                      options={{
+                        enableTime: true,
+                        noCalendar: true,
+                        dateFormat: "H:i",
+                        time_24hr: true,
+                        disableMobile: "true",
+                        static: true,
+                        clickOpens: true,
+                        allowInput: true
+                      }}
+                      className="modal-input flatpickr-input-custom"
+                    />
+                  </div>
                 </div>
               </div>
 

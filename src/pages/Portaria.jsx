@@ -450,8 +450,8 @@ export default function Portaria() {
 
       {/* MODAL EDITAR ACESSO */}
       {modalEditar && (
-        <div className="global-modal-overlay" onClick={() => setModalEditar(null)}>
-          <div className="global-modal" onClick={(e) => e.stopPropagation()}>
+        <div className="global-modal-overlay" onMouseDown={(e) => { if (e.target === e.currentTarget) setModalEditar(null); }}>
+          <div className="global-modal" onMouseDown={(e) => e.stopPropagation()}>
             <button className="global-modal-close" onClick={() => setModalEditar(null)}>✕</button>
             <div className="modal-header">
               <PencilIcon style={{ width: 22, height: 22, marginRight: '10px' }} />
@@ -549,8 +549,8 @@ export default function Portaria() {
 
       {/* Modal de Filtro */}
       {modalFiltro && (
-        <div className="global-modal-overlay" onClick={() => setModalFiltro(false)}>
-          <div className="global-modal" onClick={(e) => e.stopPropagation()}>
+        <div className="global-modal-overlay" onMouseDown={(e) => { if (e.target === e.currentTarget) setModalFiltro(false); }}>
+          <div className="global-modal" onMouseDown={(e) => e.stopPropagation()}>
             <button className="global-modal-close" onClick={() => setModalFiltro(false)}>✕</button>
             <div className="modal-header">
               <FilterIcon style={{ width: 20, height: 20, marginRight: '10px' }} />

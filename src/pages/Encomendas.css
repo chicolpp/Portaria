@@ -1152,3 +1152,15 @@
     font-size: 12px;
   }
 }
+
+/* FLATPIKCR INTERACTIVE WRAPPER FIX */
+.flatpickr-interactive-wrapper {
+  width: 100%;
+  display: flex;
+  align-items: stretch;
+  position: relative;
+}
+
+.flatpickr-interactive-wrapper .flatpickr-input-custom {
+  width: 100%;
+}

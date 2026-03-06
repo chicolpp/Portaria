@@ -240,56 +240,63 @@ export default function LivroDeOcorrencia() {
 
       {/* MODAL EDITAR */}
       {modalEditar && (
-        <div className="foto-modal-overlay" onClick={closeEditarModal}>
-          <div className="editar-modal" onClick={(e) => e.stopPropagation()}>
+        <div className="foto-modal-overlay" onMouseDown={(e) => { if (e.target === e.currentTarget) closeEditarModal(); }}>
+          <div className="editar-modal" onMouseDown={(e) => e.stopPropagation()}>
             <button className="foto-modal-close" onClick={closeEditarModal}>✕</button>
             <h3>Editar Ocorrência</h3>
 
             <form className="editar-form" onSubmit={handleEditSubmit}>
               <div className="editar-form-group">
                 <label>Data:</label>
-                <Flatpickr
-                  value={editFormData.data}
-                  onChange={([date]) => {
-                    if (date) {
-                      const year = date.getFullYear();
-                      const month = String(date.getMonth() + 1).padStart(2, '0');
-                      const day = String(date.getDate()).padStart(2, '0');
-                      setEditFormData({ ...editFormData, data: `${year}-${month}-${day}` });
-                    }
-                  }}
-                  options={{
-                    locale: Portuguese,
-                    dateFormat: "Y-m-d",
-                    altInput: true,
-                    altFormat: "d/m/Y",
-                    disableMobile: "true",
-                    static: true
-                  }}
-                  className="modal-input flatpickr-input-custom"
-                />
+                <div className="flatpickr-interactive-wrapper" onClick={(e) => e.stopPropagation()} onMouseDown={(e) => e.stopPropagation()}>
+                  <Flatpickr
+                    value={editFormData.data}
+                    onChange={([date]) => {
+                      if (date) {
+                        const year = date.getFullYear();
+                        const month = String(date.getMonth() + 1).padStart(2, '0');
+                        const day = String(date.getDate()).padStart(2, '0');
+                        setEditFormData({ ...editFormData, data: `${year}-${month}-${day}` });
+                      }
+                    }}
+                    options={{
+                      locale: Portuguese,
+                      dateFormat: "Y-m-d",
+                      altInput: true,
+                      altFormat: "d/m/Y",
+                      disableMobile: "true",
+                      static: true,
+                      clickOpens: true
+                    }}
+                    className="modal-input flatpickr-input-custom"
+                  />
+                </div>
               </div>
 
               <div className="editar-form-group">
                 <label>Hora:</label>
-                <Flatpickr
-                  value={editFormData.hora}
-                  onChange={([date]) => {
-                    if (date) {
-                      const hours = String(date.getHours()).padStart(2, '0');
-                      const minutes = String(date.getMinutes()).padStart(2, '0');
-                      setEditFormData({ ...editFormData, hora: `${hours}:${minutes}` });
-                    }
-                  }}
-                  options={{
-                    enableTime: true,
-                    noCalendar: true,
-                    dateFormat: "H:i",
-                    time_24hr: true,
-                    disableMobile: "true"
-                  }}
-                  className="modal-input flatpickr-input-custom"
-                />
+                <div className="flatpickr-interactive-wrapper" onClick={(e) => e.stopPropagation()} onMouseDown={(e) => e.stopPropagation()}>
+                  <Flatpickr
+                    value={editFormData.hora}
+                    onChange={([date]) => {
+                      if (date) {
+                        const hours = String(date.getHours()).padStart(2, '0');
+                        const minutes = String(date.getMinutes()).padStart(2, '0');
+                        setEditFormData({ ...editFormData, hora: `${hours}:${minutes}` });
+                      }
+                    }}
+                    options={{
+                      enableTime: true,
+                      noCalendar: true,
+                      dateFormat: "H:i",
+                      time_24hr: true,
+                      disableMobile: "true",
+                      static: true,
+                      clickOpens: true
+                    }}
+                    className="modal-input flatpickr-input-custom"
+                  />
+                </div>
               </div>
 
               <div className="editar-form-group">

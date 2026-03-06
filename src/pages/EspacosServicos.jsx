@@ -843,8 +843,8 @@ export default function EspacosServicos() {
       {/* --- MODAL DE RETIRADA DE CHAVE --- */}
       {
         modalChaveOpen && (
-          <div className="global-modal-overlay" onClick={() => setModalChaveOpen(false)}>
-            <div className="global-modal" onClick={e => e.stopPropagation()}>
+          <div className="global-modal-overlay" onClick={(e) => { if (e.target === e.currentTarget) setModalChaveOpen(false); }}>
+            <div className="global-modal" onClick={e => e.stopPropagation()} onMouseDown={(e) => e.stopPropagation()}>
               <button className="global-modal-close" onClick={() => setModalChaveOpen(false)}>✕</button>
               <h3>Retirar Chave: {selectedChave?.area_nome}</h3>
 
@@ -992,8 +992,8 @@ export default function EspacosServicos() {
 
       {/* --- MODAL DE RETIRADA DE ITEM --- */}
       {modalItemOpen && (
-        <div className="foto-modal-overlay" onClick={() => setModalItemOpen(false)}>
-          <div className="retirada-modal" onClick={e => e.stopPropagation()}>
+        <div className="foto-modal-overlay" onClick={(e) => { if (e.target === e.currentTarget) setModalItemOpen(false); }}>
+          <div className="retirada-modal" onClick={e => e.stopPropagation()} onMouseDown={(e) => e.stopPropagation()}>
             <button className="foto-modal-close" onClick={() => setModalItemOpen(false)}>✕</button>
             <h3>Emprestar Item: {selectedItem?.nome}</h3>
 
@@ -1047,8 +1047,8 @@ export default function EspacosServicos() {
 
       {/* Modal de Histórico */}
       {modalHistorico && (
-        <div className="global-modal-overlay" onClick={() => setModalHistorico(null)}>
-          <div className="global-modal historico-modal" onClick={e => e.stopPropagation()}>
+        <div className="global-modal-overlay" onClick={(e) => { if (e.target === e.currentTarget) setModalHistorico(null); }}>
+          <div className="global-modal historico-modal" onClick={e => e.stopPropagation()} onMouseDown={(e) => e.stopPropagation()}>
             <button className="global-modal-close" onClick={() => setModalHistorico(null)}>✕</button>
             <h3>Histórico: {modalHistorico.area_nome || modalHistorico.nome}</h3>
 
@@ -1098,8 +1098,8 @@ export default function EspacosServicos() {
 
       {/* Modal de Assinatura (Zoom) */}
       {assinaturaVer && (
-        <div className="global-modal-overlay" onClick={() => setAssinaturaVer(null)}>
-          <div className="global-modal assinatura-zoom-container" onClick={e => e.stopPropagation()}>
+        <div className="global-modal-overlay" onClick={(e) => { if (e.target === e.currentTarget) setAssinaturaVer(null); }}>
+          <div className="global-modal assinatura-zoom-container" onClick={e => e.stopPropagation()} onMouseDown={(e) => e.stopPropagation()}>
             <button className="global-modal-close" onClick={() => setAssinaturaVer(null)}>✕</button>
             <h3>Assinatura do Morador/Responsável</h3>
             <img src={assinaturaVer} alt="Assinatura" className="assinatura-img-zoom" />
@@ -1109,8 +1109,8 @@ export default function EspacosServicos() {
 
       {/* Modal de Edição Customizado */}
       {modalEditOpen && (
-        <div className="global-modal-overlay" onClick={() => setModalEditOpen(false)}>
-          <div className="global-modal edit-modal" onClick={e => e.stopPropagation()}>
+        <div className="global-modal-overlay" onClick={(e) => { if (e.target === e.currentTarget) setModalEditOpen(false); }}>
+          <div className="global-modal edit-modal" onClick={e => e.stopPropagation()} onMouseDown={(e) => e.stopPropagation()}>
             <div className="modal-header">
               <h3>Editar {editType === 'chave' ? 'Chave' : 'Item'}</h3>
               <button className="global-modal-close" onClick={() => setModalEditOpen(false)}>✕</button>
@@ -1137,8 +1137,8 @@ export default function EspacosServicos() {
 
       {/* Modal de Confirmação Unificado (Devolução/Exclusão) */}
       {modalConfirmOpen && (
-        <div className="global-modal-overlay danger" onClick={() => setModalConfirmOpen(false)}>
-          <div className={`global-modal confirm-modal ${confirmConfig.type}`} onClick={e => e.stopPropagation()}>
+        <div className="global-modal-overlay danger" onClick={(e) => { if (e.target === e.currentTarget) setModalConfirmOpen(false); }}>
+          <div className={`global-modal confirm-modal ${confirmConfig.type}`} onClick={e => e.stopPropagation()} onMouseDown={(e) => e.stopPropagation()}>
             <div className="modal-header">
               <h3>{confirmConfig.title}</h3>
               <button className="global-modal-close" onClick={() => setModalConfirmOpen(false)}>✕</button>

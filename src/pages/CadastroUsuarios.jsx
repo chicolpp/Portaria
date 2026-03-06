@@ -309,8 +309,8 @@ export default function CadastroUsuarios() {
     <div className="usuarios-container">
       {/* MODAL EDITAR */}
       {modalEditar && (
-        <div className="global-modal-overlay" onClick={closeEditarModal}>
-          <div className="global-modal" onClick={(e) => e.stopPropagation()}>
+        <div className="global-modal-overlay" onMouseDown={(e) => { if (e.target === e.currentTarget) closeEditarModal(); }}>
+          <div className="global-modal" onMouseDown={(e) => e.stopPropagation()}>
             <button className="global-modal-close" onClick={closeEditarModal}>✕</button>
             <h3>Editar Usuário</h3>
             <form className="modal-form" onSubmit={handleEditSubmit}>
@@ -710,8 +710,8 @@ export default function CadastroUsuarios() {
 
       {/* Modal de Filtro */}
       {modalFiltro && (
-        <div className="global-modal-overlay" onClick={() => setModalFiltro(false)}>
-          <div className="global-modal" onClick={(e) => e.stopPropagation()}>
+        <div className="global-modal-overlay" onMouseDown={(e) => { if (e.target === e.currentTarget) setModalFiltro(false); }}>
+          <div className="global-modal" onMouseDown={(e) => e.stopPropagation()}>
             <button className="global-modal-close" onClick={() => setModalFiltro(false)}>✕</button>
             <div className="modal-header">
               <FilterIcon style={{ width: 20, height: 20, marginRight: '10px' }} />

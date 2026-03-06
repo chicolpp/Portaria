@@ -173,8 +173,8 @@ export default function LivroDeOcorrencia() {
     <div className="ocorrencias-container">
       {/* MODAL VISUALIZAR */}
       {modalVisualizar && (
-        <div className="global-modal-overlay" onClick={closeVisualizarModal}>
-          <div className="global-modal" onClick={(e) => e.stopPropagation()}>
+        <div className="global-modal-overlay" onMouseDown={(e) => { if (e.target === e.currentTarget) closeVisualizarModal(); }}>
+          <div className="global-modal" onMouseDown={(e) => e.stopPropagation()}>
             <button className="global-modal-close" onClick={closeVisualizarModal}>✕</button>
             <h3>Detalhes da Ocorrência</h3>
 
@@ -197,8 +197,8 @@ export default function LivroDeOcorrencia() {
 
       {/* MODAL EDITAR */}
       {modalEditar && (
-        <div className="global-modal-overlay" onClick={closeEditarModal}>
-          <div className="global-modal" onClick={(e) => e.stopPropagation()}>
+        <div className="global-modal-overlay" onMouseDown={(e) => { if (e.target === e.currentTarget) closeEditarModal(); }}>
+          <div className="global-modal" onMouseDown={(e) => e.stopPropagation()}>
             <button className="global-modal-close" onClick={closeEditarModal}>✕</button>
             <h3>Editar Ocorrência</h3>
 
