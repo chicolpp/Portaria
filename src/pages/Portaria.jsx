@@ -1,7 +1,10 @@
 import { useState, useEffect, useMemo } from "react";
 import api from "../services/api";
 import { toast } from "sonner";
-import { formatDateTime } from "../utils/formatters";
+import { formatDate } from "../utils/formatters";
+import Flatpickr from "react-flatpickr";
+import "flatpickr/dist/flatpickr.min.css";
+import { Portuguese } from "flatpickr/dist/l10n/pt.js";
 import "./Portaria.css";
 
 // Ícones SVG inline
@@ -121,7 +124,7 @@ export default function Portaria() {
 
   const registrarSaida = async (id) => {
     try {
-      await api.post(`/acessos/${id}/saida`);
+      await api.post(`/ acessos / ${id}/saida`);
       toast.success("Saída registrada com sucesso!");
       fetchAcessos();
     } catch (error) {
@@ -605,20 +608,52 @@ export default function Portaria() {
               <div className="modal-form-row">
                 <div className="modal-field">
                   <label className="modal-label">Data Início</label>
-                  <input
-                    type="date"
-                    className="modal-input"
+                  <Flatpickr
                     value={filtrosTemporarios.dataInicio}
-                    onChange={(e) => setFiltrosTemporarios({ ...filtrosTemporarios, dataInicio: e.target.value })}
+                    onChange={([date]) => {
+                      if (date) {
+                        const year = date.getFullYear();
+                        const month = String(date.getMonth() + 1).padStart(2, '0');
+                        const day = String(date.getDate()).padStart(2, '0');
+                        setFiltrosTemporarios({ ...filtrosTemporarios, dataInicio: `${year}-${month}-${day}` });
+                      } else {
+                        setFiltrosTemporarios({ ...filtrosTemporarios, dataInicio: "" });
+                      }
+                    }}
+                    options={{
+                      locale: Portuguese,
+                      dateFormat: "Y-m-d",
+                      altInput: true,
+                      altFormat: "d/m/Y",
+                      disableMobile: "true"
+                    }}
+                    className="modal-input flatpickr-input-custom"
+                    placeholder="Data inicial"
                   />
                 </div>
                 <div className="modal-field">
                   <label className="modal-label">Data Fim</label>
-                  <input
-                    type="date"
-                    className="modal-input"
+                  <Flatpickr
                     value={filtrosTemporarios.dataFim}
-                    onChange={(e) => setFiltrosTemporarios({ ...filtrosTemporarios, dataFim: e.target.value })}
+                    onChange={([date]) => {
+                      if (date) {
+                        const year = date.getFullYear();
+                        const month = String(date.getMonth() + 1).padStart(2, '0');
+                        const day = String(date.getDate()).padStart(2, '0');
+                        setFiltrosTemporarios({ ...filtrosTemporarios, dataFim: `${year}-${month}-${day}` });
+                      } else {
+                        setFiltrosTemporarios({ ...filtrosTemporarios, dataFim: "" });
+                      }
+                    }}
+                    options={{
+                      locale: Portuguese,
+                      dateFormat: "Y-m-d",
+                      altInput: true,
+                      altFormat: "d/m/Y",
+                      disableMobile: "true"
+                    }}
+                    className="modal-input flatpickr-input-custom"
+                    placeholder="Data final"
                   />
                 </div>
               </div>

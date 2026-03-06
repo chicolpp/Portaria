@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
 import api from "../services/api";
 import { toast } from "sonner";
+import Flatpickr from "react-flatpickr";
+import "flatpickr/dist/flatpickr.min.css";
+import { Portuguese } from "flatpickr/dist/l10n/pt.js";
 import "./Ocorrencias.css";
 
 // Ícones SVG inline
@@ -245,23 +248,46 @@ export default function LivroDeOcorrencia() {
             <form className="editar-form" onSubmit={handleEditSubmit}>
               <div className="editar-form-group">
                 <label>Data:</label>
-                <input
-                  type="date"
-                  name="data"
+                <Flatpickr
                   value={editFormData.data}
-                  onChange={handleEditChange}
-                  required
+                  onChange={([date]) => {
+                    if (date) {
+                      const year = date.getFullYear();
+                      const month = String(date.getMonth() + 1).padStart(2, '0');
+                      const day = String(date.getDate()).padStart(2, '0');
+                      setEditFormData({ ...editFormData, data: `${year}-${month}-${day}` });
+                    }
+                  }}
+                  options={{
+                    locale: Portuguese,
+                    dateFormat: "Y-m-d",
+                    altInput: true,
+                    altFormat: "d/m/Y",
+                    disableMobile: "true"
+                  }}
+                  className="modal-input flatpickr-input-custom"
                 />
               </div>
 
               <div className="editar-form-group">
                 <label>Hora:</label>
-                <input
-                  type="time"
-                  name="hora"
+                <Flatpickr
                   value={editFormData.hora}
-                  onChange={handleEditChange}
-                  required
+                  onChange={([date]) => {
+                    if (date) {
+                      const hours = String(date.getHours()).padStart(2, '0');
+                      const minutes = String(date.getMinutes()).padStart(2, '0');
+                      setEditFormData({ ...editFormData, hora: `${hours}:${minutes}` });
+                    }
+                  }}
+                  options={{
+                    enableTime: true,
+                    noCalendar: true,
+                    dateFormat: "H:i",
+                    time_24hr: true,
+                    disableMobile: "true"
+                  }}
+                  className="modal-input flatpickr-input-custom"
                 />
               </div>
 
@@ -371,22 +397,47 @@ export default function LivroDeOcorrencia() {
 
             <div className="form-group">
               <label>Data:</label>
-              <input
-                type="date"
-                name="data"
+              <Flatpickr
                 value={formData.data}
-                onChange={handleChange}
+                onChange={([date]) => {
+                  if (date) {
+                    const year = date.getFullYear();
+                    const month = String(date.getMonth() + 1).padStart(2, '0');
+                    const day = String(date.getDate()).padStart(2, '0');
+                    setFormData({ ...formData, data: `${year}-${month}-${day}` });
+                  }
+                }}
+                options={{
+                  locale: Portuguese,
+                  dateFormat: "Y-m-d",
+                  altInput: true,
+                  altFormat: "d/m/Y",
+                  disableMobile: "true"
+                }}
+                className="flatpickr-input-custom"
                 required
               />
             </div>
 
             <div className="form-group">
               <label>Hora:</label>
-              <input
-                type="time"
-                name="hora"
+              <Flatpickr
                 value={formData.hora}
-                onChange={handleChange}
+                onChange={([date]) => {
+                  if (date) {
+                    const hours = String(date.getHours()).padStart(2, '0');
+                    const minutes = String(date.getMinutes()).padStart(2, '0');
+                    setFormData({ ...formData, hora: `${hours}:${minutes}` });
+                  }
+                }}
+                options={{
+                  enableTime: true,
+                  noCalendar: true,
+                  dateFormat: "H:i",
+                  time_24hr: true,
+                  disableMobile: "true"
+                }}
+                className="flatpickr-input-custom"
                 required
               />
             </div>
