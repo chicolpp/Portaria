@@ -131,7 +131,6 @@ export default function Portaria() {
   };
 
   const acessosFiltrados = useMemo(() => {
-    const { useMemo } = require("react"); // ensure useMemo is imported
     return acessos.filter(a => {
       const nomeCompleto = `${a.nome} ${a.sobrenome}`.toLowerCase();
       const matchNome = !filtros.nome || nomeCompleto.includes(filtros.nome.toLowerCase());
