@@ -38,6 +38,15 @@ def intercept_html_requests():
 def health_check():
     return {"status": "ok", "message": "Portaria API is running"}, 200
 
+@app.route("/maintenance/db-init")
+def maintainence_db_init():
+    try:
+        with app.app_context():
+            db.create_all()
+        return {"status": "ok", "message": "Banco de dados sincronizado"}, 200
+    except Exception as e:
+        return {"status": "error", "message": str(e)}, 500
+
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
@@ -73,54 +82,9 @@ app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
 
 db.init_app(app)
 
-with app.app_context():
-    db.create_all()
-    
-    # (Migrations removidas - as colunas já foram atualizadas para TEXT e estavam causando deadlock na AWS/Render)
-
-    # Criar admin padrão se não existir
-    admin_email = "admin@portaria.com"
-    admin = User.query.filter_by(email=admin_email).first()
-    if not admin:
-        admin = User(
-            nome="Administrador",
-            sobrenome="Sistema",
-            email=admin_email,
-            cargo="administrador",
-            is_admin=True,
-            ativo=True
-        )
-        admin.set_password("admin123")
-        db.session.add(admin)
-        db.session.commit()
-        print("✅ Admin padrão criado: admin@portaria.com / admin123")
-    else:
-        # Se admin existe mas senha não funciona, resetar
-        if not admin.check_password("admin123"):
-            admin.set_password("admin123")
-            admin.ativo = True
-            db.session.commit()
-            print("🔄 Senha do admin resetada para: admin123")
-
-    # Seed de itens de portaria e reservas exemplo
-    if ItemPortaria.query.count() == 0:
-        db.session.add_all([
-            ItemPortaria(nome="Carrinho 1", tipo="carrinho"),
-            ItemPortaria(nome="Escada 1", tipo="escada"),
-            ItemPortaria(nome="Furadeira 1", tipo="ferramenta"),
-        ])
-        db.session.commit()
-        print("✅ Itens de portaria iniciais criados")
-
-    # Reservas de exemplo do dia (apenas se vazio)
-    if ReservaEspaco.query.count() == 0:
-        today = datetime.date.today()
-        db.session.add_all([
-            ReservaEspaco(espaco="Salão de Festas", nome_morador="João Silva", data=today, hora_inicio=datetime.time(18,0), hora_fim=datetime.time(22,0)),
-            ReservaEspaco(espaco="Churrasqueira", nome_morador="Maria Souza", data=today, hora_inicio=datetime.time(12,0), hora_fim=datetime.time(16,0)),
-        ])
-        db.session.commit()
-        print("✅ Reservas de exemplo adicionadas")
+# A inicialização do banco (db.create_all() e seeds) foi removida do escopo global
+# para evitar bloqueios de renderização (timeouts no Gunicorn) causados por Eventos 
+# de Lock de Banco de Dados. As migrações devem idealmente ser feitas numa rota separada ou CLI.
 
 @app.route("/register", methods=["POST"])
 def register():
