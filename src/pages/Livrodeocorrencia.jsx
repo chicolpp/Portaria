@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import api from "../services/api";
 import { toast } from "sonner";
 import { formatDate, formatTime } from "../utils/formatters";
@@ -64,6 +64,27 @@ const UserPlusIcon = ({ className, style }) => (
   </svg>
 );
 
+const SortIcon = ({ direction, active }) => {
+  if (!active) {
+    return (
+      <svg style={{ width: 14, height: 14, marginLeft: 6, opacity: 0.3 }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M7 15l5 5 5-5" />
+        <path d="M7 9l5-5 5 5" />
+      </svg>
+    );
+  }
+  return direction === 'asc' ? (
+    <svg style={{ width: 14, height: 14, marginLeft: 6, color: 'var(--primary-light)' }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M18 15l-6-6-6 6" />
+    </svg>
+  ) : (
+    <svg style={{ width: 14, height: 14, marginLeft: 6, color: 'var(--primary-light)' }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M6 9l6 6 6-6" />
+    </svg>
+  );
+};
+
+
 const CheckIcon = ({ style }) => (
   <svg style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
     <polyline points="20 6 9 17 4 12" />
@@ -83,6 +104,7 @@ export default function LivroDeOcorrencia() {
   const [loading, setLoading] = useState(false);
   const [modalVisualizar, setModalVisualizar] = useState(null);
   const [modalEditar, setModalEditar] = useState(null);
+  const [sortConfig, setSortConfig] = useState({ key: 'id', direction: 'desc' });
 
   const [formData, setFormData] = useState({
     data: new Date().toISOString().split('T')[0],
@@ -105,6 +127,49 @@ export default function LivroDeOcorrencia() {
     const { name, value } = e.target;
     setEditFormData({ ...editFormData, [name]: value });
   };
+
+  const ocorrenciasOrdenadas = useMemo(() => {
+    const ordenadas = [...ocorrencias];
+    if (sortConfig.key) {
+      ordenadas.sort((a, b) => {
+        let valA = a[sortConfig.key];
+        let valB = b[sortConfig.key];
+
+        if (valA === null || valA === undefined) valA = '';
+        if (valB === null || valB === undefined) valB = '';
+
+        if (typeof valA === 'string') {
+          valA = valA.toLowerCase();
+          valB = valB.toLowerCase();
+          if (sortConfig.direction === 'asc') {
+            return valA.localeCompare(valB);
+          } else {
+            return valB.localeCompare(valA);
+          }
+        } else {
+          if (sortConfig.direction === 'asc') {
+            return valA > valB ? 1 : -1;
+          } else {
+            return valA < valB ? 1 : -1;
+          }
+        }
+      });
+    }
+    return ordenadas;
+  }, [ocorrencias, sortConfig]);
+
+  const handleSort = (key) => {
+    let direction = 'asc';
+    if (sortConfig.key === key && sortConfig.direction === 'asc') {
+      direction = 'desc';
+    }
+    setSortConfig({ key, direction });
+  };
+
+  const getSortIcon = (key) => {
+    return <SortIcon active={sortConfig.key === key} direction={sortConfig.direction} />;
+  };
+
 
   const fetchOcorrencias = async () => {
     try {
@@ -480,19 +545,33 @@ export default function LivroDeOcorrencia() {
               <table className="ocorrencias-table">
                 <thead>
                   <tr>
-                    <th>ID</th>
-                    <th>Data</th>
-                    <th>Hora</th>
-                    <th>Unidade</th>
-                    <th>Morador</th>
-                    <th>Registrada por</th>
-                    <th>Quem Registrou</th>
-                    <th>Ações</th>
+                    <th onClick={() => handleSort('id')} className="sortable-th">
+                      <div className="th-content">ID {getSortIcon('id')}</div>
+                    </th>
+                    <th onClick={() => handleSort('data')} className="sortable-th">
+                      <div className="th-content">DATA {getSortIcon('data')}</div>
+                    </th>
+                    <th onClick={() => handleSort('hora')} className="sortable-th">
+                      <div className="th-content">HORA {getSortIcon('hora')}</div>
+                    </th>
+                    <th onClick={() => handleSort('unidade_infratante')} className="sortable-th">
+                      <div className="th-content">UNIDADE {getSortIcon('unidade_infratante')}</div>
+                    </th>
+                    <th onClick={() => handleSort('nome_morador')} className="sortable-th">
+                      <div className="th-content">MORADOR {getSortIcon('nome_morador')}</div>
+                    </th>
+                    <th onClick={() => handleSort('registrada_por')} className="sortable-th">
+                      <div className="th-content">REGISTRADA POR {getSortIcon('registrada_por')}</div>
+                    </th>
+                    <th onClick={() => handleSort('quem_registrou')} className="sortable-th">
+                      <div className="th-content">QUEM REGISTROU {getSortIcon('quem_registrou')}</div>
+                    </th>
+                    <th>AÇÕES</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {ocorrencias.length > 0 ? (
-                    ocorrencias.map((o) => (
+                  {ocorrenciasOrdenadas.length > 0 ? (
+                    ocorrenciasOrdenadas.map((o) => (
                       <tr key={o.id}>
                         <td>{o.id}</td>
                         <td>{formatDate(o.data)}</td>
