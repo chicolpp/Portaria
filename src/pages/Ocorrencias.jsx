@@ -342,8 +342,14 @@ export default function Ocorrencias() {
                   <th onClick={() => handleSort('id')} className="sortable-th">
                     <div className="th-content">ID {getSortIcon('id')}</div>
                   </th>
+                  <th onClick={() => handleSort('unidade_infratante')} className="sortable-th">
+                    <div className="th-content">Unidade {getSortIcon('unidade_infratante')}</div>
+                  </th>
+                  <th onClick={() => handleSort('nome_morador')} className="sortable-th">
+                    <div className="th-content">Morador {getSortIcon('nome_morador')}</div>
+                  </th>
                   <th onClick={() => handleSort('motivo_ocorrencia')} className="sortable-th">
-                    <div className="th-content">Descrição {getSortIcon('motivo_ocorrencia')}</div>
+                    <div className="th-content">Motivo {getSortIcon('motivo_ocorrencia')}</div>
                   </th>
                   <th onClick={() => handleSort('data')} className="sortable-th">
                     <div className="th-content">Data {getSortIcon('data')}</div>
@@ -358,7 +364,11 @@ export default function Ocorrencias() {
                 {ocorrenciasFiltradas.map((o) => (
                   <tr key={o.id}>
                     <td>{o.id}</td>
-                    <td>{o.unidade_infratante} - {o.nome_morador}</td>
+                    <td>{o.unidade_infratante}</td>
+                    <td>{o.nome_morador}</td>
+                    <td title={o.motivo_ocorrencia}>
+                      {o.motivo_ocorrencia.length > 30 ? o.motivo_ocorrencia.substring(0, 30) + "..." : o.motivo_ocorrencia}
+                    </td>
                     <td>{formatDate(o.data)}</td>
                     <td>{formatTime(o.hora)}</td>
                     <td>

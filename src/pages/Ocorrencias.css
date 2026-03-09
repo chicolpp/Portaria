@@ -234,6 +234,18 @@
   padding: 8px 12px;
 }
 
+.sortable-th {
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.sortable-th:hover {
+  background: rgba(139, 92, 246, 0.15);
+  color: white;
+}
+
 .ocorrencias-table td {
   padding: 8px 12px;
 }
