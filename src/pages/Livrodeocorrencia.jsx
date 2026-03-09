@@ -297,7 +297,7 @@ export default function LivroDeOcorrencia() {
               </div>
 
               <div className="editar-form-group">
-                <label>Unidade Infratante:</label>
+                <label>Unidade Infratante: <span style={{ color: '#ef4444' }}>*</span></label>
                 <input
                   type="text"
                   name="unidadeInfratante"
@@ -308,7 +308,7 @@ export default function LivroDeOcorrencia() {
               </div>
 
               <div className="editar-form-group">
-                <label>Nome do Morador:</label>
+                <label>Nome do Morador: <span style={{ color: '#ef4444' }}>*</span></label>
                 <input
                   type="text"
                   name="nomeMorador"
@@ -319,7 +319,7 @@ export default function LivroDeOcorrencia() {
               </div>
 
               <div className="editar-form-group">
-                <label>Registrada por:</label>
+                <label>Registrada por: <span style={{ color: '#ef4444' }}>*</span></label>
                 <select
                   name="registradaPor"
                   value={editFormData.registradaPor}
@@ -334,7 +334,7 @@ export default function LivroDeOcorrencia() {
 
               {editFormData.registradaPor && (
                 <div className="editar-form-group">
-                  <label>Quem Registrou:</label>
+                  <label>Quem Registrou: <span style={{ color: '#ef4444' }}>*</span></label>
                   {editFormData.registradaPor === "condominio" ? (
                     <input
                       type="text"
@@ -356,7 +356,7 @@ export default function LivroDeOcorrencia() {
               )}
 
               <div className="editar-form-group">
-                <label>Motivo da Ocorrência:</label>
+                <label>Motivo da Ocorrência: <span style={{ color: '#ef4444' }}>*</span></label>
                 <textarea
                   name="motivoOcorrencia"
                   value={editFormData.motivoOcorrencia}
@@ -450,7 +450,7 @@ export default function LivroDeOcorrencia() {
             </div>
 
             <div className="form-group">
-              <label>Unidade Infratante:</label>
+              <label>Unidade Infratante: <span style={{ color: '#ef4444' }}>*</span></label>
               <input
                 type="text"
                 name="unidadeInfratante"
@@ -462,7 +462,7 @@ export default function LivroDeOcorrencia() {
             </div>
 
             <div className="form-group">
-              <label>Nome do Morador:</label>
+              <label>Nome do Morador: <span style={{ color: '#ef4444' }}>*</span></label>
               <input
                 type="text"
                 name="nomeMorador"
@@ -473,7 +473,7 @@ export default function LivroDeOcorrencia() {
             </div>
 
             <div className="form-group">
-              <label>Registrada por:</label>
+              <label>Registrada por: <span style={{ color: '#ef4444' }}>*</span></label>
               <select
                 name="registradaPor"
                 value={formData.registradaPor}
@@ -488,7 +488,7 @@ export default function LivroDeOcorrencia() {
 
             {formData.registradaPor && (
               <div className="form-group">
-                <label>Quem Registrou:</label>
+                <label>Quem Registrou: <span style={{ color: '#ef4444' }}>*</span></label>
                 {formData.registradaPor === "condominio" ? (
                   <input
                     type="text"
@@ -510,7 +510,7 @@ export default function LivroDeOcorrencia() {
             )}
 
             <div className="form-group full-width">
-              <label>Motivo da Ocorrência:</label>
+              <label>Motivo da Ocorrência: <span style={{ color: '#ef4444' }}>*</span></label>
               <textarea
                 name="motivoOcorrencia"
                 value={formData.motivoOcorrencia}

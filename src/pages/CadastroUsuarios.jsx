@@ -63,6 +63,7 @@ export default function CadastroUsuarios() {
     permissao: "todos" // todos, admin, usuario
   });
   const [filtrosTemporarios, setFiltrosTemporarios] = useState({ ...filtros });
+  const [sortConfig, setSortConfig] = useState({ key: 'id', direction: 'desc' });
   const [formData, setFormData] = useState({
     nome: "",
     sobrenome: "",
@@ -281,7 +282,7 @@ export default function CadastroUsuarios() {
   };
 
   const usuariosFiltrados = useMemo(() => {
-    return usuarios.filter(u => {
+    const filtrados = usuarios.filter(u => {
       const nomeCompleto = `${u.nome} ${u.sobrenome}`.toLowerCase();
       const matchNome = !filtros.nome || nomeCompleto.includes(filtros.nome.toLowerCase());
       const matchEmail = !filtros.email || u.email.toLowerCase().includes(filtros.email.toLowerCase());
@@ -297,7 +298,48 @@ export default function CadastroUsuarios() {
 
       return matchNome && matchEmail && matchCargo && matchStatus && matchPermissao;
     });
-  }, [usuarios, filtros]);
+
+    if (sortConfig.key) {
+      filtrados.sort((a, b) => {
+        let valA = a[sortConfig.key];
+        let valB = b[sortConfig.key];
+
+        if (valA === null || valA === undefined) valA = '';
+        if (valB === null || valB === undefined) valB = '';
+
+        if (typeof valA === 'string') {
+          valA = valA.toLowerCase();
+          valB = valB.toLowerCase();
+          if (sortConfig.direction === 'asc') {
+            return valA.localeCompare(valB);
+          } else {
+            return valB.localeCompare(valA);
+          }
+        } else {
+          if (sortConfig.direction === 'asc') {
+            return valA > valB ? 1 : -1;
+          } else {
+            return valA < valB ? 1 : -1;
+          }
+        }
+      });
+    }
+
+    return filtrados;
+  }, [usuarios, filtros, sortConfig]);
+
+  const handleSort = (key) => {
+    let direction = 'asc';
+    if (sortConfig.key === key && sortConfig.direction === 'asc') {
+      direction = 'desc';
+    }
+    setSortConfig({ key, direction });
+  };
+
+  const getSortIcon = (key) => {
+    if (sortConfig.key !== key) return "↕️";
+    return sortConfig.direction === 'asc' ? "🔼" : "🔽";
+  };
 
   const FilterIcon = ({ className, style }) => (
     <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -639,13 +681,13 @@ export default function CadastroUsuarios() {
               <table className="usuarios-table">
                 <thead>
                   <tr>
-                    <th>ID</th>
-                    <th>Nome</th>
-                    <th>Email</th>
-                    <th>Cargo</th>
-                    <th>Permissão</th>
-                    <th>Status</th>
-                    <th>Cadastro</th>
+                    <th onClick={() => handleSort('id')} className="sortable-th">ID {getSortIcon('id')}</th>
+                    <th onClick={() => handleSort('nome')} className="sortable-th">Nome {getSortIcon('nome')}</th>
+                    <th onClick={() => handleSort('email')} className="sortable-th">Email {getSortIcon('email')}</th>
+                    <th onClick={() => handleSort('cargo')} className="sortable-th">Cargo {getSortIcon('cargo')}</th>
+                    <th onClick={() => handleSort('is_admin')} className="sortable-th">Permissão {getSortIcon('is_admin')}</th>
+                    <th onClick={() => handleSort('ativo')} className="sortable-th">Status {getSortIcon('ativo')}</th>
+                    <th onClick={() => handleSort('data_criacao')} className="sortable-th">Cadastro {getSortIcon('data_criacao')}</th>
                     <th>Ações</th>
                   </tr>
                 </thead>

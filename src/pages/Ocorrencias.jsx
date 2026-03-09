@@ -38,6 +38,7 @@ export default function Ocorrencias() {
   const [modalEditar, setModalEditar] = useState(null);
   const [modalVisualizar, setModalVisualizar] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [sortConfig, setSortConfig] = useState({ key: 'id', direction: 'desc' });
   const [editFormData, setEditFormData] = useState({
     data: "",
     hora: "",
@@ -135,7 +136,7 @@ export default function Ocorrencias() {
   };
 
   const ocorrenciasFiltradas = useMemo(() => {
-    return ocorrencias.filter(o => {
+    const filtradas = ocorrencias.filter(o => {
       const matchMotivo = !filtros.motivo || o.motivo_ocorrencia.toLowerCase().includes(filtros.motivo.toLowerCase()) || o.nome_morador.toLowerCase().includes(filtros.motivo.toLowerCase());
 
       let matchData = true;
@@ -144,7 +145,48 @@ export default function Ocorrencias() {
 
       return matchMotivo && matchData;
     });
-  }, [ocorrencias, filtros]);
+
+    if (sortConfig.key) {
+      filtradas.sort((a, b) => {
+        let valA = a[sortConfig.key];
+        let valB = b[sortConfig.key];
+
+        if (valA === null || valA === undefined) valA = '';
+        if (valB === null || valB === undefined) valB = '';
+
+        if (typeof valA === 'string') {
+          valA = valA.toLowerCase();
+          valB = valB.toLowerCase();
+          if (sortConfig.direction === 'asc') {
+            return valA.localeCompare(valB);
+          } else {
+            return valB.localeCompare(valA);
+          }
+        } else {
+          if (sortConfig.direction === 'asc') {
+            return valA > valB ? 1 : -1;
+          } else {
+            return valA < valB ? 1 : -1;
+          }
+        }
+      });
+    }
+
+    return filtradas;
+  }, [ocorrencias, filtros, sortConfig]);
+
+  const handleSort = (key) => {
+    let direction = 'asc';
+    if (sortConfig.key === key && sortConfig.direction === 'asc') {
+      direction = 'desc';
+    }
+    setSortConfig({ key, direction });
+  };
+
+  const getSortIcon = (key) => {
+    if (sortConfig.key !== key) return "↕️";
+    return sortConfig.direction === 'asc' ? "🔼" : "🔽";
+  };
 
   const FilterIcon = ({ className, style }) => (
     <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -221,15 +263,15 @@ export default function Ocorrencias() {
               />
             </div>
             <div className="form-group">
-              <label>Unidade Infratora:</label>
+              <label>Unidade Infratora: <span style={{ color: '#ef4444' }}>*</span></label>
               <input type="text" value={formData.unidade_infratante} onChange={(e) => setFormData({ ...formData, unidade_infratante: e.target.value })} placeholder="Ex: Bloco A, 102" required />
             </div>
             <div className="form-group">
-              <label>Nome do Morador:</label>
+              <label>Nome do Morador: <span style={{ color: '#ef4444' }}>*</span></label>
               <input type="text" value={formData.nome_morador} onChange={(e) => setFormData({ ...formData, nome_morador: e.target.value })} placeholder="Ex: João Silva" required />
             </div>
             <div className="form-group">
-              <label>Registrado Por:</label>
+              <label>Registrado Por: <span style={{ color: '#ef4444' }}>*</span></label>
               <select value={formData.registrada_por} onChange={(e) => setFormData({ ...formData, registrada_por: e.target.value })}>
                 <option value="Morador">Morador</option>
                 <option value="Segurança">Segurança</option>
@@ -238,11 +280,11 @@ export default function Ocorrencias() {
               </select>
             </div>
             <div className="form-group">
-              <label>Quem registrou (Nome):</label>
+              <label>Quem registrou (Nome): <span style={{ color: '#ef4444' }}>*</span></label>
               <input type="text" value={formData.quem_registrou} onChange={(e) => setFormData({ ...formData, quem_registrou: e.target.value })} placeholder="Ex: Porteiro Carlos" required />
             </div>
             <div className="form-group full-width">
-              <label>Motivo / Descrição:</label>
+              <label>Motivo / Descrição: <span style={{ color: '#ef4444' }}>*</span></label>
               <textarea value={formData.motivo_ocorrencia} onChange={(e) => setFormData({ ...formData, motivo_ocorrencia: e.target.value })} placeholder="Descreva os detalhes da ocorrência..." required />
             </div>
             <button type="submit" className="submit-btn" disabled={loading}>
@@ -278,10 +320,11 @@ export default function Ocorrencias() {
             <table className="ocorrencias-table">
               <thead>
                 <tr>
-                  <th>ID</th>
-                  <th>Descrição</th>
-                  <th>Data</th>
-                  <th>Hora</th>
+                  <th onClick={() => handleSort('id')} className="sortable-th">ID {getSortIcon('id')}</th>
+                  <th onClick={() => handleSort('motivo_ocorrencia')} className="sortable-th">Descrição {getSortIcon('motivo_ocorrencia')}</th>
+                  <th onClick={() => handleSort('data')} className="sortable-th">Data {getSortIcon('data')}</th>
+                  <th onClick={() => handleSort('hora')} className="sortable-th">Hora {getSortIcon('hora')}</th>
+                  <th>Ações</th>
                 </tr>
               </thead>
               <tbody>
@@ -461,17 +504,17 @@ export default function Ocorrencias() {
 
               <div className="modal-form-row">
                 <div className="modal-field">
-                  <label className="modal-label">Unidade</label>
+                  <label className="modal-label">Unidade <span style={{ color: '#ef4444' }}>*</span></label>
                   <input type="text" className="modal-input" value={editFormData.unidade_infratante} onChange={(e) => setEditFormData({ ...editFormData, unidade_infratante: e.target.value })} placeholder="Ex: Bloco A, 102" required />
                 </div>
                 <div className="modal-field">
-                  <label className="modal-label">Morador</label>
+                  <label className="modal-label">Morador <span style={{ color: '#ef4444' }}>*</span></label>
                   <input type="text" className="modal-input" value={editFormData.nome_morador} onChange={(e) => setEditFormData({ ...editFormData, nome_morador: e.target.value })} placeholder="Ex: João Silva" required />
                 </div>
               </div>
 
               <div className="modal-field">
-                <label className="modal-label">Motivo</label>
+                <label className="modal-label">Motivo <span style={{ color: '#ef4444' }}>*</span></label>
                 <textarea className="modal-input" style={{ minHeight: '100px' }} value={editFormData.motivo_ocorrencia} onChange={(e) => setEditFormData({ ...editFormData, motivo_ocorrencia: e.target.value })} required />
               </div>
 

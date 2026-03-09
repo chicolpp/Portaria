@@ -124,6 +124,7 @@ export default function Encomendas() {
   const [modalWebcam, setModalWebcam] = useState(false);
   const [modalEditar, setModalEditar] = useState(null);
   const [editFormData, setEditFormData] = useState({});
+  const [modalExcluir, setModalExcluir] = useState(null);
   const [modalRetirada, setModalRetirada] = useState(null);
   const [nomeRetirada, setNomeRetirada] = useState("");
   const [modalFiltro, setModalFiltro] = useState(false);
@@ -137,6 +138,7 @@ export default function Encomendas() {
     dataFim: ""
   });
   const [filtrosTemporarios, setFiltrosTemporarios] = useState({ ...filtros });
+  const [sortConfig, setSortConfig] = useState({ key: 'id', direction: 'desc' }); // Default sort by ID desc
   const cameraInputRef = useRef(null);
   const galleryInputRef = useRef(null);
   const canvasRef = useRef(null);
@@ -221,7 +223,7 @@ export default function Encomendas() {
   };
 
   const encomendasFiltradas = useMemo(() => {
-    return encomendas.filter(e => {
+    const filtradas = encomendas.filter(e => {
       const matchNome = !filtros.nome || e.nome?.toLowerCase().includes(filtros.nome.toLowerCase());
       const matchUnidade = !filtros.unidade || e.unidade?.toLowerCase().includes(filtros.unidade.toLowerCase());
       const matchDoc = !filtros.documento || e.documento?.toLowerCase().includes(filtros.documento.toLowerCase());
@@ -237,7 +239,50 @@ export default function Encomendas() {
 
       return matchNome && matchUnidade && matchDoc && matchPagina && matchStatus && matchData;
     });
-  }, [encomendas, filtros]);
+
+    if (sortConfig.key) {
+      filtradas.sort((a, b) => {
+        let valA = a[sortConfig.key];
+        let valB = b[sortConfig.key];
+
+        // Handle nulls
+        if (valA === null || valA === undefined) valA = '';
+        if (valB === null || valB === undefined) valB = '';
+
+        if (typeof valA === 'string') {
+          valA = valA.toLowerCase();
+          valB = valB.toLowerCase();
+          if (sortConfig.direction === 'asc') {
+            return valA.localeCompare(valB);
+          } else {
+            return valB.localeCompare(valA);
+          }
+        } else {
+          // Numbers or other types
+          if (sortConfig.direction === 'asc') {
+            return valA > valB ? 1 : -1;
+          } else {
+            return valA < valB ? 1 : -1;
+          }
+        }
+      });
+    }
+
+    return filtradas;
+  }, [encomendas, filtros, sortConfig]);
+
+  const handleSort = (key) => {
+    let direction = 'asc';
+    if (sortConfig.key === key && sortConfig.direction === 'asc') {
+      direction = 'desc';
+    }
+    setSortConfig({ key, direction });
+  };
+
+  const getSortIcon = (key) => {
+    if (sortConfig.key !== key) return "↕️";
+    return sortConfig.direction === 'asc' ? "🔼" : "🔽";
+  };
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -428,13 +473,16 @@ export default function Encomendas() {
     }
   };
 
-  const handleDeletar = async (id) => {
-    if (!window.confirm("ATENÇÃO: Deseja realmente excluir esta encomenda? Esta ação não pode ser desfeita.")) {
-      return;
-    }
+  const handleDeletar = (id) => {
+    setModalExcluir(id);
+  };
+
+  const confirmarExclusao = async () => {
+    if (!modalExcluir) return;
     try {
-      await api.delete(`/encomendas/${id}`);
+      await api.delete(`/encomendas/${modalExcluir}`);
       toast.success("Encomenda excluída com sucesso!");
+      setModalExcluir(null);
       fetchEncomendas();
     } catch (error) {
       toast.error("Erro ao excluir encomenda");
@@ -1112,15 +1160,15 @@ export default function Encomendas() {
                 <table className="encomendas-table">
                   <thead>
                     <tr>
-                      <th>ID</th>
-                      <th>Nome</th>
-                      <th>Unidade</th>
-                      <th>Cod. Rastreamento</th>
-                      <th>Página</th>
-                      <th>Data/Hora Recebimento</th>
+                      <th onClick={() => handleSort('id')} className="sortable-th">ID {getSortIcon('id')}</th>
+                      <th onClick={() => handleSort('nome')} className="sortable-th">Nome {getSortIcon('nome')}</th>
+                      <th onClick={() => handleSort('unidade')} className="sortable-th">Unidade {getSortIcon('unidade')}</th>
+                      <th onClick={() => handleSort('documento')} className="sortable-th">Cod. Rastreamento {getSortIcon('documento')}</th>
+                      <th onClick={() => handleSort('pagina')} className="sortable-th">Página {getSortIcon('pagina')}</th>
+                      <th onClick={() => handleSort('data_recebimento')} className="sortable-th">Data/Hora Recebimento {getSortIcon('data_recebimento')}</th>
                       <th>Foto</th>
-                      <th>Status</th>
-                      <th>Retirada</th>
+                      <th onClick={() => handleSort('retirado')} className="sortable-th">Status {getSortIcon('retirado')}</th>
+                      <th onClick={() => handleSort('nome_retirada')} className="sortable-th">Retirada {getSortIcon('nome_retirada')}</th>
                       <th>Ações</th>
                     </tr>
                   </thead>
@@ -1343,6 +1391,43 @@ export default function Encomendas() {
                   Limpar
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ═══════════════════════════════════════════
+          MODAL — CONFIRMAR EXCLUSÃO
+      ═══════════════════════════════════════════ */}
+      {modalExcluir && (
+        <div className="global-modal-overlay" onClick={() => setModalExcluir(null)}>
+          <div className="global-modal border-danger" onClick={(e) => e.stopPropagation()}>
+            <button className="global-modal-close" onClick={() => setModalExcluir(null)}>✕</button>
+
+            <div className="modal-icon-container-danger">
+              <TrashIcon />
+            </div>
+
+            <div className="modal-body-confirm">
+              <h3 className="color-danger" style={{ marginBottom: '15px', fontSize: '22px', fontWeight: '700' }}>Confirmar Exclusão</h3>
+              <p>Tem certeza que deseja excluir esta encomenda?</p>
+              <p className="confirm-warning">Esta ação é irreversível e removerá todos os dados associados.</p>
+            </div>
+
+            <div className="modal-footer-confirm">
+              <button
+                className="modal-btn modal-btn-secondary"
+                onClick={() => setModalExcluir(null)}
+              >
+                Cancelar
+              </button>
+              <button
+                className="modal-btn modal-btn-danger"
+                onClick={confirmarExclusao}
+              >
+                <TrashIcon style={{ width: 16, height: 16 }} />
+                Confirmar Exclusão
+              </button>
             </div>
           </div>
         </div>

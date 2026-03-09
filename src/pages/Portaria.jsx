@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import api from "../services/api";
 import { toast } from "sonner";
-import { formatDate } from "../utils/formatters";
+import { formatDate, formatDateTime } from "../utils/formatters";
 import Flatpickr from "react-flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
 import { Portuguese } from "flatpickr/dist/l10n/pt.js";
@@ -89,6 +89,7 @@ export default function Portaria() {
     dataFim: ""
   });
   const [filtrosTemporarios, setFiltrosTemporarios] = useState({ ...filtros });
+  const [sortConfig, setSortConfig] = useState({ key: 'id', direction: 'desc' });
   const [modalEditar, setModalEditar] = useState(null);
   const [editFormData, setEditFormData] = useState({
     nome: "",
@@ -124,7 +125,7 @@ export default function Portaria() {
 
   const registrarSaida = async (id) => {
     try {
-      await api.post(`/ acessos / ${id}/saida`);
+      await api.post(`/acessos/${id}/saida`);
       toast.success("Saída registrada com sucesso!");
       fetchAcessos();
     } catch (error) {
@@ -172,7 +173,7 @@ export default function Portaria() {
   };
 
   const acessosFiltrados = useMemo(() => {
-    return acessos.filter(a => {
+    const filtrados = acessos.filter(a => {
       const nomeCompleto = `${a.nome} ${a.sobrenome}`.toLowerCase();
       const matchNome = !filtros.nome || nomeCompleto.includes(filtros.nome.toLowerCase());
       const matchDoc = !filtros.documento || a.documento.toLowerCase().includes(filtros.documento.toLowerCase());
@@ -188,7 +189,48 @@ export default function Portaria() {
 
       return matchNome && matchDoc && matchPlaca && matchStatus && matchData;
     });
-  }, [acessos, filtros]);
+
+    if (sortConfig.key) {
+      filtrados.sort((a, b) => {
+        let valA = a[sortConfig.key];
+        let valB = b[sortConfig.key];
+
+        if (valA === null || valA === undefined) valA = '';
+        if (valB === null || valB === undefined) valB = '';
+
+        if (typeof valA === 'string') {
+          valA = valA.toLowerCase();
+          valB = valB.toLowerCase();
+          if (sortConfig.direction === 'asc') {
+            return valA.localeCompare(valB);
+          } else {
+            return valB.localeCompare(valA);
+          }
+        } else {
+          if (sortConfig.direction === 'asc') {
+            return valA > valB ? 1 : -1;
+          } else {
+            return valA < valB ? 1 : -1;
+          }
+        }
+      });
+    }
+
+    return filtrados;
+  }, [acessos, filtros, sortConfig]);
+
+  const handleSort = (key) => {
+    let direction = 'asc';
+    if (sortConfig.key === key && sortConfig.direction === 'asc') {
+      direction = 'desc';
+    }
+    setSortConfig({ key, direction });
+  };
+
+  const getSortIcon = (key) => {
+    if (sortConfig.key !== key) return "↕️";
+    return sortConfig.direction === 'asc' ? "🔼" : "🔽";
+  };
 
   useEffect(() => {
     if (activeTab === "visualizacao") {
@@ -371,16 +413,16 @@ export default function Portaria() {
                 <table className="acessos-table">
                   <thead>
                     <tr>
-                      <th>ID</th>
-                      <th>Nome</th>
-                      <th>Sobrenome</th>
-                      <th>Documento</th>
-                      <th>Placa</th>
-                      <th>Marca</th>
-                      <th>Modelo</th>
-                      <th>Cor</th>
-                      <th>Entrada</th>
-                      <th>Saída</th>
+                      <th onClick={() => handleSort('id')} className="sortable-th">ID {getSortIcon('id')}</th>
+                      <th onClick={() => handleSort('nome')} className="sortable-th">Nome {getSortIcon('nome')}</th>
+                      <th onClick={() => handleSort('sobrenome')} className="sortable-th">Sobrenome {getSortIcon('sobrenome')}</th>
+                      <th onClick={() => handleSort('documento')} className="sortable-th">Documento {getSortIcon('documento')}</th>
+                      <th onClick={() => handleSort('placa')} className="sortable-th">Placa {getSortIcon('placa')}</th>
+                      <th onClick={() => handleSort('marca')} className="sortable-th">Marca {getSortIcon('marca')}</th>
+                      <th onClick={() => handleSort('modelo')} className="sortable-th">Modelo {getSortIcon('modelo')}</th>
+                      <th onClick={() => handleSort('cor')} className="sortable-th">Cor {getSortIcon('cor')}</th>
+                      <th onClick={() => handleSort('data_entrada')} className="sortable-th">Entrada {getSortIcon('data_entrada')}</th>
+                      <th onClick={() => handleSort('data_saida')} className="sortable-th">Saída {getSortIcon('data_saida')}</th>
                       <th>Ações</th>
                     </tr>
                   </thead>

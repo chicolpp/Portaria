@@ -108,18 +108,7 @@
   box-shadow: 0 0 10px var(--glow-color);
 }
 
-/* Responsive visibility */
-@media (min-width: 769px) {
-  .mobile-only-filter {
-    display: none !important;
-  }
-}
-
-@media (max-width: 768px) {
-  .header-filter-btn {
-    display: none !important;
-  }
-}
+/* Responsive visibility removida para o novo layout de filtro unificado */
 
 .usuarios-container .form-group {
   margin-bottom: 20px;
@@ -481,7 +470,7 @@
   min-width: 100%;
 }
 
-/* TABLE - Estilo Encomendas */
+/* TABLE - Estilo Encomendas (Uses global styles from index.css mostly) */
 .usuarios-table {
   width: 100%;
   border-collapse: collapse;
@@ -491,21 +480,23 @@
 }
 
 .usuarios-table th {
-  background: rgba(139, 92, 246, 0.1);
-  color: var(--primary-light);
-  font-weight: 600;
-  font-size: 14px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  text-align: left;
-  padding: 16px 20px;
+  padding: 8px 12px;
+}
+
+.sortable-th {
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.sortable-th:hover {
+  background: rgba(139, 92, 246, 0.15);
+  color: white;
 }
 
 .usuarios-table td {
-  padding: 16px 20px;
-  border-bottom: 1px solid var(--border-color);
-  color: var(--text-primary);
-  font-size: 15px;
+  padding: 8px 12px;
 }
 
 .usuarios-table tr {
@@ -528,6 +519,11 @@
   border-radius: 20px;
   font-size: 13px;
   font-weight: 600;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
 }
 
 .admin-badge {
@@ -537,6 +533,11 @@
   border-radius: 20px;
   font-size: 13px;
   font-weight: 600;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
 }
 
 .user-badge {
@@ -546,6 +547,11 @@
   border-radius: 20px;
   font-size: 13px;
   font-weight: 600;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
 }
 
 .status-badge {
@@ -553,6 +559,11 @@
   border-radius: 20px;
   font-size: 13px;
   font-weight: 600;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
 }
 
 .status-badge.ativo {
@@ -565,56 +576,57 @@
   color: #f87171;
 }
 
-/* AÇÕES */
+/* AÇÕES (Estilo Encomendas) */
 .acoes-cell {
   display: flex;
-  gap: 8px;
+  gap: 6px;
+  align-items: center;
 }
 
-.btn-editar,
-.btn-toggle,
-.btn-excluir {
-  padding: 10px 14px;
-  border: none;
+.admin-btn-small {
+  width: 30px;
+  height: 30px;
   border-radius: 8px;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
-  font-size: 14px;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+  transition: all 0.2s ease;
+  position: relative;
 }
 
-.btn-editar {
-  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
-  color: white;
+.admin-btn-small.edit-btn {
+  background: rgba(139, 92, 246, 0.15);
+  color: #ffffff !important;
+  border: 1px solid rgba(139, 92, 246, 0.25);
 }
 
-.btn-editar:hover {
-  background: linear-gradient(135deg, #7c3aed, #6d28d9);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(139, 92, 246, 0.5);
+.admin-btn-small.edit-btn:hover {
+  background: rgba(139, 92, 246, 0.3);
+  transform: translateY(-1px);
 }
 
-.btn-toggle {
-  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
-  color: white;
+.admin-btn-small.delete-btn {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ffffff !important;
+  border: 1px solid rgba(239, 68, 68, 0.3);
 }
 
-.btn-toggle:hover {
-  background: linear-gradient(135deg, #7c3aed, #6d28d9);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(139, 92, 246, 0.5);
+.admin-btn-small.delete-btn:hover {
+  background: rgba(239, 68, 68, 0.3);
+  transform: translateY(-1px);
 }
 
-.btn-excluir {
-  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
-  color: white;
+.admin-btn-small.ver-btn {
+  background: rgba(59, 130, 246, 0.15);
+  color: #ffffff !important;
+  border: 1px solid rgba(59, 130, 246, 0.3);
 }
 
-.btn-excluir:hover {
-  background: linear-gradient(135deg, #7c3aed, #6d28d9);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(139, 92, 246, 0.5);
+.admin-btn-small.ver-btn:hover {
+  background: rgba(59, 130, 246, 0.3);
+  transform: translateY(-1px);
 }
 
 /* MODAL - Estilo Encomendas */
@@ -912,12 +924,14 @@
   .usuarios-table {
     width: 100%;
     min-width: 800px;
+    font-size: 11px;
   }
 
   .usuarios-table th,
   .usuarios-table td {
-    padding: 12px 10px;
-    font-size: 13px;
+    padding: 8px 4px;
+    font-size: 11px;
+    line-height: 1.4;
   }
 
   .modal-content {
@@ -946,5 +960,98 @@
   .usuarios-tab-btn {
     padding: 8px 12px;
     font-size: 12px;
+  }
+}
+
+/* VIEW MODAL - Detalhes do Morador */
+.view-modal {
+  max-width: 600px !important;
+}
+
+.view-modal-content {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  margin: 25px 0;
+}
+
+.view-photo-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+.view-photo-section .foto-preview {
+  width: 120px;
+  height: 120px;
+  border-radius: 60px;
+  border: 4px solid var(--primary);
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+}
+
+.view-photo-section img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.view-info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 16px;
+  border: 1px solid var(--border-color);
+}
+
+.view-info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.view-info-item.full {
+  grid-column: span 2;
+}
+
+.view-info-item label {
+  font-size: 11px;
+  text-transform: uppercase;
+  color: #8b5cf6;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.view-info-item p {
+  font-size: 15px;
+  color: #fff;
+  font-weight: 500;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 10px 15px;
+  border-radius: 8px;
+  margin: 0;
+}
+
+.view-modal .secondary-btn {
+  background: rgba(255, 255, 255, 0.05) !important;
+  color: #fff !important;
+  border: 1px solid var(--border-color) !important;
+  margin-top: 20px;
+}
+
+.view-modal .secondary-btn:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+}
+
+@media (max-width: 600px) {
+  .view-info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .view-info-item.full {
+    grid-column: span 1;
   }
 }
