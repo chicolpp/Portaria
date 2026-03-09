@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
 import api from "../services/api";
 import { toast } from "sonner";
+import { formatDate, formatTime } from "../utils/formatters";
 import Flatpickr from "react-flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
 import { Portuguese } from "flatpickr/dist/l10n/pt.js";
 import "./Ocorrencias.css";
 
-// EXTERNAL FLATPICKR CONFIGURATIONS (Prevents re-render destruction loops)
+// EXTERNAL FLATPICKR CONFIGURATIONS
 const flatpickrDateOptions = {
   locale: Portuguese,
   dateFormat: "Y-m-d",
@@ -63,6 +64,19 @@ const UserPlusIcon = ({ className, style }) => (
   </svg>
 );
 
+const CheckIcon = ({ style }) => (
+  <svg style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="20 6 9 17 4 12" />
+  </svg>
+);
+
+const ClockIcon = ({ style }) => (
+  <svg style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="10" />
+    <polyline points="12 6 12 12 16 14" />
+  </svg>
+);
+
 export default function LivroDeOcorrencia() {
   const [activeTab, setActiveTab] = useState("cadastro");
   const [ocorrencias, setOcorrencias] = useState([]);
@@ -71,51 +85,25 @@ export default function LivroDeOcorrencia() {
   const [modalEditar, setModalEditar] = useState(null);
 
   const [formData, setFormData] = useState({
-    data: "",
-    hora: "",
+    data: new Date().toISOString().split('T')[0],
+    hora: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
     unidadeInfratante: "",
     nomeMorador: "",
-    registradaPor: "",
+    registradaPor: "Morador",
     quemRegistrou: "",
     motivoOcorrencia: "",
   });
 
-  const [editFormData, setEditFormData] = useState({
-    data: "",
-    hora: "",
-    unidadeInfratante: "",
-    nomeMorador: "",
-    registradaPor: "",
-    quemRegistrou: "",
-    motivoOcorrencia: "",
-  });
+  const [editFormData, setEditFormData] = useState({});
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-
-    if (name === "registradaPor") {
-      setFormData({
-        ...formData,
-        [name]: value,
-        quemRegistrou: value === "condominio" ? "Condomínio" : ""
-      });
-    } else {
-      setFormData({ ...formData, [name]: value });
-    }
+    setFormData({ ...formData, [name]: value });
   };
 
   const handleEditChange = (e) => {
     const { name, value } = e.target;
-
-    if (name === "registradaPor") {
-      setEditFormData({
-        ...editFormData,
-        [name]: value,
-        quemRegistrou: value === "condominio" ? "Condomínio" : ""
-      });
-    } else {
-      setEditFormData({ ...editFormData, [name]: value });
-    }
+    setEditFormData({ ...editFormData, [name]: value });
   };
 
   const fetchOcorrencias = async () => {
@@ -150,14 +138,16 @@ export default function LivroDeOcorrencia() {
 
       toast.success("Ocorrência cadastrada com sucesso!");
       setFormData({
-        data: "",
-        hora: "",
+        data: new Date().toISOString().split('T')[0],
+        hora: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
         unidadeInfratante: "",
         nomeMorador: "",
-        registradaPor: "",
+        registradaPor: "Morador",
         quemRegistrou: "",
         motivoOcorrencia: "",
       });
+      fetchOcorrencias();
+      setActiveTab("visualizacao");
     } catch (error) {
       toast.error("Erro ao cadastrar ocorrência");
       console.error(error);
@@ -166,19 +156,14 @@ export default function LivroDeOcorrencia() {
     }
   };
 
-  const openVisualizarModal = (ocorrencia) => {
-    setModalVisualizar(ocorrencia);
-  };
-
-  const closeVisualizarModal = () => {
-    setModalVisualizar(null);
-  };
+  const openVisualizarModal = (ocorrencia) => setModalVisualizar(ocorrencia);
+  const closeVisualizarModal = () => setModalVisualizar(null);
 
   const openEditarModal = (ocorrencia) => {
     setModalEditar(ocorrencia);
     setEditFormData({
       data: ocorrencia.data,
-      hora: ocorrencia.hora,
+      hora: ocorrencia.hora ? ocorrencia.hora.substring(0, 5) : "",
       unidadeInfratante: ocorrencia.unidade_infratante,
       nomeMorador: ocorrencia.nome_morador,
       registradaPor: ocorrencia.registrada_por,
@@ -187,13 +172,10 @@ export default function LivroDeOcorrencia() {
     });
   };
 
-  const closeEditarModal = () => {
-    setModalEditar(null);
-  };
+  const closeEditarModal = () => setModalEditar(null);
 
   const handleEditSubmit = async (e) => {
     e.preventDefault();
-
     try {
       await api.put(`/ocorrencias/${modalEditar.id}`, {
         data: editFormData.data,
@@ -215,10 +197,7 @@ export default function LivroDeOcorrencia() {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm("Tem certeza que deseja apagar esta ocorrência?")) {
-      return;
-    }
-
+    if (!window.confirm("Tem certeza que deseja apagar esta ocorrência?")) return;
     try {
       await api.delete(`/ocorrencias/${id}`);
       toast.success("Ocorrência apagada com sucesso!");
@@ -233,23 +212,25 @@ export default function LivroDeOcorrencia() {
     <div className="ocorrencias-container">
       {/* MODAL VISUALIZAR */}
       {modalVisualizar && (
-        <div className="foto-modal-overlay" onClick={closeVisualizarModal}>
-          <div className="visualizar-modal" onClick={(e) => e.stopPropagation()}>
-            <button className="foto-modal-close" onClick={closeVisualizarModal}>✕</button>
-            <h3>Detalhes da Ocorrência</h3>
+        <div className="global-modal-overlay" onClick={closeVisualizarModal}>
+          <div className="global-modal" onClick={(e) => e.stopPropagation()}>
+            <button className="global-modal-close" onClick={closeVisualizarModal}>✕</button>
+            <div className="modal-header">
+              <span className="modal-header-icon">⚠️</span>
+              <h3>Dados da Ocorrência</h3>
+            </div>
+            <div className="modal-badge">#{modalVisualizar.id} — {modalVisualizar.unidade_infratante}</div>
 
             <div className="visualizar-info">
-              <p><strong>Data:</strong> {modalVisualizar.data}</p>
-              <p><strong>Hora:</strong> {modalVisualizar.hora}</p>
-              <p><strong>Unidade Infratante:</strong> {modalVisualizar.unidade_infratante}</p>
-              <p><strong>Nome do Morador:</strong> {modalVisualizar.nome_morador}</p>
-              <p><strong>Registrada por:</strong> {modalVisualizar.registrada_por === "unidade" ? "Unidade" : "Condomínio"}</p>
-              <p><strong>Quem Registrou:</strong> {modalVisualizar.quem_registrou}</p>
-            </div>
+              <p><strong>Unidade</strong> {modalVisualizar.unidade_infratante}</p>
+              <p><strong>Morador</strong> {modalVisualizar.nome_morador}</p>
+              <p><strong>Data/Hora</strong> {formatDate(modalVisualizar.data)} às {formatTime(modalVisualizar.hora)}</p>
+              <p><strong>Registrado por</strong> {modalVisualizar.registrada_por} ({modalVisualizar.quem_registrou})</p>
 
-            <div className="motivo-box">
-              <label>Motivo da Ocorrência:</label>
-              <p className="motivo-texto">{modalVisualizar.motivo_ocorrencia}</p>
+              <div className="motivo-box" style={{ marginTop: '12px' }}>
+                <label>Motivo / Descrição</label>
+                <p className="motivo-texto">{modalVisualizar.motivo_ocorrencia}</p>
+              </div>
             </div>
           </div>
         </div>
@@ -257,119 +238,99 @@ export default function LivroDeOcorrencia() {
 
       {/* MODAL EDITAR */}
       {modalEditar && (
-        <div className="foto-modal-overlay" onMouseDown={(e) => { if (e.target === e.currentTarget) closeEditarModal(); }}>
-          <div className="editar-modal" onMouseDown={(e) => e.stopPropagation()}>
-            <button className="foto-modal-close" onClick={closeEditarModal}>✕</button>
-            <h3>Editar Ocorrência</h3>
+        <div className="global-modal-overlay" onClick={closeEditarModal}>
+          <div className="global-modal" onClick={(e) => e.stopPropagation()}>
+            <button className="global-modal-close" onClick={closeEditarModal}>✕</button>
+            <div className="modal-header">
+              <span className="modal-header-icon">✏️</span>
+              <h3>Editar Ocorrência</h3>
+            </div>
+            <div className="modal-badge">#{modalEditar.id} — {modalEditar.unidade_infratante}</div>
 
-            <form className="editar-form" onSubmit={handleEditSubmit}>
-              <div className="editar-form-group">
-                <label>Data:</label>
-                <Flatpickr
-                  value={editFormData.data}
-                  onChange={([date]) => {
-                    if (date) {
-                      const year = date.getFullYear();
-                      const month = String(date.getMonth() + 1).padStart(2, '0');
-                      const day = String(date.getDate()).padStart(2, '0');
-                      setEditFormData({ ...editFormData, data: `${year}-${month}-${day}` });
-                    }
-                  }}
-                  options={flatpickrDateOptions}
-                  className="modal-input flatpickr-input-custom"
-                />
+            <form className="modal-form" onSubmit={handleEditSubmit}>
+              <div className="modal-divider">
+                <ClockIcon style={{ width: 14, height: 14 }} />
+                <span>Data e Hora da Ocorrência</span>
               </div>
 
-              <div className="editar-form-group">
-                <label>Hora:</label>
-                <Flatpickr
-                  value={editFormData.hora}
-                  onChange={([date]) => {
-                    if (date) {
-                      const hours = String(date.getHours()).padStart(2, '0');
-                      const minutes = String(date.getMinutes()).padStart(2, '0');
-                      setEditFormData({ ...editFormData, hora: `${hours}:${minutes}` });
-                    }
-                  }}
-                  options={flatpickrTimeOptions}
-                  className="modal-input flatpickr-input-custom"
-                />
-              </div>
-
-              <div className="editar-form-group">
-                <label>Unidade Infratante: <span style={{ color: '#ef4444' }}>*</span></label>
-                <input
-                  type="text"
-                  name="unidadeInfratante"
-                  value={editFormData.unidadeInfratante}
-                  onChange={handleEditChange}
-                  required
-                />
-              </div>
-
-              <div className="editar-form-group">
-                <label>Nome do Morador: <span style={{ color: '#ef4444' }}>*</span></label>
-                <input
-                  type="text"
-                  name="nomeMorador"
-                  value={editFormData.nomeMorador}
-                  onChange={handleEditChange}
-                  required
-                />
-              </div>
-
-              <div className="editar-form-group">
-                <label>Registrada por: <span style={{ color: '#ef4444' }}>*</span></label>
-                <select
-                  name="registradaPor"
-                  value={editFormData.registradaPor}
-                  onChange={handleEditChange}
-                  required
-                >
-                  <option value="">Selecione...</option>
-                  <option value="unidade">Unidade</option>
-                  <option value="condominio">Condomínio</option>
-                </select>
-              </div>
-
-              {editFormData.registradaPor && (
-                <div className="editar-form-group">
-                  <label>Quem Registrou: <span style={{ color: '#ef4444' }}>*</span></label>
-                  {editFormData.registradaPor === "condominio" ? (
-                    <input
-                      type="text"
-                      name="quemRegistrou"
-                      value="Condomínio"
-                      readOnly
-                    />
-                  ) : (
-                    <input
-                      type="text"
-                      name="quemRegistrou"
-                      value={editFormData.quemRegistrou}
-                      onChange={handleEditChange}
-                      placeholder="Nome do morador"
-                      required
-                    />
-                  )}
+              <div className="modal-form-row">
+                <div className="modal-field">
+                  <label className="modal-label">Data</label>
+                  <Flatpickr
+                    value={editFormData.data}
+                    onChange={([date]) => {
+                      if (date) {
+                        const year = date.getFullYear();
+                        const month = String(date.getMonth() + 1).padStart(2, '0');
+                        const day = String(date.getDate()).padStart(2, '0');
+                        setEditFormData({ ...editFormData, data: `${year}-${month}-${day}` });
+                      }
+                    }}
+                    options={flatpickrDateOptions}
+                    className="modal-input flatpickr-input-custom"
+                  />
                 </div>
-              )}
+                <div className="modal-field">
+                  <label className="modal-label">Hora</label>
+                  <Flatpickr
+                    value={editFormData.hora}
+                    onChange={([date]) => {
+                      if (date) {
+                        const hours = String(date.getHours()).padStart(2, '0');
+                        const minutes = String(date.getMinutes()).padStart(2, '0');
+                        setEditFormData({ ...editFormData, hora: `${hours}:${minutes}` });
+                      }
+                    }}
+                    options={flatpickrTimeOptions}
+                    className="modal-input flatpickr-input-custom"
+                  />
+                </div>
+              </div>
 
-              <div className="editar-form-group">
-                <label>Motivo da Ocorrência: <span style={{ color: '#ef4444' }}>*</span></label>
+              <div className="modal-divider">Informações da Unidade</div>
+
+              <div className="modal-form-row">
+                <div className="modal-field">
+                  <label className="modal-label">Unidade <span className="color-danger">*</span></label>
+                  <input
+                    type="text"
+                    name="unidadeInfratante"
+                    className="modal-input"
+                    value={editFormData.unidadeInfratante}
+                    onChange={handleEditChange}
+                    required
+                  />
+                </div>
+                <div className="modal-field">
+                  <label className="modal-label">Morador <span className="color-danger">*</span></label>
+                  <input
+                    type="text"
+                    name="nomeMorador"
+                    className="modal-input"
+                    value={editFormData.nomeMorador}
+                    onChange={handleEditChange}
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="modal-field">
+                <label className="modal-label">Motivo <span className="color-danger">*</span></label>
                 <textarea
                   name="motivoOcorrencia"
+                  className="modal-input"
+                  style={{ minHeight: '120px', resize: 'vertical' }}
                   value={editFormData.motivoOcorrencia}
                   onChange={handleEditChange}
                   maxLength={500}
                   required
-                  rows={5}
                 />
                 <span className="char-count">{editFormData.motivoOcorrencia.length}/500</span>
               </div>
 
-              <button type="submit" className="salvar-edicao-btn">
-                💾 Salvar Alterações
+              <button type="submit" className="modal-btn modal-btn-primary">
+                <CheckIcon style={{ width: 16, height: 16 }} />
+                Salvar Alterações
               </button>
             </form>
           </div>
@@ -379,18 +340,18 @@ export default function LivroDeOcorrencia() {
       {/* TABS NAVIGATION */}
       <div className="ocorrencias-tabs">
         <button
-          type="button"
           className={`ocorrencias-tab-btn ${activeTab === "cadastro" ? "active" : ""}`}
           onClick={() => setActiveTab("cadastro")}
         >
-          <PencilIcon className="section-icon" style={{ width: 22, height: 22 }} /> Cadastro de Ocorrências
+          <PencilIcon style={{ width: 22, height: 22 }} />
+          <span>Cadastro de Ocorrências</span>
         </button>
         <button
-          type="button"
           className={`ocorrencias-tab-btn ${activeTab === "visualizacao" ? "active" : ""}`}
           onClick={() => setActiveTab("visualizacao")}
         >
-          <ListIcon className="section-icon" style={{ width: 22, height: 22 }} /> Visualização de Ocorrências
+          <ListIcon style={{ width: 22, height: 22 }} />
+          <span>Visualização de Ocorrências</span>
         </button>
       </div>
 
@@ -398,10 +359,13 @@ export default function LivroDeOcorrencia() {
       <div className="tab-content">
         {activeTab === "cadastro" && (
           <form className="cadastro-form" onSubmit={handleSubmit}>
-            <h2><UserPlusIcon className="section-icon" /> Cadastro de Ocorrências</h2>
+            <h2>
+              <UserPlusIcon style={{ width: 24, height: 24 }} />
+              Cadastro de Ocorrências
+            </h2>
 
             <div className="form-group">
-              <label>Data:</label>
+              <label>Data</label>
               <Flatpickr
                 value={formData.data}
                 onChange={([date]) => {
@@ -412,21 +376,14 @@ export default function LivroDeOcorrencia() {
                     setFormData({ ...formData, data: `${year}-${month}-${day}` });
                   }
                 }}
-                options={{
-                  locale: Portuguese,
-                  dateFormat: "Y-m-d",
-                  altInput: true,
-                  altFormat: "d/m/Y",
-                  disableMobile: "true",
-                  static: true
-                }}
+                options={flatpickrDateOptions}
                 className="flatpickr-input-custom"
                 required
               />
             </div>
 
             <div className="form-group">
-              <label>Hora:</label>
+              <label>Hora</label>
               <Flatpickr
                 value={formData.hora}
                 onChange={([date]) => {
@@ -436,21 +393,14 @@ export default function LivroDeOcorrencia() {
                     setFormData({ ...formData, hora: `${hours}:${minutes}` });
                   }
                 }}
-                options={{
-                  enableTime: true,
-                  noCalendar: true,
-                  dateFormat: "H:i",
-                  time_24hr: true,
-                  disableMobile: "true",
-                  static: true
-                }}
+                options={flatpickrTimeOptions}
                 className="flatpickr-input-custom"
                 required
               />
             </div>
 
             <div className="form-group">
-              <label>Unidade Infratante: <span style={{ color: '#ef4444' }}>*</span></label>
+              <label>Unidade Infratora <span className="color-danger">*</span></label>
               <input
                 type="text"
                 name="unidadeInfratante"
@@ -462,135 +412,129 @@ export default function LivroDeOcorrencia() {
             </div>
 
             <div className="form-group">
-              <label>Nome do Morador: <span style={{ color: '#ef4444' }}>*</span></label>
+              <label>Nome do Morador <span className="color-danger">*</span></label>
               <input
                 type="text"
                 name="nomeMorador"
                 value={formData.nomeMorador}
                 onChange={handleChange}
+                placeholder="Ex: João Silva"
                 required
               />
             </div>
 
             <div className="form-group">
-              <label>Registrada por: <span style={{ color: '#ef4444' }}>*</span></label>
+              <label>Registrado por <span className="color-danger">*</span></label>
               <select
                 name="registradaPor"
                 value={formData.registradaPor}
                 onChange={handleChange}
                 required
               >
-                <option value="">Selecione...</option>
-                <option value="unidade">Unidade</option>
-                <option value="condominio">Condomínio</option>
+                <option value="Morador">Morador</option>
+                <option value="Segurança">Segurança</option>
+                <option value="Portaria">Portaria</option>
+                <option value="Sindico">Síndico</option>
               </select>
             </div>
 
-            {formData.registradaPor && (
-              <div className="form-group">
-                <label>Quem Registrou: <span style={{ color: '#ef4444' }}>*</span></label>
-                {formData.registradaPor === "condominio" ? (
-                  <input
-                    type="text"
-                    name="quemRegistrou"
-                    value="Condomínio"
-                    readOnly
-                  />
-                ) : (
-                  <input
-                    type="text"
-                    name="quemRegistrou"
-                    value={formData.quemRegistrou}
-                    onChange={handleChange}
-                    placeholder="Nome do morador"
-                    required
-                  />
-                )}
-              </div>
-            )}
+            <div className="form-group">
+              <label>Quem Registrou <span className="color-danger">*</span></label>
+              <input
+                type="text"
+                name="quemRegistrou"
+                value={formData.quemRegistrou}
+                onChange={handleChange}
+                placeholder="Nome do responsável"
+                required
+              />
+            </div>
 
             <div className="form-group full-width">
-              <label>Motivo da Ocorrência: <span style={{ color: '#ef4444' }}>*</span></label>
+              <label>Motivo da Ocorrência <span className="color-danger">*</span></label>
               <textarea
                 name="motivoOcorrencia"
                 value={formData.motivoOcorrencia}
                 onChange={handleChange}
                 maxLength={500}
-                placeholder="Descreva o motivo da ocorrência (máximo 500 caracteres)"
+                placeholder="Descreva o motivo da ocorrência..."
                 required
-                rows={5}
               />
               <span className="char-count">{formData.motivoOcorrencia.length}/500</span>
             </div>
 
             <button type="submit" className="submit-btn" disabled={loading}>
-              {loading ? "Cadastrando..." : "Cadastrar Ocorrência"}
+              <CheckIcon style={{ width: 18, height: 18, marginRight: 8 }} />
+              {loading ? "Registrando..." : "Registrar Ocorrência"}
             </button>
           </form>
         )}
 
         {activeTab === "visualizacao" && (
           <div className="visualizacao">
-            <h2><ListIcon className="section-icon" /> Visualização de Ocorrências</h2>
-            {ocorrencias.length === 0 ? (
-              <p>Nenhuma ocorrência cadastrada ainda.</p>
-            ) : (
-              <div className="responsive-table-container">
-                <table className="ocorrencias-table">
-                  <thead>
-                    <tr>
-                      <th>ID</th>
-                      <th>Data</th>
-                      <th>Hora</th>
-                      <th>Unidade</th>
-                      <th>Morador</th>
-                      <th>Registrada por</th>
-                      <th>Quem Registrou</th>
-                      <th>Ações</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {ocorrencias.map((o) => (
+            <h2>
+              <ListIcon style={{ width: 24, height: 24 }} />
+              Visualização de Ocorrências
+            </h2>
+            <div className="responsive-table-container">
+              <table className="ocorrencias-table">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Data</th>
+                    <th>Hora</th>
+                    <th>Unidade</th>
+                    <th>Morador</th>
+                    <th>Registrada por</th>
+                    <th>Quem Registrou</th>
+                    <th>Ações</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {ocorrencias.length > 0 ? (
+                    ocorrencias.map((o) => (
                       <tr key={o.id}>
                         <td>{o.id}</td>
-                        <td>{o.data}</td>
-                        <td>{o.hora}</td>
+                        <td>{formatDate(o.data)}</td>
+                        <td>{formatTime(o.hora)}</td>
                         <td>{o.unidade_infratante}</td>
                         <td>{o.nome_morador}</td>
-                        <td>{o.registrada_por === "unidade" ? "Unidade" : "Condomínio"}</td>
+                        <td>{o.registrada_por}</td>
                         <td>{o.quem_registrou}</td>
-                        <td className="acoes-cell">
-                          <button
-                            type="button"
-                            className="admin-btn-small ver-btn"
-                            onClick={() => openVisualizarModal(o)}
-                            data-tooltip="Visualizar"
-                          >
-                            <EyeIcon style={{ width: 14, height: 14 }} />
-                          </button>
-                          <button
-                            type="button"
-                            className="admin-btn-small edit-btn"
-                            onClick={() => openEditarModal(o)}
-                            data-tooltip="Editar"
-                          >
-                            <PencilIcon style={{ width: 14, height: 14 }} />
-                          </button>
-                          <button
-                            type="button"
-                            className="admin-btn-small delete-btn"
-                            onClick={() => handleDelete(o.id)}
-                            data-tooltip="Apagar"
-                          >
-                            <TrashIcon style={{ width: 14, height: 14 }} />
-                          </button>
+                        <td>
+                          <div className="acoes-cell">
+                            <button
+                              className="admin-btn-small ver-btn"
+                              onClick={() => openVisualizarModal(o)}
+                            >
+                              <EyeIcon style={{ width: 14, height: 14 }} />
+                            </button>
+                            <button
+                              className="admin-btn-small edit-btn"
+                              onClick={() => openEditarModal(o)}
+                            >
+                              <PencilIcon style={{ width: 14, height: 14 }} />
+                            </button>
+                            <button
+                              className="admin-btn-small delete-btn"
+                              onClick={() => handleDelete(o.id)}
+                            >
+                              <TrashIcon style={{ width: 14, height: 14 }} />
+                            </button>
+                          </div>
                         </td>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan="8" style={{ textAlign: 'center', padding: '40px' }}>
+                        Nenhuma ocorrência encontrada.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
       </div>

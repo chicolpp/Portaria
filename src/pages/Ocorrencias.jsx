@@ -24,6 +24,73 @@ const flatpickrTimeOptions = {
   disableMobile: "true"
 };
 
+// Ícones SVG inline
+const PencilIcon = ({ className, style }) => (
+  <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
+  </svg>
+);
+
+const ListIcon = ({ className, style }) => (
+  <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <line x1="8" y1="6" x2="21" y2="6" />
+    <line x1="8" y1="12" x2="21" y2="12" />
+    <line x1="8" y1="18" x2="21" y2="18" />
+    <line x1="3" y1="6" x2="3.01" y2="6" />
+    <line x1="3" y1="12" x2="3.01" y2="12" />
+    <line x1="3" y1="12" x2="3.01" y2="12" />
+    <line x1="3" y1="18" x2="3.01" y2="18" />
+  </svg>
+);
+
+const EditIcon = ({ className, style }) => (
+  <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+  </svg>
+);
+
+const TrashIcon = ({ className, style }) => (
+  <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M10 11v6M14 11v6" />
+  </svg>
+);
+
+const EyeIcon = ({ className, style }) => (
+  <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+    <circle cx="12" cy="12" r="3" />
+  </svg>
+);
+
+const ClockIcon = ({ style }) => (
+  <svg style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="10" />
+    <polyline points="12 6 12 12 16 14" />
+  </svg>
+);
+
+const UserPlusIcon = ({ className, style }) => (
+  <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+    <circle cx="8.5" cy="7" r="4" />
+    <line x1="20" y1="8" x2="20" y2="14" />
+    <line x1="17" y1="11" x2="23" y2="11" />
+  </svg>
+);
+
+const CheckIcon = ({ style }) => (
+  <svg style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="20 6 9 17 4 12" />
+  </svg>
+);
+
+const FilterIcon = ({ className, style }) => (
+  <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
+  </svg>
+);
+
 const SortIcon = ({ direction, active }) => {
   if (!active) {
     return (
@@ -59,6 +126,7 @@ export default function Ocorrencias() {
   const [modalVisualizar, setModalVisualizar] = useState(null);
   const [loading, setLoading] = useState(false);
   const [sortConfig, setSortConfig] = useState({ key: 'id', direction: 'desc' });
+  const [modalExcluir, setModalExcluir] = useState(null);
   const [editFormData, setEditFormData] = useState({
     data: "",
     hora: "",
@@ -207,11 +275,6 @@ export default function Ocorrencias() {
     return <SortIcon active={sortConfig.key === key} direction={sortConfig.direction} />;
   };
 
-  const FilterIcon = ({ className, style }) => (
-    <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
-    </svg>
-  );
 
   return (
     <div className="ocorrencias-container">
@@ -221,13 +284,15 @@ export default function Ocorrencias() {
           className={`ocorrencias-tab-btn ${activeTab === "cadastro" ? "active" : ""}`}
           onClick={() => handleTabClick("cadastro")}
         >
-          <svg style={{ width: 22, height: 22, marginRight: 8 }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" /></svg> Cadastro de Ocorrências
+          <PencilIcon style={{ width: 22, height: 22 }} />
+          <span>Cadastro de Ocorrências</span>
         </button>
         <button
           className={`ocorrencias-tab-btn ${activeTab === "visualizacao" ? "active" : ""}`}
           onClick={() => handleTabClick("visualizacao")}
         >
-          <svg style={{ width: 22, height: 22, marginRight: 8 }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="8" y1="6" x2="21" y2="6" /><line x1="8" y1="12" x2="21" y2="12" /><line x1="8" y1="18" x2="21" y2="18" /><line x1="3" y1="6" x2="3.01" y2="6" /><line x1="3" y1="12" x2="3.01" y2="12" /><line x1="3" y1="18" x2="3.01" y2="18" /></svg> Visualização de Ocorrências
+          <ListIcon style={{ width: 22, height: 22 }} />
+          <span>Visualização de Ocorrências</span>
         </button>
       </div>
 
@@ -235,9 +300,13 @@ export default function Ocorrencias() {
       <div className="tab-content">
         {activeTab === "cadastro" && (
           <form className="cadastro-form" onSubmit={handleCreateSubmit}>
-            <h2>Cadastro de Ocorrências</h2>
+            <h2>
+              <UserPlusIcon style={{ width: 24, height: 24 }} />
+              Cadastro de Ocorrências
+            </h2>
+
             <div className="form-group">
-              <label>Data:</label>
+              <label>Data</label>
               <Flatpickr
                 value={formData.data}
                 onChange={([date]) => {
@@ -248,19 +317,13 @@ export default function Ocorrencias() {
                     setFormData({ ...formData, data: `${year}-${month}-${day}` });
                   }
                 }}
-                options={{
-                  locale: Portuguese,
-                  dateFormat: "Y-m-d",
-                  altInput: true,
-                  altFormat: "d/m/Y",
-                  disableMobile: "true"
-                }}
+                options={flatpickrDateOptions}
                 className="flatpickr-input-custom"
                 required
               />
             </div>
             <div className="form-group">
-              <label>Hora:</label>
+              <label>Hora</label>
               <Flatpickr
                 value={formData.hora}
                 onChange={([date]) => {
@@ -270,28 +333,37 @@ export default function Ocorrencias() {
                     setFormData({ ...formData, hora: `${hours}:${minutes}` });
                   }
                 }}
-                options={{
-                  enableTime: true,
-                  noCalendar: true,
-                  dateFormat: "H:i",
-                  time_24hr: true,
-                  disableMobile: "true"
-                }}
+                options={flatpickrTimeOptions}
                 className="flatpickr-input-custom"
                 required
               />
             </div>
             <div className="form-group">
-              <label>Unidade Infratora: <span style={{ color: '#ef4444' }}>*</span></label>
-              <input type="text" value={formData.unidade_infratante} onChange={(e) => setFormData({ ...formData, unidade_infratante: e.target.value })} placeholder="Ex: Bloco A, 102" required />
+              <label>Unidade Infratora <span className="color-danger">*</span></label>
+              <input
+                type="text"
+                value={formData.unidade_infratante}
+                onChange={(e) => setFormData({ ...formData, unidade_infratante: e.target.value })}
+                placeholder="Ex: Bloco A, 102"
+                required
+              />
             </div>
             <div className="form-group">
-              <label>Nome do Morador: <span style={{ color: '#ef4444' }}>*</span></label>
-              <input type="text" value={formData.nome_morador} onChange={(e) => setFormData({ ...formData, nome_morador: e.target.value })} placeholder="Ex: João Silva" required />
+              <label>Nome do Morador <span className="color-danger">*</span></label>
+              <input
+                type="text"
+                value={formData.nome_morador}
+                onChange={(e) => setFormData({ ...formData, nome_morador: e.target.value })}
+                placeholder="Ex: João Silva"
+                required
+              />
             </div>
             <div className="form-group">
-              <label>Registrado Por: <span style={{ color: '#ef4444' }}>*</span></label>
-              <select value={formData.registrada_por} onChange={(e) => setFormData({ ...formData, registrada_por: e.target.value })}>
+              <label>Registrado Por <span className="color-danger">*</span></label>
+              <select
+                value={formData.registrada_por}
+                onChange={(e) => setFormData({ ...formData, registrada_por: e.target.value })}
+              >
                 <option value="Morador">Morador</option>
                 <option value="Segurança">Segurança</option>
                 <option value="Portaria">Portaria</option>
@@ -299,14 +371,28 @@ export default function Ocorrencias() {
               </select>
             </div>
             <div className="form-group">
-              <label>Quem registrou (Nome): <span style={{ color: '#ef4444' }}>*</span></label>
-              <input type="text" value={formData.quem_registrou} onChange={(e) => setFormData({ ...formData, quem_registrou: e.target.value })} placeholder="Ex: Porteiro Carlos" required />
+              <label>Quem registrou (Nome) <span className="color-danger">*</span></label>
+              <input
+                type="text"
+                value={formData.quem_registrou}
+                onChange={(e) => setFormData({ ...formData, quem_registrou: e.target.value })}
+                placeholder="Ex: Porteiro Carlos"
+                required
+              />
             </div>
             <div className="form-group full-width">
-              <label>Motivo / Descrição: <span style={{ color: '#ef4444' }}>*</span></label>
-              <textarea value={formData.motivo_ocorrencia} onChange={(e) => setFormData({ ...formData, motivo_ocorrencia: e.target.value })} placeholder="Descreva os detalhes da ocorrência..." required />
+              <label>Motivo / Descrição <span className="color-danger">*</span></label>
+              <textarea
+                value={formData.motivo_ocorrencia}
+                onChange={(e) => setFormData({ ...formData, motivo_ocorrencia: e.target.value })}
+                placeholder="Descreva os detalhes da ocorrência..."
+                maxLength={500}
+                required
+              />
+              <span className="char-count">{formData.motivo_ocorrencia.length}/500</span>
             </div>
             <button type="submit" className="submit-btn" disabled={loading}>
+              <CheckIcon style={{ width: 18, height: 18, marginRight: 8 }} />
               {loading ? "Registrando..." : "Registrar Ocorrência"}
             </button>
           </form>
@@ -336,55 +422,74 @@ export default function Ocorrencias() {
                 <span className="filter-active-badge">Filtro Ativo</span>
               )}
             </div>
-            <table className="ocorrencias-table">
-              <thead>
-                <tr>
-                  <th onClick={() => handleSort('id')} className="sortable-th">
-                    <div className="th-content">ID {getSortIcon('id')}</div>
-                  </th>
-                  <th onClick={() => handleSort('unidade_infratante')} className="sortable-th">
-                    <div className="th-content">Unidade {getSortIcon('unidade_infratante')}</div>
-                  </th>
-                  <th onClick={() => handleSort('nome_morador')} className="sortable-th">
-                    <div className="th-content">Morador {getSortIcon('nome_morador')}</div>
-                  </th>
-                  <th onClick={() => handleSort('motivo_ocorrencia')} className="sortable-th">
-                    <div className="th-content">Motivo {getSortIcon('motivo_ocorrencia')}</div>
-                  </th>
-                  <th onClick={() => handleSort('data')} className="sortable-th">
-                    <div className="th-content">Data {getSortIcon('data')}</div>
-                  </th>
-                  <th onClick={() => handleSort('hora')} className="sortable-th">
-                    <div className="th-content">Hora {getSortIcon('hora')}</div>
-                  </th>
-                  <th>Ações</th>
-                </tr>
-              </thead>
-              <tbody>
-                {ocorrenciasFiltradas.map((o) => (
-                  <tr key={o.id}>
-                    <td>{o.id}</td>
-                    <td>{o.unidade_infratante}</td>
-                    <td>{o.nome_morador}</td>
-                    <td title={o.motivo_ocorrencia}>
-                      {o.motivo_ocorrencia.length > 30 ? o.motivo_ocorrencia.substring(0, 30) + "..." : o.motivo_ocorrencia}
-                    </td>
-                    <td>{formatDate(o.data)}</td>
-                    <td>{formatTime(o.hora)}</td>
-                    <td>
-                      <div className="acoes-cell">
-                        <button className="admin-btn-small ver-btn" onClick={() => setModalVisualizar(o)} title="Visualizar">
-                          <svg style={{ width: 14, height: 14 }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" /></svg>
-                        </button>
-                        <button className="admin-btn-small edit-btn" onClick={() => openEditarModal(o)} title="Editar">
-                          <svg style={{ width: 14, height: 14 }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" /><path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z" /></svg>
-                        </button>
-                      </div>
-                    </td>
+            <div className="responsive-table-container">
+              <table className="ocorrencias-table">
+                <thead>
+                  <tr>
+                    <th onClick={() => handleSort('id')} className="sortable-th">
+                      <div className="th-content">ID {getSortIcon('id')}</div>
+                    </th>
+                    <th onClick={() => handleSort('data')} className="sortable-th">
+                      <div className="th-content">DATA {getSortIcon('data')}</div>
+                    </th>
+                    <th onClick={() => handleSort('hora')} className="sortable-th">
+                      <div className="th-content">HORA {getSortIcon('hora')}</div>
+                    </th>
+                    <th onClick={() => handleSort('unidade_infratante')} className="sortable-th">
+                      <div className="th-content">UNIDADE {getSortIcon('unidade_infratante')}</div>
+                    </th>
+                    <th onClick={() => handleSort('nome_morador')} className="sortable-th">
+                      <div className="th-content">MORADOR {getSortIcon('nome_morador')}</div>
+                    </th>
+                    <th onClick={() => handleSort('registrada_por')} className="sortable-th">
+                      <div className="th-content">REGISTRADA POR {getSortIcon('registrada_por')}</div>
+                    </th>
+                    <th onClick={() => handleSort('quem_registrou')} className="sortable-th">
+                      <div className="th-content">QUEM REGISTROU {getSortIcon('quem_registrou')}</div>
+                    </th>
+                    <th>AÇÕES</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {ocorrenciasFiltradas.map((o) => (
+                    <tr key={o.id}>
+                      <td>{o.id}</td>
+                      <td>{formatDate(o.data)}</td>
+                      <td>{formatTime(o.hora)}</td>
+                      <td>{o.unidade_infratante}</td>
+                      <td>{o.nome_morador}</td>
+                      <td>{o.registrada_por}</td>
+                      <td>{o.quem_registrou}</td>
+                      <td>
+                        <div className="acoes-cell">
+                          <button
+                            className="admin-btn-small ver-btn"
+                            onClick={() => setModalVisualizar(o)}
+                            title="Visualizar"
+                          >
+                            <EyeIcon style={{ width: 14, height: 14 }} />
+                          </button>
+                          <button
+                            className="admin-btn-small edit-btn"
+                            onClick={() => openEditarModal(o)}
+                            title="Editar"
+                          >
+                            <PencilIcon style={{ width: 14, height: 14 }} />
+                          </button>
+                          <button
+                            className="admin-btn-small delete-btn"
+                            onClick={() => handleDeletar(o.id)}
+                            title="Excluir"
+                          >
+                            <TrashIcon style={{ width: 14, height: 14 }} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
       </div>
@@ -479,18 +584,21 @@ export default function Ocorrencias() {
       {/* Modal Visualizar */}
       {modalVisualizar && (
         <div className="global-modal-overlay" onClick={() => setModalVisualizar(null)}>
-          <div className="visualizar-modal" onClick={(e) => e.stopPropagation()}>
-            <button className="foto-modal-close" onClick={() => setModalVisualizar(null)}>✕</button>
+          <div className="modal-header">
+            <span className="modal-header-icon">⚠️</span>
             <h3>Dados da Ocorrência</h3>
-            <div className="visualizar-info">
-              <p><strong>Unidade:</strong> {modalVisualizar.unidade_infratante}</p>
-              <p><strong>Morador:</strong> {modalVisualizar.nome_morador}</p>
-              <p><strong>Data/Hora:</strong> {formatDate(modalVisualizar.data)} às {formatTime(modalVisualizar.hora)}</p>
-              <p><strong>Registrado por:</strong> {modalVisualizar.registrada_por} ({modalVisualizar.quem_registrou})</p>
-              <div className="motivo-box" style={{ marginTop: '20px' }}>
-                <label>Motivo / Descrição</label>
-                <p className="motivo-texto">{modalVisualizar.motivo_ocorrencia}</p>
-              </div>
+          </div>
+          <div className="modal-badge">#{modalVisualizar.id} — {modalVisualizar.unidade_infratante}</div>
+
+          <div className="visualizar-info">
+            <p><strong>Unidade</strong> {modalVisualizar.unidade_infratante}</p>
+            <p><strong>Morador</strong> {modalVisualizar.nome_morador}</p>
+            <p><strong>Data/Hora</strong> {formatDate(modalVisualizar.data)} às {formatTime(modalVisualizar.hora)}</p>
+            <p><strong>Registrado por</strong> {modalVisualizar.registrada_por} ({modalVisualizar.quem_registrou})</p>
+
+            <div className="motivo-box" style={{ marginTop: '12px' }}>
+              <label>Motivo / Descrição</label>
+              <p className="motivo-texto">{modalVisualizar.motivo_ocorrencia}</p>
             </div>
           </div>
         </div>
@@ -502,9 +610,17 @@ export default function Ocorrencias() {
           <div className="global-modal" onClick={(e) => e.stopPropagation()}>
             <button className="global-modal-close" onClick={() => setModalEditar(null)}>✕</button>
             <div className="modal-header">
+              <span className="modal-header-icon">✏️</span>
               <h3>Editar Ocorrência</h3>
             </div>
+            <div className="modal-badge">#{modalEditar.id} — {modalEditar.unidade_infratante}</div>
+
             <form onSubmit={handleEditSubmit} className="modal-form">
+              <div className="modal-divider">
+                <ClockIcon style={{ width: 14, height: 14 }} />
+                <span>Data e Hora da Ocorrência</span>
+              </div>
+
               <div className="modal-form-row">
                 <div className="modal-field">
                   <label className="modal-label">Data</label>
@@ -539,23 +655,50 @@ export default function Ocorrencias() {
                 </div>
               </div>
 
+              <div className="modal-divider">Informações da Unidade</div>
+
               <div className="modal-form-row">
                 <div className="modal-field">
-                  <label className="modal-label">Unidade <span style={{ color: '#ef4444' }}>*</span></label>
-                  <input type="text" className="modal-input" value={editFormData.unidade_infratante} onChange={(e) => setEditFormData({ ...editFormData, unidade_infratante: e.target.value })} placeholder="Ex: Bloco A, 102" required />
+                  <label className="modal-label">Unidade <span className="color-danger">*</span></label>
+                  <input
+                    type="text"
+                    className="modal-input"
+                    value={editFormData.unidade_infratante}
+                    onChange={(e) => setEditFormData({ ...editFormData, unidade_infratante: e.target.value })}
+                    placeholder="Ex: Bloco A, 102"
+                    required
+                  />
                 </div>
                 <div className="modal-field">
-                  <label className="modal-label">Morador <span style={{ color: '#ef4444' }}>*</span></label>
-                  <input type="text" className="modal-input" value={editFormData.nome_morador} onChange={(e) => setEditFormData({ ...editFormData, nome_morador: e.target.value })} placeholder="Ex: João Silva" required />
+                  <label className="modal-label">Morador <span className="color-danger">*</span></label>
+                  <input
+                    type="text"
+                    className="modal-input"
+                    value={editFormData.nome_morador}
+                    onChange={(e) => setEditFormData({ ...editFormData, nome_morador: e.target.value })}
+                    placeholder="Ex: João Silva"
+                    required
+                  />
                 </div>
               </div>
 
               <div className="modal-field">
-                <label className="modal-label">Motivo <span style={{ color: '#ef4444' }}>*</span></label>
-                <textarea className="modal-input" style={{ minHeight: '100px' }} value={editFormData.motivo_ocorrencia} onChange={(e) => setEditFormData({ ...editFormData, motivo_ocorrencia: e.target.value })} required />
+                <label className="modal-label">Motivo <span className="color-danger">*</span></label>
+                <textarea
+                  className="modal-input"
+                  style={{ minHeight: '120px', resize: 'vertical' }}
+                  value={editFormData.motivo_ocorrencia}
+                  onChange={(e) => setEditFormData({ ...editFormData, motivo_ocorrencia: e.target.value })}
+                  maxLength={500}
+                  required
+                />
+                <span className="char-count">{editFormData.motivo_ocorrencia.length}/500</span>
               </div>
 
-              <button type="submit" className="submit-btn" style={{ width: '100%', marginTop: '15px' }}>Salvar Alterações</button>
+              <button type="submit" className="modal-btn modal-btn-primary">
+                <CheckIcon style={{ width: 16, height: 16 }} />
+                Salvar Alterações
+              </button>
             </form>
           </div>
         </div>
