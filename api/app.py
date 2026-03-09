@@ -354,7 +354,6 @@ def criar_acesso():
 
     acesso = Acesso(
         nome=data["nome"],
-        sobrenome=data["sobrenome"],
         documento=data["documento"],
         placa=data.get("placa", ""),
         marca=data.get("marca", ""),
@@ -392,7 +391,6 @@ def editar_acesso(id):
     data = request.json
     
     acesso.nome = data.get("nome", acesso.nome)
-    acesso.sobrenome = data.get("sobrenome", acesso.sobrenome)
     acesso.documento = data.get("documento", acesso.documento)
     acesso.placa = data.get("placa", acesso.placa)
     acesso.marca = data.get("marca", acesso.marca)

@@ -74,6 +74,7 @@ const CustomSelect = ({ options, value, onChange, placeholder, className = "" })
                     key={option.value}
                     className={`custom-select-option ${value === option.value ? 'selected' : ''}`}
                     onMouseDown={(e) => {
+                        e.preventDefault();
                         e.stopPropagation();
                         handleSelect(option.value);
                     }}
@@ -105,7 +106,13 @@ const CustomSelect = ({ options, value, onChange, placeholder, className = "" })
                 </svg>
             </div>
 
-            {isOpen && ReactDOM.createPortal(dropdownMenu, document.body)}
+            {isOpen && ReactDOM.createPortal(
+                <>
+                    <div className="premium-select-backdrop" onMouseDown={() => setIsOpen(false)} />
+                    {dropdownMenu}
+                </>,
+                document.body
+            )}
         </div>
     );
 };

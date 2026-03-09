@@ -1,4 +1,5 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
+import { createPortal } from "react-dom";
 import api from "../services/api";
 import { toast } from "sonner";
 import { formatDate, formatDateTime } from "../utils/formatters";
@@ -6,6 +7,37 @@ import Flatpickr from "react-flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
 import { Portuguese } from "flatpickr/dist/l10n/pt.js";
 import "./Portaria.css";
+import PremiumSelect from "../components/PremiumSelect";
+
+const applyDocumentMask = (value, type) => {
+  if (!value) return "";
+  if (type === "CPF") {
+    let v = value.replace(/\D/g, "").substring(0, 11);
+    return v.replace(/(\d{3})(\d)/, "$1.$2")
+      .replace(/(\d{3})(\d)/, "$1.$2")
+      .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+  }
+  if (type === "RG" || type === "RG/CPF") {
+    let v = value.replace(/[^\dXx]/g, "").substring(0, 9);
+    if (v.length > 8) return v.replace(/^(.{2})(.{3})(.{3})(.{1})$/, "$1.$2.$3-$4");
+    if (v.length > 5) return v.replace(/^(.{2})(.{3})(.{1,3})$/, "$1.$2.$3");
+    if (v.length > 2) return v.replace(/^(.{2})(.{1,3})$/, "$1.$2");
+    return v;
+  }
+  if (type === "CNH") {
+    return value.replace(/\D/g, "").substring(0, 11);
+  }
+  return value.replace(/[^a-zA-Z0-9]/g, "").toUpperCase();
+};
+
+const applyPlacaMask = (value) => {
+  if (!value) return "";
+  let v = value.replace(/[^a-zA-Z0-9]/g, "").toUpperCase();
+  if (v.length > 3) {
+    return v.substring(0, 3) + "-" + v.substring(3, 7);
+  }
+  return v;
+};
 
 // Ícones SVG inline
 const PencilIcon = ({ className, style }) => (
@@ -89,9 +121,60 @@ const ShieldCheckIcon = ({ className, style }) => (
   </svg>
 );
 
+const SearchIcon = ({ className, style }) => (
+  <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="11" cy="11" r="8" />
+    <line x1="21" y1="21" x2="16.65" y2="16.65" />
+  </svg>
+);
+
 const FilterIcon = ({ className, style }) => (
   <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
+  </svg>
+);
+
+const ChevronDownIcon = ({ className, style }) => (
+  <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M6 9l6 6 6-6" />
+  </svg>
+);
+
+const FileTextIcon = ({ className, style }) => (
+  <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+    <polyline points="14 2 14 8 20 8" />
+    <line x1="16" y1="13" x2="8" y2="13" />
+    <line x1="16" y1="17" x2="8" y2="17" />
+    <polyline points="10 9 9 9 8 9" />
+  </svg>
+);
+
+const CreditCardIcon = ({ className, style }) => (
+  <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <rect x="1" y="4" width="22" height="16" rx="2" ry="2" />
+    <line x1="1" y1="10" x2="23" y2="10" />
+  </svg>
+);
+
+const GlobeIcon = ({ className, style }) => (
+  <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="10" />
+    <line x1="2" y1="12" x2="22" y2="12" />
+    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+  </svg>
+);
+
+const UserIcon = ({ className, style }) => (
+  <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+    <circle cx="12" cy="7" r="4" />
+  </svg>
+);
+
+const ShieldIcon = ({ className, style }) => (
+  <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
   </svg>
 );
 
@@ -113,7 +196,6 @@ export default function Portaria() {
   const [modalEditar, setModalEditar] = useState(null);
   const [editFormData, setEditFormData] = useState({
     nome: "",
-    sobrenome: "",
     documento: "",
     placa: "",
     marca: "",
@@ -122,7 +204,6 @@ export default function Portaria() {
   });
   const [formData, setFormData] = useState({
     nome: "",
-    sobrenome: "",
     documento: "",
     placa: "",
     marca: "",
@@ -130,8 +211,115 @@ export default function Portaria() {
     cor: "",
   });
 
+  const [docType, setDocType] = useState("RG");
+  const [quickSearchPlaca, setQuickSearchPlaca] = useState("");
+  const [quickSearchDoc, setQuickSearchDoc] = useState("");
+  const [quickSearchDocType, setQuickSearchDocType] = useState("RG");
+  const [showQuickSearchDropdown, setShowQuickSearchDropdown] = useState(false);
+  const quickSearchRef = useRef(null);
+
+  const docTypeOptions = [
+    { value: "RG", label: "RG", icon: <FileTextIcon style={{ width: 14, height: 14 }} /> },
+    { value: "CNH", label: "CNH", icon: <CreditCardIcon style={{ width: 14, height: 14 }} /> },
+    { value: "CPF", label: "CPF", icon: <UserIcon style={{ width: 14, height: 14 }} /> },
+    { value: "Passaporte", label: "Passaporte", icon: <GlobeIcon style={{ width: 14, height: 14 }} /> },
+    { value: "RNE", label: "RNE", icon: <ShieldIcon style={{ width: 14, height: 14 }} /> },
+    { value: "CRNM", label: "CRNM", icon: <ShieldIcon style={{ width: 14, height: 14 }} /> }
+  ];
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (quickSearchRef.current && !quickSearchRef.current.contains(event.target)) {
+        setShowQuickSearchDropdown(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleQuickSearchDocTypeSelect = (type) => {
+    setQuickSearchDocType(type);
+    setQuickSearchDoc((prev) => applyDocumentMask(prev, type));
+  };
+
+  const handleQuickSearchPlacaChange = (e) => {
+    const value = applyPlacaMask(e.target.value);
+    setQuickSearchPlaca(value);
+    setQuickSearchDoc(""); // Clear other field to avoid confusion
+    setShowQuickSearchDropdown(value.length > 0);
+  };
+
+  const handleQuickSearchDocChange = (e) => {
+    const value = applyDocumentMask(e.target.value, quickSearchDocType);
+    setQuickSearchDoc(value);
+    setQuickSearchPlaca(""); // Clear other field to avoid confusion
+    setShowQuickSearchDropdown(value.length > 0);
+  };
+
+  const quickSearchResults = useMemo(() => {
+    const searchTerm = quickSearchPlaca || quickSearchDoc;
+    const searchMode = quickSearchPlaca ? "placa" : (quickSearchDoc ? "documento" : null);
+
+    if (!searchTerm || !searchMode) return [];
+
+    // Pega registros únicos baseados em documento ou placa para evitar duplicatas no dropdown
+    const uniqueMap = new Map();
+
+    acessos.forEach(a => {
+      let isMatch = false;
+      let sortKey = "";
+
+      if (searchMode === "placa" && a.placa) {
+        if (a.placa.toUpperCase().includes(searchTerm.toUpperCase())) {
+          isMatch = true;
+          sortKey = a.placa;
+        }
+      } else if (searchMode === "documento" && a.documento) {
+        if (a.documento.includes(searchTerm)) {
+          isMatch = true;
+          sortKey = a.documento;
+        }
+      }
+
+      if (isMatch && !uniqueMap.has(sortKey)) {
+        uniqueMap.set(sortKey, a);
+      }
+    });
+
+    return Array.from(uniqueMap.values()).slice(0, 5); // limite de 5 resultados
+  }, [acessos, quickSearchPlaca, quickSearchDoc]);
+
+  const handleSelectQuickSearchItem = (e, item) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setFormData({
+      nome: item.nome || "",
+      documento: item.documento || "",
+      placa: item.placa || "",
+      marca: item.marca || "",
+      modelo: item.modelo || "",
+      cor: item.cor || "",
+    });
+    setDocType("RG/CPF"); // Resetando the doc type visual for filling
+    setQuickSearchPlaca("");
+    setQuickSearchDoc("");
+    setShowQuickSearchDropdown(false);
+    toast.success("Dados preenchidos com sucesso!");
+  };
+
+  const handleDocTypeSelect = (type) => {
+    setDocType(type);
+    setFormData((prev) => ({ ...prev, documento: applyDocumentMask(prev.documento, type) }));
+  };
+
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    let value = e.target.value;
+    if (e.target.name === "documento") {
+      value = applyDocumentMask(value, docType);
+    } else if (e.target.name === "placa") {
+      value = applyPlacaMask(value);
+    }
+    setFormData({ ...formData, [e.target.name]: value });
   };
 
   const fetchAcessos = async () => {
@@ -158,7 +346,6 @@ export default function Portaria() {
     setModalEditar(acesso);
     setEditFormData({
       nome: acesso.nome,
-      sobrenome: acesso.sobrenome,
       documento: acesso.documento,
       placa: acesso.placa || "",
       marca: acesso.marca || "",
@@ -169,6 +356,14 @@ export default function Portaria() {
 
   const handleEditSubmit = async (e) => {
     e.preventDefault();
+    if (editFormData.placa) {
+      const placaRegex = /^[A-Z]{3}-\d[A-Z0-9]\d{2}$/;
+      if (!placaRegex.test(editFormData.placa)) {
+        toast.error("Formato de placa inválido. Use o padrão ABC-1234 ou ABC-1D23.");
+        return;
+      }
+    }
+
     try {
       await api.put(`/acessos/${modalEditar.id}`, editFormData);
       toast.success("Acesso atualizado!");
@@ -194,7 +389,7 @@ export default function Portaria() {
 
   const acessosFiltrados = useMemo(() => {
     const filtrados = acessos.filter(a => {
-      const nomeCompleto = `${a.nome} ${a.sobrenome}`.toLowerCase();
+      const nomeCompleto = (a.nome || "").toLowerCase();
       const matchNome = !filtros.nome || nomeCompleto.includes(filtros.nome.toLowerCase());
       const matchDoc = !filtros.documento || a.documento.toLowerCase().includes(filtros.documento.toLowerCase());
       const matchPlaca = !filtros.placa || (a.placa && a.placa.toLowerCase().includes(filtros.placa.toLowerCase()));
@@ -252,6 +447,10 @@ export default function Portaria() {
   };
 
   useEffect(() => {
+    fetchAcessos(); // Load access history initially for the quick search autocomplete
+  }, []);
+
+  useEffect(() => {
     if (activeTab === "visualizacao") {
       fetchAcessos();
     }
@@ -259,6 +458,15 @@ export default function Portaria() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (formData.placa) {
+      const placaRegex = /^[A-Z]{3}-\d[A-Z0-9]\d{2}$/;
+      if (!placaRegex.test(formData.placa)) {
+        toast.error("Formato de placa inválido. Use o padrão ABC-1234 ou ABC-1D23.");
+        return;
+      }
+    }
+
     setLoading(true);
 
     try {
@@ -266,13 +474,14 @@ export default function Portaria() {
       toast.success("Acesso cadastrado com sucesso!");
       setFormData({
         nome: "",
-        sobrenome: "",
         documento: "",
         placa: "",
         marca: "",
         modelo: "",
         cor: "",
       });
+      setDocType("RG");
+      setQuickSearchDocType("RG");
     } catch (error) {
       toast.error("Erro ao cadastrar acesso");
       console.error(error);
@@ -311,93 +520,179 @@ export default function Portaria() {
       {/* TAB CONTENT */}
       <div className="tab-content">
         {activeTab === "cadastro" && (
-          <form className="cadastro-form" onSubmit={handleSubmit}>
-            <h2><UserPlusIcon className="section-icon" /> Cadastro de Acessos</h2>
+          <div className="cadastro-tab-wrapper">
+            <form className="cadastro-form" onSubmit={handleSubmit}>
+              <h2><UserPlusIcon className="section-icon" style={{ width: 22, height: 22 }} /> Cadastro de Acessos</h2>
 
-            <div className="form-group">
-              <label>Nome:</label>
-              <input
-                type="text"
-                name="nome"
-                value={formData.nome}
-                onChange={handleChange}
-                placeholder="Ex: João"
-                required
-              />
-            </div>
+              <div className="quick-search-section" ref={quickSearchRef}>
+                <h3><SearchIcon className="section-icon" style={{ width: 18, height: 18 }} /> Pesquisa Rápida (Autopreenchimento)</h3>
+                <p className="quick-search-desc">Busque acessos anteriores para preencher o formulário automaticamente.</p>
 
-            <div className="form-group">
-              <label>Sobrenome:</label>
-              <input
-                type="text"
-                name="sobrenome"
-                value={formData.sobrenome}
-                onChange={handleChange}
-                placeholder="Ex: Silva"
-                required
-              />
-            </div>
+                <div className="quick-search-controls">
+                  <div className="quick-search-field">
+                    <label>Pesquisar por Placa:</label>
+                    <input
+                      type="text"
+                      className="quick-search-input"
+                      placeholder="Ex: ABC-1234"
+                      value={quickSearchPlaca}
+                      onChange={handleQuickSearchPlacaChange}
+                      onFocus={() => { if (quickSearchPlaca) setShowQuickSearchDropdown(true); }}
+                      maxLength="8"
+                    />
+                  </div>
 
-            <div className="form-group">
-              <label>Documento (RG/CPF):</label>
-              <input
-                type="text"
-                name="documento"
-                value={formData.documento}
-                onChange={handleChange}
-                placeholder="Ex: 12.345.678-9"
-                required
-              />
-            </div>
+                  <div className="quick-search-field">
+                    <label>Pesquisar por Documento:</label>
+                    <div className="quick-search-input-wrapper">
+                      <div className="doc-type-wrapper-inline premium-wrapper">
+                        <PremiumSelect
+                          options={docTypeOptions}
+                          value={quickSearchDocType}
+                          onChange={handleQuickSearchDocTypeSelect}
+                        />
+                      </div>
+                      <input
+                        type="text"
+                        className="quick-search-input"
+                        placeholder={`Ex: (${quickSearchDocType})`}
+                        value={quickSearchDoc}
+                        onChange={handleQuickSearchDocChange}
+                        onFocus={() => { if (quickSearchDoc) setShowQuickSearchDropdown(true); }}
+                        maxLength="20"
+                      />
+                    </div>
+                  </div>
 
-            <div className="form-group">
-              <label>Placa:</label>
-              <input
-                type="text"
-                name="placa"
-                value={formData.placa}
-                onChange={handleChange}
-                placeholder="Ex: ABC-1234"
-              />
-            </div>
+                  {showQuickSearchDropdown && (quickSearchPlaca || quickSearchDoc) && createPortal(
+                    <>
+                      <div className="premium-select-backdrop" onMouseDown={() => setShowQuickSearchDropdown(false)} />
+                      <div
+                        className="quick-search-dropdown premium-autocomplete"
+                        style={{
+                          position: 'absolute',
+                          top: `${quickSearchRef.current?.getBoundingClientRect().bottom + window.scrollY + 8}px`,
+                          left: `${quickSearchRef.current?.getBoundingClientRect().left + window.scrollX}px`,
+                          width: `${quickSearchRef.current?.getBoundingClientRect().width}px`,
+                          zIndex: 999999
+                        }}
+                      >
+                        {quickSearchResults.length > 0 ? (
+                          quickSearchResults.map(item => (
+                            <div
+                              key={item.id}
+                              className="quick-search-item"
+                              onMouseDown={(e) => handleSelectQuickSearchItem(e, item)}
+                            >
+                              <div className="qs-primary">
+                                <strong>{quickSearchPlaca ? item.placa : item.documento}</strong>
+                                <span className="qs-complement">{item.nome}</span>
+                              </div>
+                              <div className="qs-secondary">
+                                {quickSearchPlaca ? `Doc: ${item.documento}` : (item.placa ? `Placa: ${item.placa}` : 'Sem placa')}
+                              </div>
+                            </div>
+                          ))
+                        ) : (
+                          <div className="quick-search-item empty">Nenhum registro encontrado.</div>
+                        )}
+                      </div>
+                    </>,
+                    document.body
+                  )}
+                </div>
+              </div>
 
-            <div className="form-group">
-              <label>Marca:</label>
-              <input
-                type="text"
-                name="marca"
-                value={formData.marca}
-                onChange={handleChange}
-                placeholder="Ex: Toyota"
-              />
-            </div>
+              <div className="form-group">
+                <label>Nome:</label>
+                <input
+                  type="text"
+                  name="nome"
+                  value={formData.nome}
+                  onChange={handleChange}
+                  placeholder="Ex: João Silva"
+                  required
+                />
+              </div>
 
-            <div className="form-group">
-              <label>Modelo:</label>
-              <input
-                type="text"
-                name="modelo"
-                value={formData.modelo}
-                onChange={handleChange}
-                placeholder="Ex: Corolla"
-              />
-            </div>
+              <div className="form-group">
+                <label>Documento:</label>
+                <div className="quick-search-input-wrapper" style={{ marginTop: '5px' }}>
+                  <div className="doc-type-wrapper-inline premium-wrapper">
+                    <PremiumSelect
+                      options={docTypeOptions}
+                      value={docType}
+                      onChange={handleDocTypeSelect}
+                    />
+                  </div>
 
-            <div className="form-group">
-              <label>Cor:</label>
-              <input
-                type="text"
-                name="cor"
-                value={formData.cor}
-                onChange={handleChange}
-                placeholder="Ex: Prata"
-              />
-            </div>
+                  <input
+                    type="text"
+                    name="documento"
+                    className="quick-search-input"
+                    value={formData.documento}
+                    onChange={handleChange}
+                    placeholder={
+                      docType === "CPF" ? "Ex: 123.456.789-00" :
+                        docType === "RG" ? "Ex: 12.345.678-x" :
+                          docType === "CNH" ? "Ex: 12345678901" :
+                            "Ex: AB123456"
+                    }
+                    required
+                  />
+                </div>
+              </div>
 
-            <button type="submit" className="submit-btn" disabled={loading}>
-              {loading ? "Cadastrando..." : "Cadastrar Acesso"}
-            </button>
-          </form>
+              <div className="form-group">
+                <label>Placa:</label>
+                <input
+                  type="text"
+                  name="placa"
+                  value={formData.placa}
+                  onChange={handleChange}
+                  placeholder="Ex: ABC-1234"
+                  maxLength="8"
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Marca:</label>
+                <input
+                  type="text"
+                  name="marca"
+                  value={formData.marca}
+                  onChange={handleChange}
+                  placeholder="Ex: Toyota"
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Modelo:</label>
+                <input
+                  type="text"
+                  name="modelo"
+                  value={formData.modelo}
+                  onChange={handleChange}
+                  placeholder="Ex: Corolla"
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Cor:</label>
+                <input
+                  type="text"
+                  name="cor"
+                  value={formData.cor}
+                  onChange={handleChange}
+                  placeholder="Ex: Prata"
+                />
+              </div>
+
+              <button type="submit" className="submit-btn" disabled={loading}>
+                {loading ? "Cadastrando..." : "Cadastrar Acesso"}
+              </button>
+            </form>
+          </div>
         )}
 
         {activeTab === "visualizacao" && (
@@ -438,9 +733,6 @@ export default function Portaria() {
                       <th onClick={() => handleSort('nome')} className="sortable-th">
                         <div className="th-content">Nome {getSortIcon('nome')}</div>
                       </th>
-                      <th onClick={() => handleSort('sobrenome')} className="sortable-th">
-                        <div className="th-content">Sobrenome {getSortIcon('sobrenome')}</div>
-                      </th>
                       <th onClick={() => handleSort('documento')} className="sortable-th">
                         <div className="th-content">Documento {getSortIcon('documento')}</div>
                       </th>
@@ -470,7 +762,6 @@ export default function Portaria() {
                       <tr key={a.id}>
                         <td>{a.id}</td>
                         <td>{a.nome}</td>
-                        <td>{a.sobrenome}</td>
                         <td>{a.documento}</td>
                         <td>{a.placa}</td>
                         <td>{a.marca}</td>
@@ -521,7 +812,7 @@ export default function Portaria() {
 
             {activeTab === "liberacao" && (
               <div className="liberacao">
-                <h2><ShieldCheckIcon className="section-icon" /> Liberação de Acessos</h2>
+                <h2>Liberação de Acessos</h2>
                 <p>Funcionalidade em desenvolvimento...</p>
               </div>
             )}
@@ -553,28 +844,16 @@ export default function Portaria() {
                   />
                 </div>
                 <div className="modal-field">
-                  <label className="modal-label">Sobrenome</label>
+                  <label className="modal-label">Documento</label>
                   <input
                     type="text"
                     className="modal-input"
-                    value={editFormData.sobrenome}
-                    onChange={(e) => setEditFormData({ ...editFormData, sobrenome: e.target.value })}
-                    placeholder="Ex: Silva"
+                    value={editFormData.documento}
+                    onChange={(e) => setEditFormData({ ...editFormData, documento: e.target.value })}
+                    placeholder="Ex: 12.345.678-9"
                     required
                   />
                 </div>
-              </div>
-
-              <div className="modal-field">
-                <label className="modal-label">Documento</label>
-                <input
-                  type="text"
-                  className="modal-input"
-                  value={editFormData.documento}
-                  onChange={(e) => setEditFormData({ ...editFormData, documento: e.target.value })}
-                  placeholder="Ex: 12.345.678-9"
-                  required
-                />
               </div>
 
               <div className="modal-form-row">
@@ -584,8 +863,9 @@ export default function Portaria() {
                     type="text"
                     className="modal-input"
                     value={editFormData.placa}
-                    onChange={(e) => setEditFormData({ ...editFormData, placa: e.target.value })}
+                    onChange={(e) => setEditFormData({ ...editFormData, placa: applyPlacaMask(e.target.value) })}
                     placeholder="Ex: ABC-1234"
+                    maxLength="8"
                   />
                 </div>
                 <div className="modal-field">
@@ -667,8 +947,9 @@ export default function Portaria() {
                     type="text"
                     className="modal-input"
                     value={filtrosTemporarios.placa}
-                    onChange={(e) => setFiltrosTemporarios({ ...filtrosTemporarios, placa: e.target.value })}
+                    onChange={(e) => setFiltrosTemporarios({ ...filtrosTemporarios, placa: applyPlacaMask(e.target.value) })}
                     placeholder="ABC-1234"
+                    maxLength="8"
                   />
                 </div>
               </div>

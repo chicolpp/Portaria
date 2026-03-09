@@ -88,7 +88,11 @@ const PlateSearch = ({ onSelect, searchField = "placa", placeholder, className =
         };
     }, [isOpen]);
 
-    const handleSelect = (access) => {
+    const handleSelect = (e, access) => {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
         onSelect(access);
         setSearchTerm("");
         setResults([]);
@@ -120,30 +124,33 @@ const PlateSearch = ({ onSelect, searchField = "placa", placeholder, className =
             </div>
 
             {isOpen && createPortal(
-                <ul
-                    className="custom-select-options portal-dropdown"
-                    style={{
-                        position: 'absolute',
-                        top: `${coords.top - 26}px`,
-                        left: `${coords.left}px`,
-                        width: `${coords.width}px`,
-                        zIndex: 9999999
-                    }}
-                >
-                    {results.map((access) => (
-                        <li
-                            key={access.id}
-                            className="custom-select-option"
-                            onClick={() => handleSelect(access)}
-                        >
-                            <div className="plate-option-content">
-                                <span className="plate-badge">{searchField === "placa" ? access.placa : (access.documento || "N/A")}</span>
-                                <span className="plate-owner">{access.nome}</span>
-                                <span className="plate-vehicle">{access.marca} {access.modelo}</span>
-                            </div>
-                        </li>
-                    ))}
-                </ul>,
+                <>
+                    <div className="premium-select-backdrop" onMouseDown={() => setIsOpen(false)} />
+                    <ul
+                        className="custom-select-options portal-dropdown premium-autocomplete"
+                        style={{
+                            position: 'absolute',
+                            top: `${coords.top - 26}px`,
+                            left: `${coords.left}px`,
+                            width: `${coords.width}px`,
+                            zIndex: 9999999
+                        }}
+                    >
+                        {results.map((access) => (
+                            <li
+                                key={access.id}
+                                className="custom-select-option"
+                                onMouseDown={(e) => handleSelect(e, access)}
+                            >
+                                <div className="plate-option-content">
+                                    <span className="plate-badge">{searchField === "placa" ? access.placa : (access.documento || "N/A")}</span>
+                                    <span className="plate-owner">{access.nome}</span>
+                                    <span className="plate-vehicle">{access.marca} {access.modelo}</span>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </>,
                 document.body
             )}
         </div>

@@ -1,4 +1,5 @@
-import { useEffect, useState, useMemo, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import api from "../services/api";
 import { toast } from "sonner";
 import { formatDate, formatDateTime } from "../utils/formatters";
@@ -904,19 +905,34 @@ export default function EspacosServicos() {
                     </div>
                   )}
 
-                  {availableItensForSearch.length > 0 && (
-                    <ul className="item-search-results">
-                      {availableItensForSearch
-                        .filter(it => !itensSelecionados.find(x => x.id === it.id))
-                        .map(item => (
-                          <li key={item.id} onClick={() => {
-                            setItensSelecionados([...itensSelecionados, item]);
-                            setItemSearchQuery("");
-                          }}>
-                            {item.nome}
-                          </li>
-                        ))}
-                    </ul>
+                  {availableItensForSearch.length > 0 && createPortal(
+                    <>
+                      <div className="premium-select-backdrop" onMouseDown={() => setItemSearchQuery("")} />
+                      <ul
+                        className="item-search-results premium-autocomplete"
+                        style={{
+                          position: 'absolute',
+                          top: `${document.querySelector('.item-search-input-wrapper')?.getBoundingClientRect().bottom + window.scrollY + 8}px`,
+                          left: `${document.querySelector('.item-search-input-wrapper')?.getBoundingClientRect().left + window.scrollX}px`,
+                          width: `${document.querySelector('.item-search-input-wrapper')?.getBoundingClientRect().width}px`,
+                          zIndex: 999999
+                        }}
+                      >
+                        {availableItensForSearch
+                          .filter(it => !itensSelecionados.find(x => x.id === it.id))
+                          .map(item => (
+                            <li key={item.id} onMouseDown={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              setItensSelecionados([...itensSelecionados, item]);
+                              setItemSearchQuery("");
+                            }}>
+                              {item.nome}
+                            </li>
+                          ))}
+                      </ul>
+                    </>,
+                    document.body
                   )}
                 </div>
               )}
