@@ -227,6 +227,12 @@
   color: white;
 }
 
+.th-content {
+  display: flex;
+  align-items: center;
+  gap: 0px;
+}
+
 .acessos-table td {
   padding: 8px 12px;
 }

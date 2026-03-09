@@ -507,6 +507,12 @@
   background: rgba(139, 92, 246, 0.05);
 }
 
+.th-content {
+  display: flex;
+  align-items: center;
+  gap: 0px;
+}
+
 .usuarios-table tbody tr.usuario-inativo {
   opacity: 0.5;
 }

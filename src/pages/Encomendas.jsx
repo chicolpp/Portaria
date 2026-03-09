@@ -102,6 +102,26 @@ const FilterIcon = ({ className, style }) => (
 
 const BoxIcon = PackageIcon;
 
+const SortIcon = ({ direction, active }) => {
+  if (!active) {
+    return (
+      <svg style={{ width: 14, height: 14, marginLeft: 6, opacity: 0.3 }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M7 15l5 5 5-5" />
+        <path d="M7 9l5-5 5 5" />
+      </svg>
+    );
+  }
+  return direction === 'asc' ? (
+    <svg style={{ width: 14, height: 14, marginLeft: 6, color: 'var(--primary-light)' }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M18 15l-6-6-6 6" />
+    </svg>
+  ) : (
+    <svg style={{ width: 14, height: 14, marginLeft: 6, color: 'var(--primary-light)' }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M6 9l6 6 6-6" />
+    </svg>
+  );
+};
+
 export default function Encomendas() {
   const [activeTab, setActiveTab] = useState("cadastro");
   const lastPointRef = useRef(null);
@@ -280,8 +300,7 @@ export default function Encomendas() {
   };
 
   const getSortIcon = (key) => {
-    if (sortConfig.key !== key) return "↕️";
-    return sortConfig.direction === 'asc' ? "🔼" : "🔽";
+    return <SortIcon active={sortConfig.key === key} direction={sortConfig.direction} />;
   };
 
   const handleChange = (e) => {
@@ -1160,15 +1179,31 @@ export default function Encomendas() {
                 <table className="encomendas-table">
                   <thead>
                     <tr>
-                      <th onClick={() => handleSort('id')} className="sortable-th">ID {getSortIcon('id')}</th>
-                      <th onClick={() => handleSort('nome')} className="sortable-th">Nome {getSortIcon('nome')}</th>
-                      <th onClick={() => handleSort('unidade')} className="sortable-th">Unidade {getSortIcon('unidade')}</th>
-                      <th onClick={() => handleSort('documento')} className="sortable-th">Cod. Rastreamento {getSortIcon('documento')}</th>
-                      <th onClick={() => handleSort('pagina')} className="sortable-th">Página {getSortIcon('pagina')}</th>
-                      <th onClick={() => handleSort('data_recebimento')} className="sortable-th">Data/Hora Recebimento {getSortIcon('data_recebimento')}</th>
+                      <th onClick={() => handleSort('id')} className="sortable-th">
+                        <div className="th-content">ID {getSortIcon('id')}</div>
+                      </th>
+                      <th onClick={() => handleSort('nome')} className="sortable-th">
+                        <div className="th-content">Nome {getSortIcon('nome')}</div>
+                      </th>
+                      <th onClick={() => handleSort('unidade')} className="sortable-th">
+                        <div className="th-content">Unidade {getSortIcon('unidade')}</div>
+                      </th>
+                      <th onClick={() => handleSort('documento')} className="sortable-th">
+                        <div className="th-content">Cod. Rastreamento {getSortIcon('documento')}</div>
+                      </th>
+                      <th onClick={() => handleSort('pagina')} className="sortable-th">
+                        <div className="th-content">Página {getSortIcon('pagina')}</div>
+                      </th>
+                      <th onClick={() => handleSort('data_recebimento')} className="sortable-th">
+                        <div className="th-content">Data/Hora Recebimento {getSortIcon('data_recebimento')}</div>
+                      </th>
                       <th>Foto</th>
-                      <th onClick={() => handleSort('retirado')} className="sortable-th">Status {getSortIcon('retirado')}</th>
-                      <th onClick={() => handleSort('nome_retirada')} className="sortable-th">Retirada {getSortIcon('nome_retirada')}</th>
+                      <th onClick={() => handleSort('retirado')} className="sortable-th">
+                        <div className="th-content">Status {getSortIcon('retirado')}</div>
+                      </th>
+                      <th onClick={() => handleSort('nome_retirada')} className="sortable-th">
+                        <div className="th-content">Retirada {getSortIcon('nome_retirada')}</div>
+                      </th>
                       <th>Ações</th>
                     </tr>
                   </thead>

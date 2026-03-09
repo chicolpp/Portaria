@@ -49,6 +49,26 @@ const UnlockIcon = ({ className, style }) => (
   </svg>
 );
 
+const SortIcon = ({ direction, active }) => {
+  if (!active) {
+    return (
+      <svg style={{ width: 14, height: 14, marginLeft: 6, opacity: 0.3 }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M7 15l5 5 5-5" />
+        <path d="M7 9l5-5 5 5" />
+      </svg>
+    );
+  }
+  return direction === 'asc' ? (
+    <svg style={{ width: 14, height: 14, marginLeft: 6, color: 'var(--primary-light)' }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M18 15l-6-6-6 6" />
+    </svg>
+  ) : (
+    <svg style={{ width: 14, height: 14, marginLeft: 6, color: 'var(--primary-light)' }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M6 9l6 6 6-6" />
+    </svg>
+  );
+};
+
 export default function CadastroUsuarios() {
   const [activeTab, setActiveTab] = useState("cadastro");
   const [usuarios, setUsuarios] = useState([]);
@@ -337,8 +357,7 @@ export default function CadastroUsuarios() {
   };
 
   const getSortIcon = (key) => {
-    if (sortConfig.key !== key) return "↕️";
-    return sortConfig.direction === 'asc' ? "🔼" : "🔽";
+    return <SortIcon active={sortConfig.key === key} direction={sortConfig.direction} />;
   };
 
   const FilterIcon = ({ className, style }) => (
@@ -681,13 +700,27 @@ export default function CadastroUsuarios() {
               <table className="usuarios-table">
                 <thead>
                   <tr>
-                    <th onClick={() => handleSort('id')} className="sortable-th">ID {getSortIcon('id')}</th>
-                    <th onClick={() => handleSort('nome')} className="sortable-th">Nome {getSortIcon('nome')}</th>
-                    <th onClick={() => handleSort('email')} className="sortable-th">Email {getSortIcon('email')}</th>
-                    <th onClick={() => handleSort('cargo')} className="sortable-th">Cargo {getSortIcon('cargo')}</th>
-                    <th onClick={() => handleSort('is_admin')} className="sortable-th">Permissão {getSortIcon('is_admin')}</th>
-                    <th onClick={() => handleSort('ativo')} className="sortable-th">Status {getSortIcon('ativo')}</th>
-                    <th onClick={() => handleSort('data_criacao')} className="sortable-th">Cadastro {getSortIcon('data_criacao')}</th>
+                    <th onClick={() => handleSort('id')} className="sortable-th">
+                      <div className="th-content">ID {getSortIcon('id')}</div>
+                    </th>
+                    <th onClick={() => handleSort('nome')} className="sortable-th">
+                      <div className="th-content">Nome {getSortIcon('nome')}</div>
+                    </th>
+                    <th onClick={() => handleSort('email')} className="sortable-th">
+                      <div className="th-content">Email {getSortIcon('email')}</div>
+                    </th>
+                    <th onClick={() => handleSort('cargo')} className="sortable-th">
+                      <div className="th-content">Cargo {getSortIcon('cargo')}</div>
+                    </th>
+                    <th onClick={() => handleSort('is_admin')} className="sortable-th">
+                      <div className="th-content">Permissão {getSortIcon('is_admin')}</div>
+                    </th>
+                    <th onClick={() => handleSort('ativo')} className="sortable-th">
+                      <div className="th-content">Status {getSortIcon('ativo')}</div>
+                    </th>
+                    <th onClick={() => handleSort('data_criacao')} className="sortable-th">
+                      <div className="th-content">Cadastro {getSortIcon('data_criacao')}</div>
+                    </th>
                     <th>Ações</th>
                   </tr>
                 </thead>
