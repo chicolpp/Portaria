@@ -179,6 +179,8 @@
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
   width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .quick-search-input-wrapper:focus-within {
@@ -611,7 +613,10 @@
   .portaria-container .cadastro-form {
     grid-template-columns: 1fr;
     gap: 12px;
-    padding: 15px 10px;
+    padding: 15px; /* Added right padding */
+    width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
   }
 
   .portaria-container .cadastro-form h2 {
@@ -620,12 +625,17 @@
   }
 
   .quick-search-section {
-    padding: 15px 10px;
+    padding: 15px; /* Added right padding */
+    width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
   }
 
   .quick-search-controls {
     grid-template-columns: 1fr;
     gap: 15px;
+    width: 100%; /* Ensure controls don't overflow */
+    box-sizing: border-box;
   }
 
   .quick-search-desc {
@@ -635,9 +645,28 @@
   /* Fixed input widths for mobile */
   .portaria-container .form-group input,
   .portaria-container .quick-search-input-wrapper,
-  .portaria-container .submit-btn {
+  .portaria-container .submit-btn,
+  .quick-search-input {
     width: 100% !important;
-    max-width: none !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    min-width: 0 !important; /* Prevents input flex blowouts */
+  }
+  
+  .portaria-container .form-group {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .doc-type-wrapper-inline {
+    max-width: 35%;
+  }
+  
+  .quick-search-field .quick-search-input {
+      width: 100% !important;
+      max-width: 100% !important;
+      min-width: 0 !important;
   }
 
   .portaria-container .submit-btn {
