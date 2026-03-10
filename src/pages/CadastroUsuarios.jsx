@@ -748,27 +748,27 @@ export default function CadastroUsuarios() {
                         <td className="acoes-cell">
                           <button
                             type="button"
-                            className="btn-editar"
+                            className="admin-btn-small edit-btn"
                             onClick={() => openEditarModal(u)}
                             data-tooltip="Editar"
                           >
-                            ✏️
+                            <PencilIcon style={{ width: 14, height: 14 }} />
                           </button>
                           <button
                             type="button"
-                            className={`btn-toggle ${u.ativo ? "desativar" : "ativar"}`}
+                            className={`admin-btn-small ver-btn ${u.ativo ? "logout-action" : ""}`}
                             onClick={() => toggleStatus(u.id)}
                             data-tooltip={u.ativo ? "Desativar" : "Ativar"}
                           >
-                            {u.ativo ? "🔒" : "🔓"}
+                            {u.ativo ? <LockIcon style={{ width: 14, height: 14 }} /> : <KeyIcon style={{ width: 14, height: 14 }} />}
                           </button>
                           <button
                             type="button"
-                            className="btn-excluir"
+                            className="admin-btn-small delete-btn"
                             onClick={() => deletarUsuario(u.id)}
                             data-tooltip="Excluir"
                           >
-                            🗑️
+                            <TrashIcon style={{ width: 14, height: 14 }} />
                           </button>
                         </td>
                       </tr>
