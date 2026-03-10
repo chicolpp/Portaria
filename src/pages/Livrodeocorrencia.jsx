@@ -91,6 +91,12 @@ const CheckIcon = ({ style }) => (
   </svg>
 );
 
+const FilterIcon = ({ className, style }) => (
+  <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
+  </svg>
+);
+
 const ClockIcon = ({ style }) => (
   <svg style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <circle cx="12" cy="12" r="10" />
@@ -102,9 +108,20 @@ export default function LivroDeOcorrencia() {
   const [activeTab, setActiveTab] = useState("cadastro");
   const [ocorrencias, setOcorrencias] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [sortConfig, setSortConfig] = useState({ key: 'id', direction: 'desc' });
   const [modalVisualizar, setModalVisualizar] = useState(null);
   const [modalEditar, setModalEditar] = useState(null);
-  const [sortConfig, setSortConfig] = useState({ key: 'id', direction: 'desc' });
+  const [modalFiltro, setModalFiltro] = useState(false);
+  const [filtros, setFiltros] = useState({
+    motivo: "",
+    unidade: "",
+    morador: "",
+    registrada_por: "todos",
+    quem_registrou: "",
+    dataInicio: "",
+    dataFim: ""
+  });
+  const [filtrosTemporarios, setFiltrosTemporarios] = useState({ ...filtros });
 
   const [formData, setFormData] = useState({
     data: new Date().toISOString().split('T')[0],
@@ -123,15 +140,41 @@ export default function LivroDeOcorrencia() {
     setFormData({ ...formData, [name]: value });
   };
 
+  const clearFiltros = () => {
+    const limpo = {
+      motivo: "",
+      unidade: "",
+      morador: "",
+      registrada_por: "todos",
+      quem_registrou: "",
+      dataInicio: "",
+      dataFim: ""
+    };
+    setFiltrosTemporarios(limpo);
+  };
+
   const handleEditChange = (e) => {
     const { name, value } = e.target;
     setEditFormData({ ...editFormData, [name]: value });
   };
 
-  const ocorrenciasOrdenadas = useMemo(() => {
-    const ordenadas = [...ocorrencias];
+  const ocorrenciasFiltradas = useMemo(() => {
+    const filtradas = ocorrencias.filter(o => {
+      const matchMotivo = !filtros.motivo || o.motivo_ocorrencia.toLowerCase().includes(filtros.motivo.toLowerCase());
+      const matchUnidade = !filtros.unidade || o.unidade_infratante.toLowerCase().includes(filtros.unidade.toLowerCase());
+      const matchMorador = !filtros.morador || o.nome_morador.toLowerCase().includes(filtros.morador.toLowerCase());
+      const matchRegistradaPor = filtros.registrada_por === "todos" || o.registrada_por === filtros.registrada_por;
+      const matchQuemRegistrou = !filtros.quem_registrou || o.quem_registrou.toLowerCase().includes(filtros.quem_registrou.toLowerCase());
+
+      let matchData = true;
+      if (filtros.dataInicio) matchData = matchData && o.data >= filtros.dataInicio;
+      if (filtros.dataFim) matchData = matchData && o.data <= filtros.dataFim;
+
+      return matchMotivo && matchUnidade && matchMorador && matchRegistradaPor && matchQuemRegistrou && matchData;
+    });
+
     if (sortConfig.key) {
-      ordenadas.sort((a, b) => {
+      filtradas.sort((a, b) => {
         let valA = a[sortConfig.key];
         let valB = b[sortConfig.key];
 
@@ -155,8 +198,8 @@ export default function LivroDeOcorrencia() {
         }
       });
     }
-    return ordenadas;
-  }, [ocorrencias, sortConfig]);
+    return filtradas;
+  }, [ocorrencias, filtros, sortConfig]);
 
   const handleSort = (key) => {
     let direction = 'asc';
@@ -537,11 +580,23 @@ export default function LivroDeOcorrencia() {
 
         {activeTab === "visualizacao" && (
           <div className="visualizacao">
-            <h2>
-              <ListIcon style={{ width: 24, height: 24 }} />
-              Visualização de Ocorrências
-            </h2>
-            <div className="responsive-table-container">
+            <div className="visualizacao-header">
+              <h2>
+                <ListIcon style={{ width: 24, height: 24 }} />
+                Visualização de Ocorrências
+              </h2>
+              <button
+                className="admin-btn-small ver-btn header-filter-btn"
+                onClick={() => setModalFiltro(true)}
+              >
+                <FilterIcon style={{ width: 16, height: 16 }} />
+                <span>Filtrar</span>
+              </button>
+              {Object.values(filtros).some(v => v !== "" && v !== "todos") && (
+                <span className="filter-active-badge" style={{ marginLeft: '10px' }}>Filtro Ativo</span>
+              )}
+            </div>
+            <div className="responsive-table-container desktop-only-table">
               <table className="ocorrencias-table">
                 <thead>
                   <tr>
@@ -570,8 +625,8 @@ export default function LivroDeOcorrencia() {
                   </tr>
                 </thead>
                 <tbody>
-                  {ocorrenciasOrdenadas.length > 0 ? (
-                    ocorrenciasOrdenadas.map((o) => (
+                  {ocorrenciasFiltradas.length > 0 ? (
+                    ocorrenciasFiltradas.map((o) => (
                       <tr key={o.id}>
                         <td>{o.id}</td>
                         <td>{formatDate(o.data)}</td>
@@ -614,9 +669,205 @@ export default function LivroDeOcorrencia() {
                 </tbody>
               </table>
             </div>
+
+            {/* Mobile Card View */}
+            <div className="mobile-cards-container mobile-only-cards">
+              {ocorrenciasFiltradas.length > 0 ? (
+                ocorrenciasFiltradas.map((o) => (
+                  <div key={o.id} className="mobile-access-card">
+                    <div className="card-header">
+                      <span className="card-id">#{o.id}</span>
+                      <span className="card-date">{formatDate(o.data)} - {formatTime(o.hora)}</span>
+                    </div>
+                    <div className="card-body">
+                      <div className="card-row">
+                        <label>Unidade:</label>
+                        <span>{o.unidade_infratante}</span>
+                      </div>
+                      <div className="card-row">
+                        <label>Morador:</label>
+                        <span>{o.nome_morador}</span>
+                      </div>
+                      <div className="card-row">
+                        <label>Registrada por:</label>
+                        <span>{o.registrada_por}</span>
+                      </div>
+                      <div className="card-row">
+                        <label>Quem Registrou:</label>
+                        <span>{o.quem_registrou}</span>
+                      </div>
+                    </div>
+                    <div className="card-actions">
+                      <button
+                        className="admin-btn-small ver-btn mobile-action-btn"
+                        onClick={() => openVisualizarModal(o)}
+                      >
+                        <EyeIcon style={{ width: 18, height: 18 }} />
+                        <span>Ver</span>
+                      </button>
+                      <button
+                        className="admin-btn-small edit-btn mobile-action-btn"
+                        onClick={() => openEditarModal(o)}
+                      >
+                        <PencilIcon style={{ width: 18, height: 18 }} />
+                        <span>Editar</span>
+                      </button>
+                      <button
+                        className="admin-btn-small delete-btn mobile-action-btn"
+                        onClick={() => handleDelete(o.id)}
+                      >
+                        <TrashIcon style={{ width: 18, height: 18 }} />
+                        <span>Excluir</span>
+                      </button>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div style={{ textAlign: 'center', padding: '40px', color: '#94a3b8' }}>
+                  Nenhuma ocorrência encontrada.
+                </div>
+              )}
+            </div>
           </div>
         )}
       </div>
+
+      {/* Modal de Filtro */}
+      {modalFiltro && (
+        <div className="global-modal-overlay" onClick={() => setModalFiltro(false)}>
+          <div className="global-modal" onClick={(e) => e.stopPropagation()}>
+            <button className="global-modal-close" onClick={() => setModalFiltro(false)}>✕</button>
+            <div className="modal-header">
+              <FilterIcon style={{ width: 20, height: 20, marginRight: '10px' }} />
+              <h3>Filtrar Ocorrências</h3>
+            </div>
+
+            <div className="modal-form">
+              <div className="modal-field">
+                <label className="modal-label">Motivo (Busca Livre)</label>
+                <input
+                  type="text"
+                  className="modal-input"
+                  value={filtrosTemporarios.motivo}
+                  onChange={(e) => setFiltrosTemporarios({ ...filtrosTemporarios, motivo: e.target.value })}
+                  placeholder="Pesquisar por motivo..."
+                />
+              </div>
+
+              <div className="modal-form-row">
+                <div className="modal-field">
+                  <label className="modal-label">Unidade</label>
+                  <input
+                    type="text"
+                    className="modal-input"
+                    value={filtrosTemporarios.unidade}
+                    onChange={(e) => setFiltrosTemporarios({ ...filtrosTemporarios, unidade: e.target.value })}
+                    placeholder="Ex: Bloco A, 102"
+                  />
+                </div>
+                <div className="modal-field">
+                  <label className="modal-label">Morador</label>
+                  <input
+                    type="text"
+                    className="modal-input"
+                    value={filtrosTemporarios.morador}
+                    onChange={(e) => setFiltrosTemporarios({ ...filtrosTemporarios, morador: e.target.value })}
+                    placeholder="Ex: João Silva"
+                  />
+                </div>
+              </div>
+
+              <div className="modal-form-row">
+                <div className="modal-field">
+                  <label className="modal-label">Registrada Por</label>
+                  <select
+                    className="modal-input"
+                    value={filtrosTemporarios.registrada_por}
+                    onChange={(e) => setFiltrosTemporarios({ ...filtrosTemporarios, registrada_por: e.target.value })}
+                  >
+                    <option value="todos">Todos</option>
+                    <option value="Morador">Morador</option>
+                    <option value="Segurança">Segurança</option>
+                    <option value="Portaria">Portaria</option>
+                    <option value="Sindico">Síndico</option>
+                  </select>
+                </div>
+                <div className="modal-field">
+                  <label className="modal-label">Quem Registrou</label>
+                  <input
+                    type="text"
+                    className="modal-input"
+                    value={filtrosTemporarios.quem_registrou}
+                    onChange={(e) => setFiltrosTemporarios({ ...filtrosTemporarios, quem_registrou: e.target.value })}
+                    placeholder="Ex: Porteiro Carlos"
+                  />
+                </div>
+              </div>
+
+              <div className="modal-form-row">
+                <div className="modal-field">
+                  <label className="modal-label">Data Início</label>
+                  <Flatpickr
+                    value={filtrosTemporarios.dataInicio}
+                    onChange={([date]) => {
+                      if (date) {
+                        const year = date.getFullYear();
+                        const month = String(date.getMonth() + 1).padStart(2, '0');
+                        const day = String(date.getDate()).padStart(2, '0');
+                        setFiltrosTemporarios({ ...filtrosTemporarios, dataInicio: `${year}-${month}-${day}` });
+                      } else {
+                        setFiltrosTemporarios({ ...filtrosTemporarios, dataInicio: "" });
+                      }
+                    }}
+                    options={flatpickrDateOptions}
+                    className="modal-input flatpickr-input-custom"
+                    placeholder="Data inicial"
+                  />
+                </div>
+                <div className="modal-field">
+                  <label className="modal-label">Data Fim</label>
+                  <Flatpickr
+                    value={filtrosTemporarios.dataFim}
+                    onChange={([date]) => {
+                      if (date) {
+                        const year = date.getFullYear();
+                        const month = String(date.getMonth() + 1).padStart(2, '0');
+                        const day = String(date.getDate()).padStart(2, '0');
+                        setFiltrosTemporarios({ ...filtrosTemporarios, dataFim: `${year}-${month}-${day}` });
+                      } else {
+                        setFiltrosTemporarios({ ...filtrosTemporarios, dataFim: "" });
+                      }
+                    }}
+                    options={flatpickrDateOptions}
+                    className="modal-input flatpickr-input-custom"
+                    placeholder="Data final"
+                  />
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
+                <button
+                  className="submit-btn"
+                  onClick={() => {
+                    setFiltros(filtrosTemporarios);
+                    setModalFiltro(false);
+                  }}
+                  style={{ flex: 1 }}
+                >
+                  Aplicar Filtros
+                </button>
+                <button
+                  className="photo-action-btn gallery-btn"
+                  onClick={clearFiltros}
+                  style={{ flex: 1, background: '#475569' }}
+                >
+                  Limpar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

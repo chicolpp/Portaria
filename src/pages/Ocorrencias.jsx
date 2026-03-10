@@ -118,6 +118,10 @@ export default function Ocorrencias() {
   const [modalFiltro, setModalFiltro] = useState(false);
   const [filtros, setFiltros] = useState({
     motivo: "",
+    unidade: "",
+    morador: "",
+    registrada_por: "todos",
+    quem_registrou: "",
     dataInicio: "",
     dataFim: ""
   });
@@ -166,6 +170,10 @@ export default function Ocorrencias() {
   const clearFiltros = () => {
     const limpo = {
       motivo: "",
+      unidade: "",
+      morador: "",
+      registrada_por: "todos",
+      quem_registrou: "",
       dataInicio: "",
       dataFim: ""
     };
@@ -225,13 +233,17 @@ export default function Ocorrencias() {
 
   const ocorrenciasFiltradas = useMemo(() => {
     const filtradas = ocorrencias.filter(o => {
-      const matchMotivo = !filtros.motivo || o.motivo_ocorrencia.toLowerCase().includes(filtros.motivo.toLowerCase()) || o.nome_morador.toLowerCase().includes(filtros.motivo.toLowerCase());
+      const matchMotivo = !filtros.motivo || o.motivo_ocorrencia.toLowerCase().includes(filtros.motivo.toLowerCase());
+      const matchUnidade = !filtros.unidade || o.unidade_infratante.toLowerCase().includes(filtros.unidade.toLowerCase());
+      const matchMorador = !filtros.morador || o.nome_morador.toLowerCase().includes(filtros.morador.toLowerCase());
+      const matchRegistradaPor = filtros.registrada_por === "todos" || o.registrada_por === filtros.registrada_por;
+      const matchQuemRegistrou = !filtros.quem_registrou || o.quem_registrou.toLowerCase().includes(filtros.quem_registrou.toLowerCase());
 
       let matchData = true;
       if (filtros.dataInicio) matchData = matchData && o.data >= filtros.dataInicio;
       if (filtros.dataFim) matchData = matchData && o.data <= filtros.dataFim;
 
-      return matchMotivo && matchData;
+      return matchMotivo && matchUnidade && matchMorador && matchRegistradaPor && matchQuemRegistrou && matchData;
     });
 
     if (sortConfig.key) {
@@ -408,21 +420,11 @@ export default function Ocorrencias() {
                 <FilterIcon style={{ width: 16, height: 16 }} />
                 <span>Filtrar</span>
               </button>
-            </div>
-
-            <div className="filter-standard-bar mobile-only-filter">
-              <button
-                className="admin-btn-small ver-btn"
-                onClick={() => setModalFiltro(true)}
-              >
-                <FilterIcon style={{ width: 16, height: 16 }} />
-                <span>Filtrar</span>
-              </button>
               {Object.values(filtros).some(v => v !== "" && v !== "todos") && (
-                <span className="filter-active-badge">Filtro Ativo</span>
+                <span className="filter-active-badge" style={{ marginLeft: '10px' }}>Filtro Ativo</span>
               )}
             </div>
-            <div className="responsive-table-container">
+            <div className="responsive-table-container desktop-only-table">
               <table className="ocorrencias-table">
                 <thead>
                   <tr>
@@ -490,219 +492,334 @@ export default function Ocorrencias() {
                 </tbody>
               </table>
             </div>
+
+            {/* Mobile Card View */}
+            <div className="mobile-cards-container mobile-only-cards">
+              {ocorrenciasFiltradas.length > 0 ? (
+                ocorrenciasFiltradas.map((o) => (
+                  <div key={o.id} className="mobile-access-card">
+                    <div className="card-header">
+                      <span className="card-id">#{o.id}</span>
+                      <span className="card-date">{formatDate(o.data)} - {formatTime(o.hora)}</span>
+                    </div>
+                    <div className="card-body">
+                      <div className="card-row">
+                        <label>Unidade:</label>
+                        <span>{o.unidade_infratante}</span>
+                      </div>
+                      <div className="card-row">
+                        <label>Morador:</label>
+                        <span>{o.nome_morador}</span>
+                      </div>
+                      <div className="card-row">
+                        <label>Registrada por:</label>
+                        <span>{o.registrada_por}</span>
+                      </div>
+                      <div className="card-row">
+                        <label>Quem Registrou:</label>
+                        <span>{o.quem_registrou}</span>
+                      </div>
+                    </div>
+                    <div className="card-actions">
+                      <button
+                        className="admin-btn-small ver-btn mobile-action-btn"
+                        onClick={() => setModalVisualizar(o)}
+                      >
+                        <EyeIcon style={{ width: 18, height: 18 }} />
+                        <span>Ver</span>
+                      </button>
+                      <button
+                        className="admin-btn-small edit-btn mobile-action-btn"
+                        onClick={() => openEditarModal(o)}
+                      >
+                        <PencilIcon style={{ width: 18, height: 18 }} />
+                        <span>Editar</span>
+                      </button>
+                      <button
+                        className="admin-btn-small delete-btn mobile-action-btn"
+                        onClick={() => handleDeletar(o.id)}
+                      >
+                        <TrashIcon style={{ width: 18, height: 18 }} />
+                        <span>Excluir</span>
+                      </button>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div style={{ textAlign: 'center', padding: '40px', color: '#94a3b8' }}>
+                  Nenhuma ocorrência encontrada.
+                </div>
+              )}
+            </div>
           </div>
         )}
       </div>
 
       {/* Modal de Filtro */}
-      {modalFiltro && (
-        <div className="global-modal-overlay" onClick={() => setModalFiltro(false)}>
-          <div className="global-modal" onClick={(e) => e.stopPropagation()}>
-            <button className="global-modal-close" onClick={() => setModalFiltro(false)}>✕</button>
-            <div className="modal-header">
-              <FilterIcon style={{ width: 20, height: 20, marginRight: '10px' }} />
-              <h3>Filtrar Ocorrências</h3>
-            </div>
-
-            <div className="modal-form">
-              <div className="modal-field">
-                <label className="modal-label">Pesquisar (Motivo ou Morador)</label>
-                <input
-                  type="text"
-                  className="modal-input"
-                  value={filtrosTemporarios.motivo}
-                  onChange={(e) => setFiltrosTemporarios({ ...filtrosTemporarios, motivo: e.target.value })}
-                  placeholder="Pesquisar..."
-                />
+      {
+        modalFiltro && (
+          <div className="global-modal-overlay" onClick={() => setModalFiltro(false)}>
+            <div className="global-modal" onClick={(e) => e.stopPropagation()}>
+              <button className="global-modal-close" onClick={() => setModalFiltro(false)}>✕</button>
+              <div className="modal-header">
+                <FilterIcon style={{ width: 20, height: 20, marginRight: '10px' }} />
+                <h3>Filtrar Ocorrências</h3>
               </div>
 
-              <div className="modal-form-row">
+              <div className="modal-form">
                 <div className="modal-field">
-                  <label className="modal-label">Data Início</label>
-                  <Flatpickr
-                    value={filtrosTemporarios.dataInicio}
-                    onChange={([date]) => {
-                      if (date) {
-                        const year = date.getFullYear();
-                        const month = String(date.getMonth() + 1).padStart(2, '0');
-                        const day = String(date.getDate()).padStart(2, '0');
-                        setFiltrosTemporarios({ ...filtrosTemporarios, dataInicio: `${year}-${month}-${day}` });
-                      } else {
-                        setFiltrosTemporarios({ ...filtrosTemporarios, dataInicio: "" });
-                      }
-                    }}
-                    options={flatpickrDateOptions}
-                    className="modal-input flatpickr-input-custom"
-                    placeholder="Data inicial"
+                  <label className="modal-label">Motivo (Busca Livre)</label>
+                  <input
+                    type="text"
+                    className="modal-input"
+                    value={filtrosTemporarios.motivo}
+                    onChange={(e) => setFiltrosTemporarios({ ...filtrosTemporarios, motivo: e.target.value })}
+                    placeholder="Pesquisar por motivo..."
                   />
                 </div>
-                <div className="modal-field">
-                  <label className="modal-label">Data Fim</label>
-                  <Flatpickr
-                    value={filtrosTemporarios.dataFim}
-                    onChange={([date]) => {
-                      if (date) {
-                        const year = date.getFullYear();
-                        const month = String(date.getMonth() + 1).padStart(2, '0');
-                        const day = String(date.getDate()).padStart(2, '0');
-                        setFiltrosTemporarios({ ...filtrosTemporarios, dataFim: `${year}-${month}-${day}` });
-                      } else {
-                        setFiltrosTemporarios({ ...filtrosTemporarios, dataFim: "" });
-                      }
-                    }}
-                    options={flatpickrDateOptions}
-                    className="modal-input flatpickr-input-custom"
-                    placeholder="Data final"
-                  />
-                </div>
-              </div>
 
-              <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
-                <button
-                  className="submit-btn"
-                  onClick={() => {
-                    setFiltros(filtrosTemporarios);
-                    setModalFiltro(false);
-                  }}
-                  style={{ flex: 1 }}
-                >
-                  Aplicar Filtros
-                </button>
-                <button
-                  className="photo-action-btn gallery-btn"
-                  onClick={clearFiltros}
-                  style={{ flex: 1, background: '#475569' }}
-                >
-                  Limpar
-                </button>
+                <div className="modal-form-row">
+                  <div className="modal-field">
+                    <label className="modal-label">Unidade</label>
+                    <input
+                      type="text"
+                      className="modal-input"
+                      value={filtrosTemporarios.unidade}
+                      onChange={(e) => setFiltrosTemporarios({ ...filtrosTemporarios, unidade: e.target.value })}
+                      placeholder="Ex: Bloco A, 102"
+                    />
+                  </div>
+                  <div className="modal-field">
+                    <label className="modal-label">Morador</label>
+                    <input
+                      type="text"
+                      className="modal-input"
+                      value={filtrosTemporarios.morador}
+                      onChange={(e) => setFiltrosTemporarios({ ...filtrosTemporarios, morador: e.target.value })}
+                      placeholder="Ex: João Silva"
+                    />
+                  </div>
+                </div>
+
+                <div className="modal-form-row">
+                  <div className="modal-field">
+                    <label className="modal-label">Registrada Por</label>
+                    <select
+                      className="modal-input"
+                      value={filtrosTemporarios.registrada_por}
+                      onChange={(e) => setFiltrosTemporarios({ ...filtrosTemporarios, registrada_por: e.target.value })}
+                    >
+                      <option value="todos">Todos</option>
+                      <option value="Morador">Morador</option>
+                      <option value="Segurança">Segurança</option>
+                      <option value="Portaria">Portaria</option>
+                      <option value="Sindico">Síndico</option>
+                    </select>
+                  </div>
+                  <div className="modal-field">
+                    <label className="modal-label">Quem Registrou</label>
+                    <input
+                      type="text"
+                      className="modal-input"
+                      value={filtrosTemporarios.quem_registrou}
+                      onChange={(e) => setFiltrosTemporarios({ ...filtrosTemporarios, quem_registrou: e.target.value })}
+                      placeholder="Ex: Porteiro Carlos"
+                    />
+                  </div>
+                </div>
+
+                <div className="modal-form-row">
+                  <div className="modal-field">
+                    <label className="modal-label">Data Início</label>
+                    <Flatpickr
+                      value={filtrosTemporarios.dataInicio}
+                      onChange={([date]) => {
+                        if (date) {
+                          const year = date.getFullYear();
+                          const month = String(date.getMonth() + 1).padStart(2, '0');
+                          const day = String(date.getDate()).padStart(2, '0');
+                          setFiltrosTemporarios({ ...filtrosTemporarios, dataInicio: `${year}-${month}-${day}` });
+                        } else {
+                          setFiltrosTemporarios({ ...filtrosTemporarios, dataInicio: "" });
+                        }
+                      }}
+                      options={flatpickrDateOptions}
+                      className="modal-input flatpickr-input-custom"
+                      placeholder="Data inicial"
+                    />
+                  </div>
+                  <div className="modal-field">
+                    <label className="modal-label">Data Fim</label>
+                    <Flatpickr
+                      value={filtrosTemporarios.dataFim}
+                      onChange={([date]) => {
+                        if (date) {
+                          const year = date.getFullYear();
+                          const month = String(date.getMonth() + 1).padStart(2, '0');
+                          const day = String(date.getDate()).padStart(2, '0');
+                          setFiltrosTemporarios({ ...filtrosTemporarios, dataFim: `${year}-${month}-${day}` });
+                        } else {
+                          setFiltrosTemporarios({ ...filtrosTemporarios, dataFim: "" });
+                        }
+                      }}
+                      options={flatpickrDateOptions}
+                      className="modal-input flatpickr-input-custom"
+                      placeholder="Data final"
+                    />
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
+                  <button
+                    className="submit-btn"
+                    onClick={() => {
+                      setFiltros(filtrosTemporarios);
+                      setModalFiltro(false);
+                    }}
+                    style={{ flex: 1 }}
+                  >
+                    Aplicar Filtros
+                  </button>
+                  <button
+                    className="photo-action-btn gallery-btn"
+                    onClick={clearFiltros}
+                    style={{ flex: 1, background: '#475569' }}
+                  >
+                    Limpar
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      )}
+        )
+      }
 
       {/* Modal Visualizar */}
-      {modalVisualizar && (
-        <div className="global-modal-overlay" onClick={() => setModalVisualizar(null)}>
-          <div className="modal-header">
-            <span className="modal-header-icon">⚠️</span>
-            <h3>Dados da Ocorrência</h3>
-          </div>
-          <div className="modal-badge">#{modalVisualizar.id} — {modalVisualizar.unidade_infratante}</div>
+      {
+        modalVisualizar && (
+          <div className="global-modal-overlay" onClick={() => setModalVisualizar(null)}>
+            <div className="modal-header">
+              <span className="modal-header-icon">⚠️</span>
+              <h3>Dados da Ocorrência</h3>
+            </div>
+            <div className="modal-badge">#{modalVisualizar.id} — {modalVisualizar.unidade_infratante}</div>
 
-          <div className="visualizar-info">
-            <p><strong>Unidade</strong> {modalVisualizar.unidade_infratante}</p>
-            <p><strong>Morador</strong> {modalVisualizar.nome_morador}</p>
-            <p><strong>Data/Hora</strong> {formatDate(modalVisualizar.data)} às {formatTime(modalVisualizar.hora)}</p>
-            <p><strong>Registrado por</strong> {modalVisualizar.registrada_por} ({modalVisualizar.quem_registrou})</p>
+            <div className="visualizar-info">
+              <p><strong>Unidade</strong> {modalVisualizar.unidade_infratante}</p>
+              <p><strong>Morador</strong> {modalVisualizar.nome_morador}</p>
+              <p><strong>Data/Hora</strong> {formatDate(modalVisualizar.data)} às {formatTime(modalVisualizar.hora)}</p>
+              <p><strong>Registrado por</strong> {modalVisualizar.registrada_por} ({modalVisualizar.quem_registrou})</p>
 
-            <div className="motivo-box" style={{ marginTop: '12px' }}>
-              <label>Motivo / Descrição</label>
-              <p className="motivo-texto">{modalVisualizar.motivo_ocorrencia}</p>
+              <div className="motivo-box" style={{ marginTop: '12px' }}>
+                <label>Motivo / Descrição</label>
+                <p className="motivo-texto">{modalVisualizar.motivo_ocorrencia}</p>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )
+      }
 
       {/* Modal Editar */}
-      {modalEditar && (
-        <div className="global-modal-overlay" onClick={() => setModalEditar(null)}>
-          <div className="global-modal" onClick={(e) => e.stopPropagation()}>
-            <button className="global-modal-close" onClick={() => setModalEditar(null)}>✕</button>
-            <div className="modal-header">
-              <span className="modal-header-icon">✏️</span>
-              <h3>Editar Ocorrência</h3>
+      {
+        modalEditar && (
+          <div className="global-modal-overlay" onClick={() => setModalEditar(null)}>
+            <div className="global-modal" onClick={(e) => e.stopPropagation()}>
+              <button className="global-modal-close" onClick={() => setModalEditar(null)}>✕</button>
+              <div className="modal-header">
+                <span className="modal-header-icon">✏️</span>
+                <h3>Editar Ocorrência</h3>
+              </div>
+              <div className="modal-badge">#{modalEditar.id} — {modalEditar.unidade_infratante}</div>
+
+              <form onSubmit={handleEditSubmit} className="modal-form">
+                <div className="modal-divider">
+                  <ClockIcon style={{ width: 14, height: 14 }} />
+                  <span>Data e Hora da Ocorrência</span>
+                </div>
+
+                <div className="modal-form-row">
+                  <div className="modal-field">
+                    <label className="modal-label">Data</label>
+                    <Flatpickr
+                      value={editFormData.data}
+                      onChange={([date]) => {
+                        if (date) {
+                          const year = date.getFullYear();
+                          const month = String(date.getMonth() + 1).padStart(2, '0');
+                          const day = String(date.getDate()).padStart(2, '0');
+                          setEditFormData({ ...editFormData, data: `${year}-${month}-${day}` });
+                        }
+                      }}
+                      options={flatpickrDateOptions}
+                      className="modal-input flatpickr-input-custom"
+                    />
+                  </div>
+                  <div className="modal-field">
+                    <label className="modal-label">Hora</label>
+                    <Flatpickr
+                      value={editFormData.hora}
+                      onChange={([date]) => {
+                        if (date) {
+                          const hours = String(date.getHours()).padStart(2, '0');
+                          const minutes = String(date.getMinutes()).padStart(2, '0');
+                          setEditFormData({ ...editFormData, hora: `${hours}:${minutes}` });
+                        }
+                      }}
+                      options={flatpickrTimeOptions}
+                      className="modal-input flatpickr-input-custom"
+                    />
+                  </div>
+                </div>
+
+                <div className="modal-divider">Informações da Unidade</div>
+
+                <div className="modal-form-row">
+                  <div className="modal-field">
+                    <label className="modal-label">Unidade <span className="color-danger">*</span></label>
+                    <input
+                      type="text"
+                      className="modal-input"
+                      value={editFormData.unidade_infratante}
+                      onChange={(e) => setEditFormData({ ...editFormData, unidade_infratante: e.target.value })}
+                      placeholder="Ex: Bloco A, 102"
+                      required
+                    />
+                  </div>
+                  <div className="modal-field">
+                    <label className="modal-label">Morador <span className="color-danger">*</span></label>
+                    <input
+                      type="text"
+                      className="modal-input"
+                      value={editFormData.nome_morador}
+                      onChange={(e) => setEditFormData({ ...editFormData, nome_morador: e.target.value })}
+                      placeholder="Ex: João Silva"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="modal-field">
+                  <label className="modal-label">Motivo <span className="color-danger">*</span></label>
+                  <textarea
+                    className="modal-input"
+                    style={{ minHeight: '120px', resize: 'vertical' }}
+                    value={editFormData.motivo_ocorrencia}
+                    onChange={(e) => setEditFormData({ ...editFormData, motivo_ocorrencia: e.target.value })}
+                    maxLength={500}
+                    required
+                  />
+                  <span className="char-count">{editFormData.motivo_ocorrencia.length}/500</span>
+                </div>
+
+                <button type="submit" className="modal-btn modal-btn-primary">
+                  <CheckIcon style={{ width: 16, height: 16 }} />
+                  Salvar Alterações
+                </button>
+              </form>
             </div>
-            <div className="modal-badge">#{modalEditar.id} — {modalEditar.unidade_infratante}</div>
-
-            <form onSubmit={handleEditSubmit} className="modal-form">
-              <div className="modal-divider">
-                <ClockIcon style={{ width: 14, height: 14 }} />
-                <span>Data e Hora da Ocorrência</span>
-              </div>
-
-              <div className="modal-form-row">
-                <div className="modal-field">
-                  <label className="modal-label">Data</label>
-                  <Flatpickr
-                    value={editFormData.data}
-                    onChange={([date]) => {
-                      if (date) {
-                        const year = date.getFullYear();
-                        const month = String(date.getMonth() + 1).padStart(2, '0');
-                        const day = String(date.getDate()).padStart(2, '0');
-                        setEditFormData({ ...editFormData, data: `${year}-${month}-${day}` });
-                      }
-                    }}
-                    options={flatpickrDateOptions}
-                    className="modal-input flatpickr-input-custom"
-                  />
-                </div>
-                <div className="modal-field">
-                  <label className="modal-label">Hora</label>
-                  <Flatpickr
-                    value={editFormData.hora}
-                    onChange={([date]) => {
-                      if (date) {
-                        const hours = String(date.getHours()).padStart(2, '0');
-                        const minutes = String(date.getMinutes()).padStart(2, '0');
-                        setEditFormData({ ...editFormData, hora: `${hours}:${minutes}` });
-                      }
-                    }}
-                    options={flatpickrTimeOptions}
-                    className="modal-input flatpickr-input-custom"
-                  />
-                </div>
-              </div>
-
-              <div className="modal-divider">Informações da Unidade</div>
-
-              <div className="modal-form-row">
-                <div className="modal-field">
-                  <label className="modal-label">Unidade <span className="color-danger">*</span></label>
-                  <input
-                    type="text"
-                    className="modal-input"
-                    value={editFormData.unidade_infratante}
-                    onChange={(e) => setEditFormData({ ...editFormData, unidade_infratante: e.target.value })}
-                    placeholder="Ex: Bloco A, 102"
-                    required
-                  />
-                </div>
-                <div className="modal-field">
-                  <label className="modal-label">Morador <span className="color-danger">*</span></label>
-                  <input
-                    type="text"
-                    className="modal-input"
-                    value={editFormData.nome_morador}
-                    onChange={(e) => setEditFormData({ ...editFormData, nome_morador: e.target.value })}
-                    placeholder="Ex: João Silva"
-                    required
-                  />
-                </div>
-              </div>
-
-              <div className="modal-field">
-                <label className="modal-label">Motivo <span className="color-danger">*</span></label>
-                <textarea
-                  className="modal-input"
-                  style={{ minHeight: '120px', resize: 'vertical' }}
-                  value={editFormData.motivo_ocorrencia}
-                  onChange={(e) => setEditFormData({ ...editFormData, motivo_ocorrencia: e.target.value })}
-                  maxLength={500}
-                  required
-                />
-                <span className="char-count">{editFormData.motivo_ocorrencia.length}/500</span>
-              </div>
-
-              <button type="submit" className="modal-btn modal-btn-primary">
-                <CheckIcon style={{ width: 16, height: 16 }} />
-                Salvar Alterações
-              </button>
-            </form>
           </div>
-        </div>
-      )}
-    </div>
+        )
+      }
+    </div >
   );
 }

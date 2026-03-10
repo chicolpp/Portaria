@@ -98,6 +98,12 @@ const ListIcon = ({ className, style }) => (
   </svg>
 );
 
+const CheckIcon = ({ className, style }) => (
+  <svg className={className} style={{ width: 16, height: 16, ...style }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="20 6 9 17 4 12" />
+  </svg>
+);
+
 const UnlockIcon = ({ className, style }) => (
   <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
@@ -706,25 +712,16 @@ export default function Portaria() {
                 <FilterIcon style={{ width: 16, height: 16 }} />
                 <span>Filtrar</span>
               </button>
-            </div>
-
-            <div className="filter-standard-bar mobile-only-filter">
-              <button
-                className="admin-btn-small ver-btn"
-                onClick={() => setModalFiltro(true)}
-              >
-                <FilterIcon style={{ width: 16, height: 16 }} />
-                <span>Filtrar</span>
-              </button>
               {Object.values(filtros).some(v => v !== "" && v !== "todos") && (
-                <span className="filter-active-badge">Filtro Ativo</span>
+                <span className="filter-active-badge" style={{ marginLeft: '10px' }}>Filtro Ativo</span>
               )}
             </div>
             {acessos.length === 0 ? (
               <p>Nenhum acesso cadastrado ainda.</p>
             ) : (
               <div className="responsive-table-container">
-                <table className="acessos-table">
+                {/* Desktop Table View */}
+                <table className="acessos-table desktop-only-table">
                   <thead>
                     <tr>
                       <th onClick={() => handleSort('id')} className="sortable-th">
@@ -771,7 +768,7 @@ export default function Portaria() {
                         <td>
                           {a.data_saida ? (
                             <span className="status-saida-registrada">
-                              ✓ {formatDateTime(a.data_saida)}
+                              <CheckIcon /> {formatDateTime(a.data_saida)}
                             </span>
                           ) : (
                             <span className="status-presente">🟢 Presente</span>
@@ -807,6 +804,72 @@ export default function Portaria() {
                     ))}
                   </tbody>
                 </table>
+
+                {/* Mobile Card View */}
+                <div className="mobile-cards-container mobile-only-cards">
+                  {acessosFiltrados.map((a) => (
+                    <div key={a.id} className="mobile-access-card">
+                      <div className="card-header">
+                        <span className="card-id">#{a.id}</span>
+                        <div className="card-status">
+                          {a.data_saida ? (
+                            <span className="status-saida-registrada">
+                              <CheckIcon /> Saída: {formatDateTime(a.data_saida)}
+                            </span>
+                          ) : (
+                            <span className="status-presente">🟢 Presente</span>
+                          )}
+                        </div>
+                      </div>
+                      <div className="card-body">
+                        <div className="card-row">
+                          <label>Nome:</label>
+                          <span>{a.nome}</span>
+                        </div>
+                        <div className="card-row">
+                          <label>Documento:</label>
+                          <span>{a.documento}</span>
+                        </div>
+                        {a.placa && (
+                          <>
+                            <div className="card-row">
+                              <label>Veículo:</label>
+                              <span>{a.marca} {a.modelo} ({a.cor})</span>
+                            </div>
+                            <div className="card-row">
+                              <label>Placa:</label>
+                              <span className="placa-badge">{a.placa}</span>
+                            </div>
+                          </>
+                        )}
+                        <div className="card-row">
+                          <label>Entrada:</label>
+                          <span>{formatDateTime(a.data_entrada)}</span>
+                        </div>
+                      </div>
+                      <div className="card-actions">
+                        <button
+                          type="button"
+                          className="admin-btn-small edit-btn mobile-action-btn"
+                          onClick={() => openEditarModal(a)}
+                        >
+                          <PencilIcon style={{ width: 16, height: 16 }} />
+                          <span>Editar</span>
+                        </button>
+                        {!a.data_saida && (
+                          <button
+                            type="button"
+                            className="admin-btn-small edit-btn mobile-action-btn logout-action"
+                            onClick={() => registrarSaida(a.id)}
+                          >
+                            <LogOutIcon style={{ width: 16, height: 16 }} />
+                            <span>Registrar Saída</span>
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
 

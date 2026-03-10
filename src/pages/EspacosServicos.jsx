@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { createPortal } from "react-dom";
 import api from "../services/api";
 import { toast } from "sonner";
@@ -306,7 +306,7 @@ export default function EspacosServicos() {
       for (const it of itensSelecionados) {
         const itemFormData = new FormData();
         itemFormData.append("nome_morador", retiradaChaveForm.nome);
-        itemFormData.append("apartamento", retiradaChaveChaveForm.unidade);
+        itemFormData.append("apartamento", retiradaChaveForm.unidade);
         itemFormData.append("bloco", "");
         if (blob) {
           itemFormData.append("assinatura", blob, "assinatura_item.png");

@@ -219,15 +219,22 @@
   box-shadow: 0 0 10px var(--glow-color);
 }
 
-/* Responsive visibility */
-@media (min-width: 769px) {
-  .mobile-only-filter {
+@media (max-width: 768px) {
+  .header-filter-btn {
     display: none !important;
+  }
+
+  .desktop-only-table {
+    display: none !important;
+  }
+
+  .mobile-only-cards {
+    display: flex !important;
   }
 }
 
-@media (max-width: 768px) {
-  .header-filter-btn {
+@media (min-width: 769px) {
+  .mobile-only-cards {
     display: none !important;
   }
 }
@@ -1173,16 +1180,130 @@
   }
 
   .encomendas-table {
-    width: 100%;
-    min-width: 800px;
-    font-size: 11px;
+    display: none;
   }
 
-  .encomendas-table th,
-  .encomendas-table td {
-    padding: 8px 4px;
-    font-size: 11px;
-    line-height: 1.4;
+  /* Mobile Card Styles (Matched with Portaria) */
+  .mobile-access-card {
+    background: rgba(15, 23, 42, 0.4);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 20px;
+    transition: transform 0.2s;
+    width: 100%;
+  }
+
+  .mobile-access-card:active {
+    transform: scale(0.98);
+  }
+
+  .card-header {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start !important;
+    gap: 5px;
+    margin-bottom: 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding-bottom: 8px;
+  }
+
+  .card-id {
+    font-family: monospace;
+    color: var(--primary-light);
+    font-weight: 700;
+  }
+
+  .card-status {
+    text-align: left !important;
+    font-size: 14px;
+    width: 100%;
+  }
+
+  .card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .card-row {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start !important;
+    gap: 4px;
+    font-size: 13px;
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  .card-row label {
+    color: #94a3b8;
+    font-weight: 600;
+    margin-bottom: 2px !important;
+    text-transform: none !important;
+    font-size: 12px !important;
+    min-width: unset !important;
+  }
+
+  .card-row span {
+    color: #e2e8f0;
+    font-weight: 500;
+    text-align: left !important;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    width: 100%;
+    padding-left: 0;
+  }
+
+  .status-retirado {
+    color: #10b981;
+    font-weight: 600;
+  }
+
+  .status-aguardando {
+    color: #f59e0b;
+    font-weight: 600;
+  }
+
+  .highlighted-retirada {
+    background: rgba(16, 185, 129, 0.05);
+    padding: 10px;
+    border-radius: 8px;
+    border-left: 3px solid #10b981;
+  }
+
+  .card-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .mobile-action-btn {
+    height: 44px !important;
+    width: 44px !important;
+    flex: 0 0 44px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: 14px !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    backdrop-filter: blur(10px) !important;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    padding: 0 !important;
+  }
+
+  .mobile-action-btn svg {
+    width: 22px !important;
+    height: 22px !important;
+  }
+
+  .mobile-action-btn span {
+    display: none !important;
   }
 
   /* Modais em mobile */

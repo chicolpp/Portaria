@@ -1154,18 +1154,8 @@ export default function Encomendas() {
                 <FilterIcon style={{ width: 16, height: 16 }} />
                 <span>Filtrar</span>
               </button>
-            </div>
-
-            <div className="filter-standard-bar mobile-only-filter">
-              <button
-                className="admin-btn-small ver-btn"
-                onClick={() => setModalFiltro(true)}
-              >
-                <FilterIcon style={{ width: 16, height: 16 }} />
-                <span>Filtrar</span>
-              </button>
               {Object.values(filtros).some(v => v !== "" && v !== "todos") && (
-                <span className="filter-active-badge">Filtro Ativo</span>
+                <span className="filter-active-badge" style={{ marginLeft: '10px' }}>Filtro Ativo</span>
               )}
             </div>
             {fetchLoading ? (
@@ -1176,7 +1166,8 @@ export default function Encomendas() {
               <p>Nenhuma encomenda cadastrada ainda.</p>
             ) : (
               <div className="responsive-table-container">
-                <table className="encomendas-table">
+                {/* Desktop Table View */}
+                <table className="encomendas-table desktop-only-table">
                   <thead>
                     <tr>
                       <th onClick={() => handleSort('id')} className="sortable-th">
@@ -1291,6 +1282,104 @@ export default function Encomendas() {
                     ))}
                   </tbody>
                 </table>
+
+                {/* Mobile Card View */}
+                <div className="mobile-cards-container mobile-only-cards">
+                  {encomendasFiltradas.map((e) => (
+                    <div key={e.id} className="mobile-access-card">
+                      <div className="card-header">
+                        <span className="card-id">#{e.id}</span>
+                        <div className="card-status">
+                          {e.retirado ? (
+                            <span className="status-retirado">✓ Retirado</span>
+                          ) : (
+                            <span className="status-aguardando">⏳ Aguardando</span>
+                          )}
+                        </div>
+                      </div>
+                      <div className="card-body">
+                        <div className="card-row">
+                          <label>Nome:</label>
+                          <span>{e.nome}</span>
+                        </div>
+                        <div className="card-row">
+                          <label>Unidade:</label>
+                          <span>{e.unidade}</span>
+                        </div>
+                        <div className="card-row">
+                          <label>Rastreamento:</label>
+                          <span>{e.documento}</span>
+                        </div>
+                        {e.pagina && (
+                          <div className="card-row">
+                            <label>Página:</label>
+                            <span>{e.pagina}</span>
+                          </div>
+                        )}
+                        <div className="card-row">
+                          <label>Recebimento:</label>
+                          <span>{formatDate(e.data_recebimento)} {formatTime(e.hora_recebimento)}</span>
+                        </div>
+                        {e.retirado && (
+                          <div className="card-row highlighted-retirada">
+                            <label>Retirada por:</label>
+                            <span>{e.nome_retirada} ({formatDate(e.data_retirada)} {formatTime(e.hora_retirada)})</span>
+                          </div>
+                        )}
+                      </div>
+                      <div className="card-actions">
+                        {e.foto && (
+                          <button
+                            type="button"
+                            className="admin-btn-small ver-btn mobile-action-btn"
+                            onClick={() => openFotoModal(e.foto)}
+                          >
+                            <EyeIcon style={{ width: 16, height: 16 }} />
+                            <span>Ver Foto</span>
+                          </button>
+                        )}
+                        {!e.retirado && (
+                          <button
+                            type="button"
+                            className="admin-btn-small edit-btn mobile-action-btn logout-action"
+                            onClick={() => openRetiradaModal(e)}
+                          >
+                            <PackageIcon style={{ width: 16, height: 16 }} />
+                            <span>Retirar</span>
+                          </button>
+                        )}
+                        {e.assinatura && (
+                          <button
+                            type="button"
+                            className="admin-btn-small ver-btn mobile-action-btn"
+                            onClick={() => openFotoModal(e.assinatura, true)}
+                          >
+                            <PencilIcon style={{ width: 16, height: 16 }} />
+                            <span>Assinatura</span>
+                          </button>
+                        )}
+                        <button
+                          type="button"
+                          className="admin-btn-small edit-btn mobile-action-btn"
+                          onClick={() => openEditarModal(e)}
+                        >
+                          <EditIcon style={{ width: 16, height: 16 }} />
+                          <span>Editar</span>
+                        </button>
+                        {isAdmin && (
+                          <button
+                            type="button"
+                            className="admin-btn-small delete-btn mobile-action-btn"
+                            onClick={() => handleDeletar(e.id)}
+                          >
+                            <TrashIcon style={{ width: 16, height: 16 }} />
+                            <span>Excluir</span>
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
           </div>
