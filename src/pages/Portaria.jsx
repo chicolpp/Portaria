@@ -202,6 +202,7 @@ export default function Portaria() {
   const [modalEditar, setModalEditar] = useState(null);
   const [editFormData, setEditFormData] = useState({
     nome: "",
+    sobrenome: "",
     documento: "",
     placa: "",
     marca: "",
@@ -210,6 +211,7 @@ export default function Portaria() {
   });
   const [formData, setFormData] = useState({
     nome: "",
+    sobrenome: "",
     documento: "",
     placa: "",
     marca: "",
@@ -300,6 +302,7 @@ export default function Portaria() {
     e.stopPropagation();
     setFormData({
       nome: item.nome || "",
+      sobrenome: item.sobrenome || "",
       documento: item.documento || "",
       placa: item.placa || "",
       marca: item.marca || "",
@@ -352,6 +355,7 @@ export default function Portaria() {
     setModalEditar(acesso);
     setEditFormData({
       nome: acesso.nome,
+      sobrenome: acesso.sobrenome || "",
       documento: acesso.documento,
       placa: acesso.placa || "",
       marca: acesso.marca || "",
@@ -480,6 +484,7 @@ export default function Portaria() {
       toast.success("Acesso cadastrado com sucesso!");
       setFormData({
         nome: "",
+        sobrenome: "",
         documento: "",
         placa: "",
         marca: "",
@@ -616,7 +621,19 @@ export default function Portaria() {
                   name="nome"
                   value={formData.nome}
                   onChange={handleChange}
-                  placeholder="Ex: João Silva"
+                  placeholder="Ex: João"
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Sobrenome:</label>
+                <input
+                  type="text"
+                  name="sobrenome"
+                  value={formData.sobrenome}
+                  onChange={handleChange}
+                  placeholder="Ex: Silva"
                   required
                 />
               </div>
@@ -758,7 +775,7 @@ export default function Portaria() {
                     {acessosFiltrados.map((a) => (
                       <tr key={a.id}>
                         <td>{a.id}</td>
-                        <td>{a.nome}</td>
+                        <td>{a.nome} {a.sobrenome}</td>
                         <td>{a.documento}</td>
                         <td>{a.placa}</td>
                         <td>{a.marca}</td>
@@ -824,7 +841,7 @@ export default function Portaria() {
                       <div className="card-body">
                         <div className="card-row">
                           <label>Nome:</label>
-                          <span>{a.nome}</span>
+                          <span>{a.nome} {a.sobrenome}</span>
                         </div>
                         <div className="card-row">
                           <label>Documento:</label>
@@ -907,19 +924,30 @@ export default function Portaria() {
                   />
                 </div>
                 <div className="modal-field">
-                  <label className="modal-label">Documento</label>
+                  <label className="modal-label">Sobrenome</label>
                   <input
                     type="text"
                     className="modal-input"
-                    value={editFormData.documento}
-                    onChange={(e) => setEditFormData({ ...editFormData, documento: e.target.value })}
-                    placeholder="Ex: 12.345.678-9"
+                    value={editFormData.sobrenome}
+                    onChange={(e) => setEditFormData({ ...editFormData, sobrenome: e.target.value })}
+                    placeholder="Ex: Silva"
                     required
                   />
                 </div>
               </div>
 
               <div className="modal-form-row">
+                <div className="modal-field">
+                  <label className="modal-label">Documento</label>
+                  <input
+                    type="text"
+                    className="modal-input"
+                    value={editFormData.documento}
+                    onChange={(e) => setEditFormData({ ...editFormData, documento: e.target.value })}
+                    placeholder="Ex: 12.345.678-x"
+                    required
+                  />
+                </div>
                 <div className="modal-field">
                   <label className="modal-label">Placa</label>
                   <input
@@ -929,15 +957,6 @@ export default function Portaria() {
                     onChange={(e) => setEditFormData({ ...editFormData, placa: applyPlacaMask(e.target.value) })}
                     placeholder="Ex: ABC-1234"
                     maxLength="8"
-                  />
-                </div>
-                <div className="modal-field">
-                  <label className="modal-label">Cor</label>
-                  <input
-                    type="text"
-                    className="modal-input"
-                    value={editFormData.cor}
-                    onChange={(e) => setEditFormData({ ...editFormData, cor: e.target.value })}
                   />
                 </div>
               </div>
@@ -960,6 +979,21 @@ export default function Portaria() {
                     value={editFormData.modelo}
                     onChange={(e) => setEditFormData({ ...editFormData, modelo: e.target.value })}
                   />
+                </div>
+              </div>
+
+              <div className="modal-form-row">
+                <div className="modal-field">
+                  <label className="modal-label">Cor</label>
+                  <input
+                    type="text"
+                    className="modal-input"
+                    value={editFormData.cor}
+                    onChange={(e) => setEditFormData({ ...editFormData, cor: e.target.value })}
+                  />
+                </div>
+                <div className="modal-field" style={{ visibility: 'hidden' }}>
+                    {/* Placeholder for alignment */}
                 </div>
               </div>
 

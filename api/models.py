@@ -77,6 +77,7 @@ class Acesso(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(100), nullable=False)
+    sobrenome = db.Column(db.String(100), nullable=False)
     documento = db.Column(db.String(20), nullable=False)
     placa = db.Column(db.String(20))
     marca = db.Column(db.String(50))
@@ -89,6 +90,7 @@ class Acesso(db.Model):
         return {
             "id": self.id,
             "nome": self.nome,
+            "sobrenome": self.sobrenome,
             "documento": self.documento,
             "placa": self.placa or "",
             "marca": self.marca or "",
