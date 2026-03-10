@@ -1,4 +1,4 @@
-﻿.portaria-container {
+.portaria-container {
   padding: 40px;
   width: 100%;
   max-width: 1200px;
@@ -556,7 +556,7 @@
    ═══════════════════════════════════════════ */
 @media (max-width: 768px) {
   .portaria-container {
-    padding: 10px;
+    padding: 10px 5px;
     padding-top: 15px;
     padding-bottom: 80px;
     overflow-x: hidden;
@@ -602,7 +602,7 @@
   }
 
   .portaria-container .tab-content {
-    padding: 20px 15px;
+    padding: 15px 10px;
     border-radius: 0 0 16px 16px;
     min-height: 400px;
     animation: none;
@@ -610,8 +610,8 @@
 
   .portaria-container .cadastro-form {
     grid-template-columns: 1fr;
-    gap: 15px;
-    padding: 20px;
+    gap: 12px;
+    padding: 15px 10px;
   }
 
   .portaria-container .cadastro-form h2 {
@@ -620,7 +620,7 @@
   }
 
   .quick-search-section {
-    padding: 18px;
+    padding: 15px 10px;
   }
 
   .quick-search-controls {

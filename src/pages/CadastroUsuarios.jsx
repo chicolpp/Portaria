@@ -49,6 +49,15 @@ const UnlockIcon = ({ className, style }) => (
   </svg>
 );
 
+const FilterIcon = ({ className, style }) => (
+  <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
+  </svg>
+);
+
+const EditIcon = PencilIcon;
+const KeyIcon = UnlockIcon;
+
 const SortIcon = ({ direction, active }) => {
   if (!active) {
     return (
@@ -681,103 +690,164 @@ export default function CadastroUsuarios() {
                 <span>Filtrar</span>
               </button>
             </div>
-
-            <div className="filter-standard-bar mobile-only-filter">
-              <button
-                className="admin-btn-small ver-btn"
-                onClick={() => setModalFiltro(true)}
-              >
-                <FilterIcon style={{ width: 16, height: 16 }} />
-                <span>Filtrar</span>
-              </button>
-              {Object.values(filtros).some(v => v !== "" && v !== "todos") && (
-                <span className="filter-active-badge">Filtro Ativo</span>
-              )}
-            </div>
             {usuarios.length === 0 ? (
               <p>Nenhum usuário cadastrado ainda.</p>
             ) : (
-              <table className="usuarios-table">
-                <thead>
-                  <tr>
-                    <th onClick={() => handleSort('id')} className="sortable-th">
-                      <div className="th-content">ID {getSortIcon('id')}</div>
-                    </th>
-                    <th onClick={() => handleSort('nome')} className="sortable-th">
-                      <div className="th-content">Nome {getSortIcon('nome')}</div>
-                    </th>
-                    <th onClick={() => handleSort('email')} className="sortable-th">
-                      <div className="th-content">Email {getSortIcon('email')}</div>
-                    </th>
-                    <th onClick={() => handleSort('cargo')} className="sortable-th">
-                      <div className="th-content">Cargo {getSortIcon('cargo')}</div>
-                    </th>
-                    <th onClick={() => handleSort('is_admin')} className="sortable-th">
-                      <div className="th-content">Permissão {getSortIcon('is_admin')}</div>
-                    </th>
-                    <th onClick={() => handleSort('ativo')} className="sortable-th">
-                      <div className="th-content">Status {getSortIcon('ativo')}</div>
-                    </th>
-                    <th onClick={() => handleSort('data_criacao')} className="sortable-th">
-                      <div className="th-content">Cadastro {getSortIcon('data_criacao')}</div>
-                    </th>
-                    <th>Ações</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {usuariosFiltrados.map((u) => (
-                    <tr key={u.id} className={!u.ativo ? "usuario-inativo" : ""}>
-                      <td>{u.id}</td>
-                      <td>{u.nome} {u.sobrenome}</td>
-                      <td>{u.email}</td>
-                      <td>
-                        <span className="cargo-badge">
-                          {cargos.find((c) => c.value === u.cargo)?.label || u.cargo}
-                        </span>
-                      </td>
-                      <td>
-                        {u.is_admin ? (
-                          <span className="admin-badge">👑 Admin</span>
-                        ) : (
-                          <span className="user-badge">👤 Usuário</span>
-                        )}
-                      </td>
-                      <td>
-                        <span className={`status-badge ${u.ativo ? "ativo" : "inativo"}`}>
-                          {u.ativo ? "✓ Ativo" : "✕ Inativo"}
-                        </span>
-                      </td>
-                      <td>{new Date(u.data_criacao).toLocaleDateString("pt-BR")}</td>
-                      <td className="acoes-cell">
-                        <button
-                          type="button"
-                          className="btn-editar"
-                          onClick={() => openEditarModal(u)}
-                          data-tooltip="Editar"
-                        >
-                          ✏️
-                        </button>
-                        <button
-                          type="button"
-                          className={`btn-toggle ${u.ativo ? "desativar" : "ativar"}`}
-                          onClick={() => toggleStatus(u.id)}
-                          data-tooltip={u.ativo ? "Desativar" : "Ativar"}
-                        >
-                          {u.ativo ? "🔒" : "🔓"}
-                        </button>
-                        <button
-                          type="button"
-                          className="btn-excluir"
-                          onClick={() => deletarUsuario(u.id)}
-                          data-tooltip="Excluir"
-                        >
-                          🗑️
-                        </button>
-                      </td>
+              <div className="responsive-table-container">
+                <table className="usuarios-table desktop-only-table">
+                  <thead>
+                    <tr>
+                      <th onClick={() => handleSort('id')} className="sortable-th">
+                        <div className="th-content">ID {getSortIcon('id')}</div>
+                      </th>
+                      <th onClick={() => handleSort('nome')} className="sortable-th">
+                        <div className="th-content">Nome {getSortIcon('nome')}</div>
+                      </th>
+                      <th onClick={() => handleSort('email')} className="sortable-th">
+                        <div className="th-content">Email {getSortIcon('email')}</div>
+                      </th>
+                      <th onClick={() => handleSort('cargo')} className="sortable-th">
+                        <div className="th-content">Cargo {getSortIcon('cargo')}</div>
+                      </th>
+                      <th onClick={() => handleSort('is_admin')} className="sortable-th">
+                        <div className="th-content">Permissão {getSortIcon('is_admin')}</div>
+                      </th>
+                      <th onClick={() => handleSort('ativo')} className="sortable-th">
+                        <div className="th-content">Status {getSortIcon('ativo')}</div>
+                      </th>
+                      <th onClick={() => handleSort('data_criacao')} className="sortable-th">
+                        <div className="th-content">Cadastro {getSortIcon('data_criacao')}</div>
+                      </th>
+                      <th>Ações</th>
                     </tr>
+                  </thead>
+                  <tbody>
+                    {usuariosFiltrados.map((u) => (
+                      <tr key={u.id} className={!u.ativo ? "usuario-inativo" : ""}>
+                        <td>{u.id}</td>
+                        <td>{u.nome} {u.sobrenome}</td>
+                        <td>{u.email}</td>
+                        <td>
+                          <span className="cargo-badge">
+                            {cargos.find((c) => c.value === u.cargo)?.label || u.cargo}
+                          </span>
+                        </td>
+                        <td>
+                          {u.is_admin ? (
+                            <span className="admin-badge">👑 Admin</span>
+                          ) : (
+                            <span className="user-badge">👤 Usuário</span>
+                          )}
+                        </td>
+                        <td>
+                          <span className={`status-badge ${u.ativo ? "ativo" : "inativo"}`}>
+                            {u.ativo ? "✓ Ativo" : "✕ Inativo"}
+                          </span>
+                        </td>
+                        <td>{new Date(u.data_criacao).toLocaleDateString("pt-BR")}</td>
+                        <td className="acoes-cell">
+                          <button
+                            type="button"
+                            className="btn-editar"
+                            onClick={() => openEditarModal(u)}
+                            data-tooltip="Editar"
+                          >
+                            ✏️
+                          </button>
+                          <button
+                            type="button"
+                            className={`btn-toggle ${u.ativo ? "desativar" : "ativar"}`}
+                            onClick={() => toggleStatus(u.id)}
+                            data-tooltip={u.ativo ? "Desativar" : "Ativar"}
+                          >
+                            {u.ativo ? "🔒" : "🔓"}
+                          </button>
+                          <button
+                            type="button"
+                            className="btn-excluir"
+                            onClick={() => deletarUsuario(u.id)}
+                            data-tooltip="Excluir"
+                          >
+                            🗑️
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+
+                {/* Mobile Card View */}
+                <div className="mobile-cards-container mobile-only-cards">
+                  {usuariosFiltrados.map((u) => (
+                    <div key={u.id} className={`mobile-access-card ${!u.ativo ? "usuario-inativo-card" : ""}`}>
+                      <div className="card-header">
+                        <span className="card-id">#{u.id}</span>
+                        <div className="card-status">
+                          <span className={`status-badge ${u.ativo ? "ativo" : "inativo"}`}>
+                            {u.ativo ? "✓ Ativo" : "✕ Inativo"}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="card-body">
+                        <div className="card-row">
+                          <label>Nome:</label>
+                          <span>{u.nome} {u.sobrenome}</span>
+                        </div>
+                        <div className="card-row">
+                          <label>Email:</label>
+                          <span>{u.email}</span>
+                        </div>
+                        <div className="card-row">
+                          <label>Cargo:</label>
+                          <span className="cargo-badge">
+                            {cargos.find((c) => c.value === u.cargo)?.label || u.cargo}
+                          </span>
+                        </div>
+                        <div className="card-row">
+                          <label>Permissão:</label>
+                          <span>
+                            {u.is_admin ? (
+                              <span className="admin-badge">👑 Admin</span>
+                            ) : (
+                              <span className="user-badge">👤 Usuário</span>
+                            )}
+                          </span>
+                        </div>
+                        <div className="card-row">
+                          <label>Cadastro:</label>
+                          <span>{new Date(u.data_criacao).toLocaleDateString("pt-BR")}</span>
+                        </div>
+                      </div>
+                      <div className="card-actions">
+                        <button
+                          type="button"
+                          className="admin-btn-small edit-btn mobile-action-btn"
+                          onClick={() => openEditarModal(u)}
+                        >
+                          <EditIcon style={{ width: 16, height: 16 }} />
+                          <span>Editar</span>
+                        </button>
+                        <button
+                          type="button"
+                          className={`admin-btn-small ver-btn mobile-action-btn ${u.ativo ? "logout-action" : ""}`}
+                          onClick={() => toggleStatus(u.id)}
+                        >
+                          {u.ativo ? <LockIcon style={{ width: 16, height: 16 }} /> : <KeyIcon style={{ width: 16, height: 16 }} />}
+                          <span>{u.ativo ? "Desativar" : "Ativar"}</span>
+                        </button>
+                        <button
+                          type="button"
+                          className="admin-btn-small delete-btn mobile-action-btn"
+                          onClick={() => deletarUsuario(u.id)}
+                        >
+                          <TrashIcon style={{ width: 16, height: 16 }} />
+                          <span>Excluir</span>
+                        </button>
+                      </div>
+                    </div>
                   ))}
-                </tbody>
-              </table>
+                </div>
+              </div>
             )}
           </div>
         )}
