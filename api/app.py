@@ -11,7 +11,10 @@ from werkzeug.utils import secure_filename
 import base64
 
 UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads')
-STATIC_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'dist')
+# Busca o dist em dois lugares possíveis: relativo ao arquivo e relativo ao CWD
+_dist_rel = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'dist')
+_dist_cwd = os.path.join(os.getcwd(), 'dist')
+STATIC_FOLDER = _dist_rel if os.path.exists(os.path.join(_dist_rel, 'index.html')) else _dist_cwd
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 # UPLOAD_FOLDER não é mais necessário para persistência em Base64
@@ -37,6 +40,19 @@ def intercept_html_requests():
 @app.route("/health")
 def health_check():
     return {"status": "ok", "message": "Portaria API is running"}, 200
+
+@app.route("/debug/paths")
+def debug_paths():
+    return {
+        "__file__": __file__,
+        "abspath": os.path.abspath(__file__),
+        "cwd": os.getcwd(),
+        "STATIC_FOLDER": STATIC_FOLDER,
+        "exists": os.path.exists(STATIC_FOLDER),
+        "index_exists": os.path.exists(os.path.join(STATIC_FOLDER, 'index.html')),
+        "files_in_static": os.listdir(STATIC_FOLDER) if os.path.exists(STATIC_FOLDER) else [],
+        "files_in_cwd": os.listdir(os.getcwd())
+    }
 
 @app.route("/maintenance/db-init")
 def maintainence_db_init():
