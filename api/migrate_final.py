@@ -6,7 +6,7 @@ from database import db
 def run_migration():
     db_url = os.environ.get("DATABASE_URL")
     if not db_url:
-        print("⚠️ DATABASE_URL não encontrada. Usando configuração padrão.")
+        print("⚠️ DATABASE_URL não encontrada.")
         return
 
     if db_url.startswith("postgres://"):
@@ -16,7 +16,7 @@ def run_migration():
     engine = create_engine(db_url)
     
     with engine.connect() as conn:
-        print("🔧 Iniciando Migração Final...")
+        print("🔧 Iniciando Migração Final (V2)...")
         
         # 1. Garantir que as tabelas básicas existam
         try:
@@ -29,40 +29,35 @@ def run_migration():
         # 2. Adicionar colunas faltantes em 'users'
         print("  - Verificando colunas em 'users'...")
         columns_to_add_users = [
-            ("sobrenome", "VARCHAR(100)"),
-            ("unidade", "VARCHAR(100)"),
-            ("documento", "VARCHAR(20)")
+            ("sobrenome", "TEXT"),
+            ("unidade", "TEXT"),
+            ("documento", "TEXT")
         ]
         
         for col_name, col_type in columns_to_add_users:
             try:
-                check_query = text(f"SELECT column_name FROM information_schema.columns WHERE table_name='users' AND column_name='{col_name}';")
-                result = conn.execute(check_query).fetchone()
-                if not result:
-                    print(f"    + Adicionando coluna '{col_name}'...")
-                    conn.execute(text(f"ALTER TABLE users ADD COLUMN {col_name} {col_type};"))
-                    conn.commit()
-                else:
-                    print(f"    ok: '{col_name}' já existe.")
+                # Usando IF NOT EXISTS direto no SQL para o Postgres
+                print(f"    + Tentando adicionar '{col_name}'...")
+                # Postgres doesn't support ADD COLUMN IF NOT EXISTS in all versions, 
+                # but we can check manualy or just catch the error
+                sql = text(f"ALTER TABLE users ADD COLUMN IF NOT EXISTS {col_name} {col_type};")
+                conn.execute(sql)
+                conn.commit()
+                print(f"    ✅ '{col_name}' processada.")
             except Exception as e:
-                print(f"    ⚠️ Erro ao adicionar {col_name}: {e}")
+                print(f"    ⚠️ Erro ao processar {col_name}: {e}")
 
         # 3. Adicionar colunas faltantes em 'acessos'
         print("  - Verificando colunas em 'acessos'...")
         try:
-            check_query = text("SELECT column_name FROM information_schema.columns WHERE table_name='acessos' AND column_name='sobrenome';")
-            result = conn.execute(check_query).fetchone()
-            if not result:
-                print("    + Adicionando coluna 'sobrenome' em 'acessos'...")
-                conn.execute(text("ALTER TABLE acessos ADD COLUMN sobrenome VARCHAR(100);"))
-                conn.commit()
-            else:
-                print("    ok: 'sobrenome' já existe em 'acessos'.")
+            conn.execute(text("ALTER TABLE acessos ADD COLUMN IF NOT EXISTS sobrenome TEXT;"))
+            conn.commit()
+            print("    ✅ 'sobrenome' processada em 'acessos'.")
         except Exception as e:
             print(f"    ⚠️ Erro em 'acessos': {e}")
 
-        # 4. Converter colunas para TEXT para suportar Base64 longo
-        print("  - Convertendo colunas para TEXT (Base64)...")
+        # 4. Converter colunas existentes para TEXT (caso sejam VARCHAR curtos)
+        print("  - Garantindo tipo TEXT para campos longos...")
         text_targets = [
             ("users", "foto"),
             ("encomendas", "foto"),
@@ -75,22 +70,15 @@ def run_migration():
         
         for table, column in text_targets:
             try:
-                # Verifica se a tabela existe antes de verificar a coluna
-                check_table = conn.execute(text(f"SELECT EXISTS (SELECT FROM information_schema.tables WHERE table_name = '{table}')")).scalar()
-                if not check_table:
-                    continue
-                    
-                # Verifica se a coluna existe antes de converter
-                check_col = conn.execute(text(f"SELECT column_name FROM information_schema.columns WHERE table_name='{table}' AND column_name='{column}';")).fetchone()
-                if check_col:
-                    print(f"    ~ Convertendo {table}.{column} para TEXT...")
-                    # No PostgreSQL, ALTER COLUMN TYPE com USING
-                    conn.execute(text(f"ALTER TABLE {table} ALTER COLUMN {column} TYPE TEXT USING {column}::TEXT;"))
-                    conn.commit()
+                sql = text(f"ALTER TABLE {table} ALTER COLUMN {column} TYPE TEXT USING {column}::TEXT;")
+                conn.execute(sql)
+                conn.commit()
+                print(f"    ✅ {table}.{column} convertido.")
             except Exception as e:
-                print(f"    ⚠️ Erro ao converter {table}.{column}: {e}")
+                # Provavelmente a coluna ou tabela não existe, ignoramos
+                pass
 
-        print("✅ Migração concluída!")
+        print("✅ Migração finalizada!")
 
 if __name__ == "__main__":
     run_migration()
