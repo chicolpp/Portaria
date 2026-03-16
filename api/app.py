@@ -43,6 +43,7 @@ def health_check():
 
 @app.route("/debug/paths")
 def debug_paths():
+    root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
     return {
         "__file__": __file__,
         "abspath": os.path.abspath(__file__),
@@ -51,7 +52,9 @@ def debug_paths():
         "exists": os.path.exists(STATIC_FOLDER),
         "index_exists": os.path.exists(os.path.join(STATIC_FOLDER, 'index.html')),
         "files_in_static": os.listdir(STATIC_FOLDER) if os.path.exists(STATIC_FOLDER) else [],
-        "files_in_cwd": os.listdir(os.getcwd())
+        "files_in_cwd": os.listdir(os.getcwd()),
+        "root_dir": root_dir,
+        "files_in_root": os.listdir(root_dir) if os.path.exists(root_dir) else []
     }
 
 @app.route("/maintenance/db-init")
