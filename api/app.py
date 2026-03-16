@@ -41,9 +41,9 @@ def health_check():
 @app.route("/maintenance/db-init")
 def maintainence_db_init():
     try:
-        with app.app_context():
-            db.create_all()
-        return {"status": "ok", "message": "Banco de dados sincronizado"}, 200
+        from migrate_final import run_migration
+        run_migration()
+        return {"status": "ok", "message": "Banco de dados sincronizado e migrado"}, 200
     except Exception as e:
         return {"status": "error", "message": str(e)}, 500
 
