@@ -1,7 +1,7 @@
 from flask import Flask, request, send_from_directory
 from flask_cors import CORS
 from database import db
-from models import User, Encomenda, Acesso, Ocorrencia, Chave, ItemPortaria, ReservaEspaco, MovimentacaoChave, MovimentacaoItem
+from models import User, Encomenda, Acesso, Ocorrencia, Chave, ItemPortaria, ReservaEspaco, MovimentacaoChave, MovimentacaoItem, Veiculo
 import jwt
 import datetime
 import os
@@ -94,6 +94,8 @@ def register():
     password = request.form.get("password")
     cargo = request.form.get("cargo", "porteiro")
     is_admin = request.form.get("is_admin", "false").lower() == "true"
+    unidade = request.form.get("unidade", "")
+    documento = request.form.get("documento", "")
 
     # 🔒 BLOQUEIO DO ERRO (ESSENCIAL)
     if not email or not password:
@@ -115,11 +117,34 @@ def register():
         cargo=cargo,
         foto=foto_base64,
         is_admin=is_admin,
+        unidade=unidade,
+        documento=documento,
     )
 
     user.set_password(password)
 
     db.session.add(user)
+    db.session.flush() # Para pegar o ID do usuário
+
+    # Processamento de veículos se for morador
+    if cargo == "morador":
+        veiculos_raw = request.form.get("veiculos")
+        if veiculos_raw:
+            import json
+            try:
+                veiculos_list = json.loads(veiculos_raw)
+                for v_data in veiculos_list:
+                    novo_veiculo = Veiculo(
+                        user_id=user.id,
+                        placa=v_data.get("placa"),
+                        marca=v_data.get("marca"),
+                        modelo=v_data.get("modelo"),
+                        cor=v_data.get("cor")
+                    )
+                    db.session.add(novo_veiculo)
+            except Exception as e:
+                print(f"Erro ao processar veículos: {e}")
+
     db.session.commit()
 
     return {"message": "Usuário criado", "user": user.to_dict()}, 201
@@ -144,6 +169,8 @@ def editar_usuario(id):
         user.cargo = request.form.get("cargo", user.cargo)
         user.is_admin = request.form.get("is_admin", "false").lower() == "true"
         user.ativo = request.form.get("ativo", "true").lower() == "true"
+        user.unidade = request.form.get("unidade", user.unidade)
+        user.documento = request.form.get("documento", user.documento)
         
         if request.form.get("password"):
             user.set_password(request.form.get("password"))
@@ -153,6 +180,26 @@ def editar_usuario(id):
             file = request.files['foto']
             if file and file.filename and allowed_file(file.filename):
                 user.foto = file_to_base64(file)
+        
+        # Atualiza veículos
+        veiculos_raw = request.form.get("veiculos")
+        if veiculos_raw:
+            import json
+            try:
+                veiculos_list = json.loads(veiculos_raw)
+                # Remove veículos antigos e adiciona os novos (sincronização simples)
+                Veiculo.query.filter_by(user_id=user.id).delete()
+                for v_data in veiculos_list:
+                    novo_veiculo = Veiculo(
+                        user_id=user.id,
+                        placa=v_data.get("placa"),
+                        marca=v_data.get("marca"),
+                        modelo=v_data.get("modelo"),
+                        cor=v_data.get("cor")
+                    )
+                    db.session.add(novo_veiculo)
+            except Exception as e:
+                print(f"Erro ao atualizar veículos: {e}")
     else:
         data = request.json or {}
         user.nome = data.get("nome", user.nome)
@@ -161,6 +208,8 @@ def editar_usuario(id):
         user.cargo = data.get("cargo", user.cargo)
         user.is_admin = data.get("is_admin", user.is_admin)
         user.ativo = data.get("ativo", user.ativo)
+        user.unidade = data.get("unidade", user.unidade)
+        user.documento = data.get("documento", user.documento)
 
         if data.get("password"):
             user.set_password(data["password"])
@@ -226,7 +275,9 @@ def login():
             "email": user.email,
             "cargo": user.cargo,
             "foto": user.foto or "",
-            "is_admin": user.is_admin
+            "is_admin": user.is_admin,
+            "unidade": user.unidade or "",
+            "documento": user.documento or ""
         }
     }
 

@@ -2,33 +2,13 @@ import { useState, useEffect, useMemo, useRef } from "react";
 import { createPortal } from "react-dom";
 import api from "../services/api";
 import { toast } from "sonner";
-import { formatDate, formatDateTime } from "../utils/formatters";
+import { formatDate, formatDateTime, applyDocumentMask } from "../utils/formatters";
 import Flatpickr from "react-flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
 import { Portuguese } from "flatpickr/dist/l10n/pt.js";
 import "./Portaria.css";
 import PremiumSelect from "../components/PremiumSelect";
 
-const applyDocumentMask = (value, type) => {
-  if (!value) return "";
-  if (type === "CPF") {
-    let v = value.replace(/\D/g, "").substring(0, 11);
-    return v.replace(/(\d{3})(\d)/, "$1.$2")
-      .replace(/(\d{3})(\d)/, "$1.$2")
-      .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
-  }
-  if (type === "RG" || type === "RG/CPF") {
-    let v = value.replace(/[^\dXx]/g, "").substring(0, 9);
-    if (v.length > 8) return v.replace(/^(.{2})(.{3})(.{3})(.{1})$/, "$1.$2.$3-$4");
-    if (v.length > 5) return v.replace(/^(.{2})(.{3})(.{1,3})$/, "$1.$2.$3");
-    if (v.length > 2) return v.replace(/^(.{2})(.{1,3})$/, "$1.$2");
-    return v;
-  }
-  if (type === "CNH") {
-    return value.replace(/\D/g, "").substring(0, 11);
-  }
-  return value.replace(/[^a-zA-Z0-9]/g, "").toUpperCase();
-};
 
 const applyPlacaMask = (value) => {
   if (!value) return "";
@@ -554,8 +534,8 @@ export default function Portaria() {
                   </div>
 
                   <div className="quick-search-field">
-                    <label>Pesquisar por Documento:</label>
-                    <div className="quick-search-input-wrapper">
+                    <div className="label-with-action">
+                      <label>Pesquisar por Documento:</label>
                       <div className="doc-type-wrapper-inline premium-wrapper">
                         <PremiumSelect
                           options={docTypeOptions}
@@ -563,16 +543,16 @@ export default function Portaria() {
                           onChange={handleQuickSearchDocTypeSelect}
                         />
                       </div>
-                      <input
-                        type="text"
-                        className="quick-search-input"
-                        placeholder={`Ex: (${quickSearchDocType})`}
-                        value={quickSearchDoc}
-                        onChange={handleQuickSearchDocChange}
-                        onFocus={() => { if (quickSearchDoc) setShowQuickSearchDropdown(true); }}
-                        maxLength="20"
-                      />
                     </div>
+                    <input
+                      type="text"
+                      className="quick-search-input-standalone"
+                      placeholder={`Ex: (${quickSearchDocType})`}
+                      value={quickSearchDoc}
+                      onChange={handleQuickSearchDocChange}
+                      onFocus={() => { if (quickSearchDoc) setShowQuickSearchDropdown(true); }}
+                      maxLength="20"
+                    />
                   </div>
 
                   {showQuickSearchDropdown && (quickSearchPlaca || quickSearchDoc) && createPortal(
@@ -639,8 +619,8 @@ export default function Portaria() {
               </div>
 
               <div className="form-group">
-                <label>Documento:</label>
-                <div className="quick-search-input-wrapper" style={{ marginTop: '5px' }}>
+                <div className="label-with-action">
+                  <label>Documento:</label>
                   <div className="doc-type-wrapper-inline premium-wrapper">
                     <PremiumSelect
                       options={docTypeOptions}
@@ -648,22 +628,22 @@ export default function Portaria() {
                       onChange={handleDocTypeSelect}
                     />
                   </div>
-
-                  <input
-                    type="text"
-                    name="documento"
-                    className="quick-search-input"
-                    value={formData.documento}
-                    onChange={handleChange}
-                    placeholder={
-                      docType === "CPF" ? "Ex: 123.456.789-00" :
-                        docType === "RG" ? "Ex: 12.345.678-x" :
-                          docType === "CNH" ? "Ex: 12345678901" :
-                            "Ex: AB123456"
-                    }
-                    required
-                  />
                 </div>
+
+                <input
+                  type="text"
+                  name="documento"
+                  className="quick-search-input-standalone"
+                  value={formData.documento}
+                  onChange={handleChange}
+                  placeholder={
+                    docType === "CPF" ? "Ex: 123.456.789-00" :
+                      docType === "RG" ? "Ex: 12.345.678-x" :
+                        docType === "CNH" ? "Ex: 12345678901" :
+                          "Ex: AB123456"
+                  }
+                  required
+                />
               </div>
 
               <div className="form-group">

@@ -159,7 +159,9 @@
 }
 
 .portaria-container .form-group label {
-  display: block;
+  display: flex;
+  align-items: center;
+  height: 42px; /* Fixed height to align with label-with-action */
   font-size: 13px;
   color: #94a3b8;
   font-weight: 600;
@@ -531,7 +533,8 @@
 
 /* ─── Submit Button ─── */
 .portaria-container .submit-btn {
-  margin-top: 10px;
+  grid-column: 1 / -1;
+  margin-top: 20px;
   padding: 16px 40px;
   background: linear-gradient(135deg, var(--primary), var(--primary-dark));
   color: white;
@@ -858,5 +861,50 @@
 @media (max-width: 768px) {
   .premium-wrapper {
     min-width: 100px;
+  }
+}
+
+.label-with-action {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  height: 42px; /* Match standard label height */
+  margin-bottom: 10px;
+  width: 100%;
+}
+
+.label-with-action label {
+  margin-bottom: 0 !important;
+}
+
+.quick-search-input-standalone {
+  width: 100%;
+  padding: 14px 20px;
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  color: white;
+  font-size: 15px;
+  font-weight: 500;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  display: block;
+  box-sizing: border-box;
+}
+
+.quick-search-input-standalone:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.25);
+  background: rgba(15, 23, 42, 0.8);
+}
+
+@media (max-width: 768px) {
+  .label-with-action {
+    gap: 10px;
+  }
+  
+  .label-with-action .doc-type-wrapper-inline {
+    max-width: fit-content;
   }
 }

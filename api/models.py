@@ -13,8 +13,11 @@ class User(db.Model):
     foto = db.Column(db.Text, nullable=True)
     is_admin = db.Column(db.Boolean, default=False)
     ativo = db.Column(db.Boolean, default=True)
+    unidade = db.Column(db.String(100), nullable=True)
+    documento = db.Column(db.String(20), nullable=True)
     data_criacao = db.Column(db.DateTime, default=db.func.now())
     ultimo_acesso = db.Column(db.DateTime, nullable=True)
+    veiculos = db.relationship("Veiculo", backref="dono", cascade="all, delete-orphan")
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -32,8 +35,32 @@ class User(db.Model):
             "foto": self.foto or "",
             "is_admin": self.is_admin,
             "ativo": self.ativo,
+            "unidade": self.unidade or "",
+            "documento": self.documento or "",
             "data_criacao": self.data_criacao.isoformat() if self.data_criacao else "",
             "ultimo_acesso": self.ultimo_acesso.isoformat() if self.ultimo_acesso else "",
+            "veiculos": [v.to_dict() for v in self.veiculos],
+        }
+
+
+class Veiculo(db.Model):
+    __tablename__ = "veiculos"
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    placa = db.Column(db.String(20), nullable=False)
+    marca = db.Column(db.String(50))
+    modelo = db.Column(db.String(50))
+    cor = db.Column(db.String(30))
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "user_id": self.user_id,
+            "placa": self.placa,
+            "marca": self.marca or "",
+            "modelo": self.modelo or "",
+            "cor": self.cor or "",
         }
 
 

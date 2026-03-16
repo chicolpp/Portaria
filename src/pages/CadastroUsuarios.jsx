@@ -1,7 +1,48 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import api from "../services/api";
 import { toast } from "sonner";
+import { applyDocumentMask, applyPlateMask } from "../utils/formatters";
 import "./CadastroUsuarios.css";
+import PremiumSelect from "../components/PremiumSelect";
+
+// Ícones SVG inline para documentos
+const FileTextIcon = ({ className, style }) => (
+  <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+    <polyline points="14 2 14 8 20 8" />
+    <line x1="16" y1="13" x2="8" y2="13" />
+    <line x1="16" y1="17" x2="8" y2="17" />
+    <polyline points="10 9 9 9 8 9" />
+  </svg>
+);
+
+const CreditCardIcon = ({ className, style }) => (
+  <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <rect x="1" y="4" width="22" height="16" rx="2" ry="2" />
+    <line x1="1" y1="10" x2="23" y2="10" />
+  </svg>
+);
+
+const GlobeIcon = ({ className, style }) => (
+  <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="10" />
+    <line x1="2" y1="12" x2="22" y2="12" />
+    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+  </svg>
+);
+
+const UserIcon = ({ className, style }) => (
+  <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+    <circle cx="12" cy="7" r="4" />
+  </svg>
+);
+
+const ShieldIcon = ({ className, style }) => (
+  <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+  </svg>
+);
 
 // Ícones SVG inline (Padronizados com Encomendas)
 const UserPlusIcon = ({ className, style }) => (
@@ -57,6 +98,28 @@ const FilterIcon = ({ className, style }) => (
 
 const EditIcon = PencilIcon;
 const KeyIcon = UnlockIcon;
+const EyeIcon = ({ className, style }) => (
+  <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+    <circle cx="12" cy="12" r="3" />
+  </svg>
+);
+
+const CarIcon = ({ className, style }) => (
+  <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2" />
+    <circle cx="7" cy="17" r="2" />
+    <path d="M9 17h6" />
+    <circle cx="17" cy="17" r="2" />
+  </svg>
+);
+
+const PlusIcon = ({ className, style }) => (
+  <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <line x1="12" y1="5" x2="12" y2="19" />
+    <line x1="5" y1="12" x2="19" y2="12" />
+  </svg>
+);
 
 const SortIcon = ({ direction, active }) => {
   if (!active) {
@@ -83,6 +146,7 @@ export default function CadastroUsuarios() {
   const [usuarios, setUsuarios] = useState([]);
   const [loading, setLoading] = useState(false);
   const [modalEditar, setModalEditar] = useState(null);
+  const [modalDetalhes, setModalDetalhes] = useState(null);
   const [modalFiltro, setModalFiltro] = useState(false);
   const [filtros, setFiltros] = useState({
     nome: "",
@@ -93,6 +157,8 @@ export default function CadastroUsuarios() {
   });
   const [filtrosTemporarios, setFiltrosTemporarios] = useState({ ...filtros });
   const [sortConfig, setSortConfig] = useState({ key: 'id', direction: 'desc' });
+  const [modalVeiculos, setModalVeiculos] = useState(false);
+  const [tempVeiculos, setTempVeiculos] = useState([]);
   const [formData, setFormData] = useState({
     nome: "",
     sobrenome: "",
@@ -101,6 +167,10 @@ export default function CadastroUsuarios() {
     confirmPassword: "",
     cargo: "porteiro",
     is_admin: false,
+    unidade: "",
+    documento: "",
+    temVeiculo: false,
+    veiculos: [],
   });
   const [fotoFile, setFotoFile] = useState(null);
   const [fotoPreview, setFotoPreview] = useState(null);
@@ -112,10 +182,55 @@ export default function CadastroUsuarios() {
     cargo: "",
     is_admin: false,
     ativo: true,
+    unidade: "",
+    documento: "",
   });
   const [editFotoFile, setEditFotoFile] = useState(null);
   const [editFotoPreview, setEditFotoPreview] = useState(null);
+
+  // Persistence: Restore from localStorage on mount
+  useEffect(() => {
+    const savedData = localStorage.getItem('cadastro_user_data');
+    if (savedData) {
+      try {
+        const parsedData = JSON.parse(savedData);
+        // Don't restore passwords
+        const { password: _p, confirmPassword: _cp, ...rest } = parsedData;
+        setFormData(prev => ({ ...prev, ...rest }));
+      } catch (e) {
+        console.error("Error restoring form data", e);
+      }
+    }
+
+    const savedPhoto = localStorage.getItem('cadastro_user_photo');
+    if (savedPhoto) {
+      setFotoPreview(savedPhoto);
+    }
+  }, []);
+
+  // Persistence: Save to localStorage on change
+  useEffect(() => {
+    const { password: _p, confirmPassword: _cp, ...rest } = formData;
+    localStorage.setItem('cadastro_user_data', JSON.stringify(rest));
+  }, [formData]);
   const [cargoDropdownOpen, setCargoDropdownOpen] = useState(false);
+  const [docType, setDocType] = useState("RG");
+  const [editDocType, setEditDocType] = useState("RG");
+
+  const docTypeOptions = [
+    { value: "RG", label: "RG", icon: <FileTextIcon style={{ width: 14, height: 14 }} /> },
+    { value: "CNH", label: "CNH", icon: <CreditCardIcon style={{ width: 14, height: 14 }} /> },
+    { value: "CPF", label: "CPF", icon: <UserIcon style={{ width: 14, height: 14 }} /> },
+    { value: "Passaporte", label: "Passaporte", icon: <GlobeIcon style={{ width: 14, height: 14 }} /> },
+    { value: "RNE", label: "RNE", icon: <ShieldIcon style={{ width: 14, height: 14 }} /> },
+    { value: "CRNM", label: "CRNM", icon: <ShieldIcon style={{ width: 14, height: 14 }} /> }
+  ];
+
+  const [modalWebcam, setModalWebcam] = useState(false);
+  const [webcamTarget, setWebcamTarget] = useState(null); // 'cadastro' ou 'editar'
+  const videoRef = useRef(null);
+  const streamRef = useRef(null);
+  const cameraInputRef = useRef(null);
 
   const cargos = [
     { value: "porteiro", label: "Porteiro" },
@@ -123,30 +238,97 @@ export default function CadastroUsuarios() {
     { value: "zelador", label: "Zelador" },
     { value: "sindico", label: "Síndico" },
     { value: "administrador", label: "Administrador" },
+    { value: "morador", label: "Morador" },
   ];
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData({
-      ...formData,
-      [name]: type === "checkbox" ? checked : value,
+    let finalValue = type === "checkbox" ? checked : value;
+
+    if (name === "documento") {
+      finalValue = applyDocumentMask(finalValue, docType);
+    }
+    
+    setFormData((prev) => {
+      const newData = {
+        ...prev,
+        [name]: finalValue,
+      };
+
+      // Se mudar para morador, remove admin
+      if (name === "cargo" && value === "morador") {
+        newData.is_admin = false;
+      }
+
+      // Se marcar "Tem veículo?", abre o modal
+      if (name === "temVeiculo" && finalValue === true) {
+        if (newData.veiculos.length === 0) {
+          setTempVeiculos([{ placa: "", marca: "", modelo: "", cor: "" }]);
+        } else {
+          setTempVeiculos([...newData.veiculos]);
+        }
+        setModalVeiculos("cadastro");
+      }
+
+      return newData;
     });
+  };
+
+  const handleDocTypeSelect = (type) => {
+    setDocType(type);
+    setFormData((prev) => ({ ...prev, documento: applyDocumentMask(prev.documento, type) }));
   };
 
   const handleFotoChange = (e) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
-      setFotoFile(file);
-      setFotoPreview(URL.createObjectURL(file));
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result;
+        setFotoFile(file);
+        setFotoPreview(base64String);
+        localStorage.setItem('cadastro_user_photo', base64String);
+      };
+      reader.readAsDataURL(file);
     }
   };
 
   const handleEditChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setEditFormData({
-      ...editFormData,
-      [name]: type === "checkbox" ? checked : value,
+    let finalValue = type === "checkbox" ? checked : value;
+
+    if (name === "documento") {
+      finalValue = applyDocumentMask(finalValue, editDocType);
+    }
+    
+    setEditFormData((prev) => {
+      const newData = {
+        ...prev,
+        [name]: finalValue,
+      };
+
+      // Se mudar para morador, remove admin
+      if (name === "cargo" && value === "morador") {
+        newData.is_admin = false;
+      }
+
+      // Se marcar "Tem veículo?", abre o modal
+      if (name === "temVeiculo" && finalValue === true) {
+        if (!newData.veiculos || newData.veiculos.length === 0) {
+          setTempVeiculos([{ placa: "", marca: "", modelo: "", cor: "" }]);
+        } else {
+          setTempVeiculos([...newData.veiculos]);
+        }
+        setModalVeiculos("editar");
+      }
+
+      return newData;
     });
+  };
+
+  const handleEditDocTypeSelect = (type) => {
+    setEditDocType(type);
+    setEditFormData((prev) => ({ ...prev, documento: applyDocumentMask(prev.documento, type) }));
   };
 
   const fetchUsuarios = async () => {
@@ -163,6 +345,62 @@ export default function CadastroUsuarios() {
       fetchUsuarios();
     }
   }, [activeTab]);
+
+  const handleVeiculoChange = (index, field, value) => {
+    const newVeiculos = [...tempVeiculos];
+    if (field === "placa") {
+      newVeiculos[index][field] = applyPlateMask(value);
+    } else {
+      newVeiculos[index][field] = value;
+    }
+    setTempVeiculos(newVeiculos);
+  };
+
+  const addVeiculoRow = () => {
+    setTempVeiculos([...tempVeiculos, { placa: "", marca: "", modelo: "", cor: "" }]);
+  };
+
+  const removeVeiculoRow = (index) => {
+    const newVeiculos = tempVeiculos.filter((_, i) => i !== index);
+    setTempVeiculos(newVeiculos);
+  };
+
+  const confirmarVeiculos = () => {
+    // Filtrar veículos vazios (pelo menos a placa deve existir)
+    const validVeiculos = tempVeiculos.filter(v => v.placa.trim() !== "");
+    
+    if (modalVeiculos === "cadastro") {
+      setFormData(prev => ({ 
+        ...prev, 
+        veiculos: validVeiculos,
+        temVeiculo: validVeiculos.length > 0 
+      }));
+    } else if (modalVeiculos === "editar") {
+      setEditFormData(prev => ({ 
+        ...prev, 
+        veiculos: validVeiculos,
+        temVeiculo: validVeiculos.length > 0 
+      }));
+    }
+    setModalVeiculos(false);
+  };
+
+  const cancelarVeiculos = () => {
+    // Se o usuário fechar o modal sem confirmar, desativa o checkbox
+    // se ele não tiver veículos já cadastrados/confirmados.
+    if (modalVeiculos === "cadastro") {
+      setFormData(prev => ({ 
+        ...prev, 
+        temVeiculo: prev.veiculos.length > 0 
+      }));
+    } else if (modalVeiculos === "editar") {
+      setEditFormData(prev => ({ 
+        ...prev, 
+        temVeiculo: prev.veiculos.length > 0 
+      }));
+    }
+    setModalVeiculos(false);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -187,8 +425,18 @@ export default function CadastroUsuarios() {
       data.append("password", formData.password);
       data.append("cargo", formData.cargo);
       data.append("is_admin", formData.is_admin.toString());
+      data.append("unidade", formData.unidade || "");
+      data.append("documento", formData.documento || "");
+      data.append("veiculos", JSON.stringify(formData.veiculos));
       if (fotoFile) {
         data.append("foto", fotoFile);
+      } else if (fotoPreview && fotoPreview.startsWith('data:image')) {
+        // If we restored from localStorage and don't have the File object, send base64
+        // The backend might need to handle this. But usually, we want to try to get the File.
+        // Convert Base64 back to Blob if no File is present.
+        const response = await fetch(fotoPreview);
+        const blob = await response.blob();
+        data.append("foto", blob, "user_photo.jpg");
       }
 
       await api.post("/register", data, {
@@ -196,6 +444,8 @@ export default function CadastroUsuarios() {
       });
 
       toast.success("Usuário cadastrado com sucesso!");
+      localStorage.removeItem('cadastro_user_data');
+      localStorage.removeItem('cadastro_user_photo');
       setFormData({
         nome: "",
         sobrenome: "",
@@ -204,7 +454,12 @@ export default function CadastroUsuarios() {
         confirmPassword: "",
         cargo: "porteiro",
         is_admin: false,
+        unidade: "",
+        documento: "",
+        temVeiculo: false,
+        veiculos: [],
       });
+      setDocType("RG");
       setFotoFile(null);
       setFotoPreview(null);
     } catch (error) {
@@ -213,6 +468,70 @@ export default function CadastroUsuarios() {
     } finally {
       setLoading(false);
     }
+  };
+
+  // Funções de Webcam
+  const startCamera = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+      }
+      streamRef.current = stream;
+    } catch (err) {
+      console.error("Erro ao acessar a câmera: ", err);
+      toast.error("Não foi possível acessar a câmera do dispositivo.");
+      setModalWebcam(false);
+    }
+  };
+
+  const stopCamera = () => {
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(track => track.stop());
+      streamRef.current = null;
+    }
+  };
+
+  const capturePhoto = () => {
+    if (videoRef.current) {
+      const canvas = document.createElement("canvas");
+      canvas.width = videoRef.current.videoWidth;
+      canvas.height = videoRef.current.videoHeight;
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
+      const dataUrl = canvas.toDataURL("image/jpeg");
+
+      fetch(dataUrl)
+        .then(res => res.blob())
+        .then(blob => {
+          const file = new File([blob], "user_photo.jpg", { type: "image/jpeg" });
+          if (webcamTarget === 'cadastro') {
+            setFotoFile(file);
+            setFotoPreview(dataUrl);
+            localStorage.setItem('cadastro_user_photo', dataUrl);
+          } else {
+            setEditFotoFile(file);
+            setEditFotoPreview(dataUrl);
+          }
+          closeWebcamModal();
+        });
+    }
+  };
+
+  const openWebcamModal = (target) => {
+    setWebcamTarget(target);
+    const isTouchDevice = window.matchMedia("(any-pointer: coarse)").matches;
+    if (isTouchDevice) {
+      cameraInputRef.current?.click();
+    } else {
+      setModalWebcam(true);
+      startCamera();
+    }
+  };
+
+  const closeWebcamModal = () => {
+    stopCamera();
+    setModalWebcam(false);
   };
 
   const openEditarModal = (usuario) => {
@@ -225,9 +544,15 @@ export default function CadastroUsuarios() {
       cargo: usuario.cargo,
       is_admin: usuario.is_admin,
       ativo: usuario.ativo,
+      unidade: usuario.unidade || "",
+      documento: usuario.documento || "",
+      temVeiculo: usuario.veiculos && usuario.veiculos.length > 0,
+      veiculos: usuario.veiculos || [],
     });
     setEditFotoFile(null);
-    setEditFotoPreview(usuario.foto ? `/uploads/${usuario.foto}` : null);
+    // Backend returns Base64 or a filename. If it's Base64, it starts with data:image
+    const isBase64 = usuario.foto && usuario.foto.startsWith('data:image');
+    setEditFotoPreview(usuario.foto ? (isBase64 ? usuario.foto : `/uploads/${usuario.foto}`) : null);
   };
 
   const closeEditarModal = () => {
@@ -239,8 +564,13 @@ export default function CadastroUsuarios() {
   const handleEditFotoChange = (e) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
-      setEditFotoFile(file);
-      setEditFotoPreview(URL.createObjectURL(file));
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result;
+        setEditFotoFile(file);
+        setEditFotoPreview(base64String);
+      };
+      reader.readAsDataURL(file);
     }
   };
 
@@ -255,6 +585,9 @@ export default function CadastroUsuarios() {
       data.append("cargo", editFormData.cargo);
       data.append("is_admin", editFormData.is_admin.toString());
       data.append("ativo", editFormData.ativo.toString());
+      data.append("unidade", editFormData.unidade || "");
+      data.append("documento", editFormData.documento || "");
+      data.append("veiculos", JSON.stringify(editFormData.veiculos));
       if (editFormData.password) {
         data.append("password", editFormData.password);
       }
@@ -369,11 +702,6 @@ export default function CadastroUsuarios() {
     return <SortIcon active={sortConfig.key === key} direction={sortConfig.direction} />;
   };
 
-  const FilterIcon = ({ className, style }) => (
-    <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
-    </svg>
-  );
 
   return (
     <div className="usuarios-container">
@@ -384,24 +712,48 @@ export default function CadastroUsuarios() {
             <button className="global-modal-close" onClick={closeEditarModal}>✕</button>
             <h3>Editar Usuário</h3>
             <form className="modal-form" onSubmit={handleEditSubmit}>
-              <div className="form-group foto-edit-group">
+              <div className="form-group foto-edit-group secao-foto-dados">
                 <label>Foto do Usuário:</label>
                 <div className="foto-edit-container">
                   {editFotoPreview ? (
-                    <img src={editFotoPreview} alt="Preview" className="foto-edit-preview" />
+                    <div className="photo-preview-container">
+                      <img src={editFotoPreview} alt="Preview" className="foto-edit-preview" />
+                      <button
+                        type="button"
+                        className="remove-photo-btn"
+                        onClick={() => {
+                          setEditFotoFile(null);
+                          setEditFotoPreview(null);
+                        }}
+                      >
+                        ✕ remover
+                      </button>
+                    </div>
                   ) : (
                     <div className="foto-edit-placeholder">👤</div>
                   )}
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleEditFotoChange}
-                    id="edit-foto-input"
-                    style={{ display: 'none' }}
-                  />
-                  <label htmlFor="edit-foto-input" className="foto-edit-btn">
-                    📷 Alterar Foto
-                  </label>
+                </div>
+                <div className="photo-actions-edit">
+                  <button
+                    type="button"
+                    className="photo-action-btn camera-btn"
+                    onClick={() => openWebcamModal('editar')}
+                  >
+                    📷 Tirar Foto
+                  </button>
+                  <button
+                    type="button"
+                    className="photo-action-btn gallery-btn"
+                    onClick={() => {
+                      const input = document.createElement('input');
+                      input.type = 'file';
+                      input.accept = 'image/*';
+                      input.onchange = handleEditFotoChange;
+                      input.click();
+                    }}
+                  >
+                    🖼️ Galeria
+                  </button>
                 </div>
               </div>
 
@@ -467,23 +819,111 @@ export default function CadastroUsuarios() {
                   ))}
                 </select>
               </div>
+              {editFormData.cargo === "morador" && (
+                <div className="form-row">
+                  <div className="form-group">
+                    <label>Unidade:</label>
+                    <input
+                      type="text"
+                      name="unidade"
+                      value={editFormData.unidade}
+                      onChange={handleEditChange}
+                      placeholder="Ex: Apt 101"
+                      required
+                    />
+                  </div>
+                  <div className="form-group">
+                    <div className="label-with-action">
+                      <label>Documento:</label>
+                      <div className="doc-type-wrapper-inline premium-wrapper">
+                        <PremiumSelect
+                          options={docTypeOptions}
+                          value={editDocType}
+                          onChange={handleEditDocTypeSelect}
+                        />
+                      </div>
+                    </div>
+                    <input
+                      type="text"
+                      name="documento"
+                      className="premium-input-standalone"
+                      value={editFormData.documento}
+                      onChange={handleEditChange}
+                      placeholder={
+                        editDocType === "CPF" ? "Ex: 123.456.789-00" :
+                          editDocType === "RG" ? "Ex: 12.345.678-x" :
+                            editDocType === "CNH" ? "Ex: 12345678901" :
+                              "Ex: AB123456"
+                      }
+                      required
+                    />
+                  </div>
+                </div>
+              )}
+
+              {editFormData.cargo === "morador" && (
+                <div className="form-group vehicle-checkbox-group">
+                  <label>VEÍCULOS</label>
+                  <div className="checkbox-row">
+                    <label className="premium-switch">
+                      <input
+                        type="checkbox"
+                        id="editTemVeiculo"
+                        name="temVeiculo"
+                        checked={editFormData.temVeiculo}
+                        onChange={handleEditChange}
+                      />
+                      <span className="switch-slider"></span>
+                    </label>
+                    <label htmlFor="editTemVeiculo" className="switch-label">O morador possui veículos?</label>
+                  </div>
+
+                  {editFormData.temVeiculo && editFormData.veiculos.length > 0 && (
+                    <div className="vehicle-summary-area">
+                      {editFormData.veiculos.map((v, idx) => (
+                        <div key={idx} className="vehicle-summary-card">
+                          <CarIcon className="summary-card-icon" />
+                          <div className="summary-badges-container">
+                            <span className="summary-badge plate">{v.placa}</span>
+                            <span className="summary-badge brand">{v.marca}</span>
+                            <span className="summary-badge model">{v.modelo}</span>
+                            <span className="summary-badge color">{v.cor}</span>
+                          </div>
+                        </div>
+                      ))}
+                      <button 
+                        type="button" 
+                        className="edit-vehicles-btn"
+                        onClick={() => {
+                          setTempVeiculos([...editFormData.veiculos]);
+                          setModalVeiculos("editar");
+                        }}
+                      >
+                        ✏️ Editar Veículos
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
 
               <div className="edit-toggles-row">
-                <div className={`edit-toggle-box ${editFormData.is_admin ? "active" : ""}`}>
-                  <div className="edit-toggle-info">
-                    <span className="edit-toggle-icon">👑</span>
-                    <span className="edit-toggle-title">Administrador</span>
+                {editFormData.cargo !== "morador" && (
+                  <div className={`edit-toggle-box ${editFormData.is_admin ? "active" : ""}`}>
+                    <div className="edit-toggle-info">
+                      <span className="edit-toggle-icon">👑</span>
+                      <span className="edit-toggle-title">Administrador</span>
+                    </div>
+                    <label className="toggle-switch">
+                      <input
+                        type="checkbox"
+                        name="is_admin"
+                        checked={editFormData.is_admin}
+                        onChange={handleEditChange}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
                   </div>
-                  <label className="toggle-switch">
-                    <input
-                      type="checkbox"
-                      name="is_admin"
-                      checked={editFormData.is_admin}
-                      onChange={handleEditChange}
-                    />
-                    <span className="toggle-slider"></span>
-                  </label>
-                </div>
+                )}
 
                 <div className={`edit-toggle-box ${editFormData.ativo ? "ativo" : "inativo"}`}>
                   <div className="edit-toggle-info">
@@ -501,6 +941,7 @@ export default function CadastroUsuarios() {
                   </label>
                 </div>
               </div>
+
 
               <button type="submit" className="submit-btn">
                 💾 Salvar Alterações
@@ -536,25 +977,51 @@ export default function CadastroUsuarios() {
           <form className="cadastro-form" onSubmit={handleSubmit}>
             <h2>Cadastro de Usuário</h2>
 
-            {/* Seção Foto + Dados Pessoais */}
+            {/* Seção Foto + Dados Pessoais - Moved to Top */}
             <div className="secao-foto-dados">
               <div className="foto-upload-box">
                 <div className="foto-preview">
                   {fotoPreview ? (
-                    <img src={fotoPreview} alt="Preview" />
+                    <div className="photo-preview-container">
+                      <img src={fotoPreview} alt="Preview" className="photo-preview-img" />
+                      <button
+                        type="button"
+                        className="remove-photo-btn"
+                        onClick={() => {
+                          setFotoFile(null);
+                          setFotoPreview(null);
+                          localStorage.removeItem('cadastro_user_photo');
+                        }}
+                      >
+                        ✕ remover
+                      </button>
+                    </div>
                   ) : (
                     <span className="foto-placeholder">👤</span>
                   )}
                 </div>
-                <label className="foto-upload-btn">
-                  📷 Escolher Foto
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleFotoChange}
-                    hidden
-                  />
-                </label>
+                <div className="photo-actions">
+                  <button
+                    type="button"
+                    className="photo-action-btn camera-btn"
+                    onClick={() => openWebcamModal('cadastro')}
+                  >
+                    📷 Tirar Foto
+                  </button>
+                  <button
+                    type="button"
+                    className="photo-action-btn gallery-btn"
+                    onClick={() => {
+                      const input = document.createElement('input');
+                      input.type = 'file';
+                      input.accept = 'image/*';
+                      input.onchange = handleFotoChange;
+                      input.click();
+                    }}
+                  >
+                    🖼️ Galeria
+                  </button>
+                </div>
               </div>
 
               <div className="dados-pessoais">
@@ -614,7 +1081,13 @@ export default function CadastroUsuarios() {
                         key={c.value}
                         className={`custom-select-option ${formData.cargo === c.value ? "selected" : ""}`}
                         onClick={() => {
-                          setFormData({ ...formData, cargo: c.value });
+                          setFormData((prev) => {
+                            const newData = { ...prev, cargo: c.value };
+                            if (c.value === "morador") {
+                              newData.is_admin = false;
+                            }
+                            return newData;
+                          });
                           setCargoDropdownOpen(false);
                         }}
                       >
@@ -651,26 +1124,116 @@ export default function CadastroUsuarios() {
               </div>
             </div>
 
-            <div className="admin-toggle-container">
-              <div className="admin-toggle-box">
-                <div className="admin-toggle-info">
-                  <span className="admin-toggle-icon">👑</span>
-                  <div>
-                    <span className="admin-toggle-title">Administrador</span>
-                    <span className="admin-toggle-desc">Acesso total ao sistema</span>
-                  </div>
-                </div>
-                <label className="toggle-switch">
+            {formData.cargo === "morador" && (
+              <div className="form-row-2">
+                <div className="form-group">
+                  <label>Unidade:</label>
                   <input
-                    type="checkbox"
-                    name="is_admin"
-                    checked={formData.is_admin}
+                    type="text"
+                    name="unidade"
+                    value={formData.unidade}
                     onChange={handleChange}
+                    placeholder="Ex: Apt 101"
+                    required
                   />
-                  <span className="toggle-slider"></span>
-                </label>
+                </div>
+                <div className="form-group">
+                  <div className="label-with-action">
+                    <label>Documento:</label>
+                    <div className="doc-type-wrapper-inline premium-wrapper">
+                      <PremiumSelect
+                        options={docTypeOptions}
+                        value={docType}
+                        onChange={handleDocTypeSelect}
+                      />
+                    </div>
+                  </div>
+                  <input
+                    type="text"
+                    name="documento"
+                    className="premium-input-standalone"
+                    value={formData.documento}
+                    onChange={handleChange}
+                    placeholder={
+                      docType === "CPF" ? "Ex: 123.456.789-00" :
+                        docType === "RG" ? "Ex: 12.345.678-x" :
+                          docType === "CNH" ? "Ex: 12345678901" :
+                            "Ex: AB123456"
+                    }
+                    required
+                  />
+                </div>
               </div>
-            </div>
+            )}
+
+            {formData.cargo === "morador" && (
+              <div className="form-group vehicle-checkbox-group">
+                <label>VEÍCULOS</label>
+                <div className="checkbox-row">
+                  <label className="premium-switch">
+                    <input
+                      type="checkbox"
+                      id="temVeiculo"
+                      name="temVeiculo"
+                      checked={formData.temVeiculo}
+                      onChange={handleChange}
+                    />
+                    <span className="switch-slider"></span>
+                  </label>
+                  <label htmlFor="temVeiculo" className="switch-label">O morador possui veículos?</label>
+                </div>
+
+                {formData.temVeiculo && formData.veiculos.length > 0 && (
+                  <div className="vehicle-summary-area">
+                    {formData.veiculos.map((v, idx) => (
+                      <div key={idx} className="vehicle-summary-card">
+                        <CarIcon className="summary-card-icon" />
+                        <div className="summary-badges-container">
+                          <span className="summary-badge plate">{v.placa}</span>
+                          <span className="summary-badge brand">{v.marca}</span>
+                          <span className="summary-badge model">{v.modelo}</span>
+                          <span className="summary-badge color">{v.cor}</span>
+                        </div>
+                      </div>
+                    ))}
+                    <button 
+                      type="button" 
+                      className="edit-vehicles-btn"
+                      onClick={() => {
+                        setTempVeiculos([...formData.veiculos]);
+                        setModalVeiculos("cadastro");
+                      }}
+                    >
+                      ✏️ Editar Veículos
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+
+
+            {formData.cargo !== "morador" && (
+              <div className="admin-toggle-container">
+                <div className="admin-toggle-box">
+                  <div className="admin-toggle-info">
+                    <span className="admin-toggle-icon">👑</span>
+                    <div>
+                      <span className="admin-toggle-title">Administrador</span>
+                      <span className="admin-toggle-desc">Acesso total ao sistema</span>
+                    </div>
+                  </div>
+                  <label className="toggle-switch">
+                    <input
+                      type="checkbox"
+                      name="is_admin"
+                      checked={formData.is_admin}
+                      onChange={handleChange}
+                    />
+                    <span className="toggle-slider"></span>
+                  </label>
+                </div>
+              </div>
+            )}
 
             <button type="submit" className="submit-btn" disabled={loading}>
               {loading ? "Cadastrando..." : "Cadastrar Usuário"}
@@ -770,6 +1333,16 @@ export default function CadastroUsuarios() {
                           >
                             <TrashIcon style={{ width: 14, height: 14 }} />
                           </button>
+                          {u.cargo === "morador" && (
+                            <button
+                              type="button"
+                              className="admin-btn-small view-info-btn"
+                              onClick={() => setModalDetalhes(u)}
+                              data-tooltip="Visualizar Detalhes"
+                            >
+                              <EyeIcon style={{ width: 14, height: 14 }} />
+                            </button>
+                          )}
                         </td>
                       </tr>
                     ))}
@@ -843,6 +1416,16 @@ export default function CadastroUsuarios() {
                           <TrashIcon style={{ width: 16, height: 16 }} />
                           <span>Excluir</span>
                         </button>
+                        {u.cargo === "morador" && (
+                          <button
+                            type="button"
+                            className="admin-btn-small view-info-btn mobile-action-btn"
+                            onClick={() => setModalDetalhes(u)}
+                          >
+                            <EyeIcon style={{ width: 16, height: 16 }} />
+                            <span>Visualizar</span>
+                          </button>
+                        )}
                       </div>
                     </div>
                   ))}
@@ -949,6 +1532,208 @@ export default function CadastroUsuarios() {
           </div>
         </div>
       )}
+      {/* Modal de Detalhes do Morador */}
+      {modalDetalhes && (
+        <div className="global-modal-overlay" onMouseDown={(e) => { if (e.target === e.currentTarget) setModalDetalhes(null); }}>
+          <div className="global-modal details-modal" onMouseDown={(e) => e.stopPropagation()}>
+            <button className="global-modal-close" onClick={() => setModalDetalhes(null)}>✕</button>
+            <div className="modal-header">
+              <EyeIcon style={{ width: 24, height: 24, marginRight: '10px', color: '#10b981' }} />
+              <h3>Informações do Cadastro</h3>
+            </div>
+
+            <div className="details-content">
+              <div className="details-photo-section">
+                {modalDetalhes.foto ? (
+                  <img 
+                    src={modalDetalhes.foto.startsWith('data:image') ? modalDetalhes.foto : `/uploads/${modalDetalhes.foto}`} 
+                    alt="Foto" 
+                    className="details-photo" 
+                  />
+                ) : (
+                  <div className="details-photo-placeholder">👤</div>
+                )}
+                <div className="details-main-info">
+                  <h4>{modalDetalhes.nome} {modalDetalhes.sobrenome}</h4>
+                  <span className="cargo-badge morador-badge">Morador</span>
+                </div>
+              </div>
+
+              <div className="details-grid">
+                <div className="detail-item">
+                  <label>Email</label>
+                  <span>{modalDetalhes.email}</span>
+                </div>
+                <div className="detail-item">
+                  <label>Unidade</label>
+                  <span>{modalDetalhes.unidade || "Não informada"}</span>
+                </div>
+                <div className="detail-item">
+                  <label>Documento</label>
+                  <span>{modalDetalhes.documento || "Não informado"}</span>
+                </div>
+                <div className="detail-item">
+                  <label>Status</label>
+                  <span className={`status-badge ${modalDetalhes.ativo ? "ativo" : "inativo"}`}>
+                    {modalDetalhes.ativo ? "Ativo" : "Inativo"}
+                  </span>
+                </div>
+                <div className="detail-item">
+                  <label>Data de Cadastro</label>
+                  <span>{new Date(modalDetalhes.data_criacao).toLocaleDateString("pt-BR")}</span>
+                </div>
+                <div className="detail-item">
+                  <label>ID do Usuário</label>
+                  <span>#{modalDetalhes.id}</span>
+                </div>
+              </div>
+
+              {modalDetalhes.veiculos && modalDetalhes.veiculos.length > 0 && (
+                <div className="details-vehicles-section">
+                  <label className="section-label">Veículos Cadastrados</label>
+                  <div className="details-vehicles-list">
+                    {modalDetalhes.veiculos.map((v, idx) => (
+                      <div key={idx} className="detail-vehicle-card">
+                        <CarIcon className="summary-card-icon" />
+                        <div className="summary-badges-container">
+                          <span className="summary-badge plate">{v.placa}</span>
+                          <span className="summary-badge brand">{v.marca}</span>
+                          <span className="summary-badge model">{v.modelo}</span>
+                          <span className="summary-badge color">{v.cor}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <button 
+                className="submit-btn" 
+                onClick={() => setModalDetalhes(null)}
+                style={{ marginTop: '20px', width: '100%' }}
+              >
+                Fechar Visualização
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL VEICULOS */}
+      {modalVeiculos && (
+        <div className="global-modal-overlay" onMouseDown={(e) => { if (e.target === e.currentTarget) cancelarVeiculos(); }}>
+          <div className="global-modal vehicles-modal" onMouseDown={(e) => e.stopPropagation()}>
+            <button className="global-modal-close" onClick={cancelarVeiculos}>✕</button>
+            <div className="modal-header">
+              <CarIcon style={{ width: 24, height: 24, marginRight: '10px', color: 'var(--primary-light)' }} />
+              <h3>Cadastro de Veículos do Morador</h3>
+            </div>
+
+            <div className="modal-form">
+              <div className="vehicles-list">
+                {tempVeiculos.map((v, idx) => (
+                  <div key={idx} className="vehicle-input-row">
+                    <div className="input-with-label">
+                      <label>Placa</label>
+                      <input
+                        type="text"
+                        value={v.placa}
+                        onChange={(e) => handleVeiculoChange(idx, "placa", e.target.value)}
+                        placeholder="ABC-1234"
+                        className="plate-input"
+                      />
+                    </div>
+                    <div className="input-with-label">
+                      <label>Marca</label>
+                      <input
+                        type="text"
+                        value={v.marca}
+                        onChange={(e) => handleVeiculoChange(idx, "marca", e.target.value)}
+                        placeholder="Marca"
+                      />
+                    </div>
+                    <div className="input-with-label">
+                      <label>Modelo</label>
+                      <input
+                        type="text"
+                        value={v.modelo}
+                        onChange={(e) => handleVeiculoChange(idx, "modelo", e.target.value)}
+                        placeholder="Modelo"
+                      />
+                    </div>
+                    <div className="input-with-label">
+                      <label>Cor</label>
+                      <input
+                        type="text"
+                        value={v.cor}
+                        onChange={(e) => handleVeiculoChange(idx, "cor", e.target.value)}
+                        placeholder="Cor"
+                      />
+                    </div>
+                    <button 
+                      type="button" 
+                      className="remove-vehicle-btn"
+                      onClick={() => removeVeiculoRow(idx)}
+                      title="Remover Veículo"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                ))}
+              </div>
+
+              <div className="modal-actions-left">
+                <button type="button" className="add-vehicle-btn" onClick={addVeiculoRow}>
+                  <PlusIcon style={{ width: 18, height: 18 }} />
+                  <span>Adicionar outro carro</span>
+                </button>
+              </div>
+
+              <div className="modal-footer" style={{ marginTop: '20px' }}>
+                <button
+                  type="button"
+                  className="submit-btn"
+                  onClick={confirmarVeiculos}
+                  style={{ width: '100%' }}
+                >
+                  Confirmar Cadastro de Veículos
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Modal da Webcam */}
+      {modalWebcam && (
+        <div className="global-modal-overlay webcam-overlay" onClick={closeWebcamModal}>
+          <div className="global-modal webcam-modal" onClick={e => e.stopPropagation()}>
+            <button className="global-modal-close" onClick={closeWebcamModal}>✕</button>
+            <div className="modal-header">
+              <span className="modal-header-icon">📷</span>
+              <h3>Capturar Foto</h3>
+            </div>
+            <div className="webcam-container">
+              <video ref={videoRef} autoPlay playsInline className="webcam-video" />
+              <div className="webcam-controls">
+                <button type="button" className="capture-btn" onClick={capturePhoto}>
+                  <div className="capture-btn-inner"></div>
+                </button>
+              </div>
+            </div>
+            <p className="webcam-hint">Posicione o rosto no centro da imagem</p>
+          </div>
+        </div>
+      )}
+
+      {/* Input Oculto para mobile/camera nativa */}
+      <input
+        type="file"
+        ref={cameraInputRef}
+        accept="image/*"
+        capture="environment"
+        style={{ display: 'none' }}
+        onChange={webcamTarget === 'cadastro' ? handleFotoChange : handleEditFotoChange}
+      />
     </div>
   );
 }
