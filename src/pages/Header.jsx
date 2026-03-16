@@ -14,19 +14,34 @@ export default function Header() {
     navigate("/login");
   };
 
-  const quickLinks = [
+  const cargo = user?.cargo?.toLowerCase() || "";
+  const isAdmin = user?.is_admin || false;
+
+  const porteiroLinks = [
     { path: "/encomendas", label: "Encomendas" },
     { path: "/portaria", label: "Portaria" },
     { path: "/livroocorrencias", label: "Livro de Ocorrências" },
     { path: "/espacosservicos", label: "Espaços e Serviços" },
   ];
 
-  // Áreas pesquisáveis do sistema (Apenas as solicitadas pelo usuário)
+  const moradorLinks = [
+    { path: "/dashboard", label: "Liberação de Acessos" },
+    { path: "/dashboard", label: "Visualização de Encomendas" },
+    { path: "/dashboard", label: "Visualização de Ocorrências" },
+    { path: "/dashboard", label: "Visualização de Chaves" },
+  ];
+
+  const quickLinks = [
+    ...(cargo === "porteiro" || isAdmin ? porteiroLinks : []),
+    ...(cargo === "morador" || isAdmin ? moradorLinks : [])
+  ];
+
+  // Áreas pesquisáveis do sistema
   const allSearchableAreas = [
-    { path: "/encomendas", label: "Encomendas" },
-    { path: "/portaria", label: "Portaria" },
-    { path: "/livroocorrencias", label: "Livro de Ocorrências" },
-    { path: "/espacosservicos", label: "Espaços e Serviços" },
+    ...porteiroLinks,
+    ...moradorLinks,
+    { path: "/cadastro-usuarios", label: "Cadastro de Usuários", adminOnly: true },
+    { path: "/monitoramento", label: "Monitoramento", adminOnly: true },
   ];
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -38,9 +53,18 @@ export default function Header() {
 
     if (value.trim().length > 0) {
       const filtered = allSearchableAreas.filter(area => {
-        if (area.adminOnly && !user?.is_admin) return false;
-        return area.label.toLowerCase().includes(value.toLowerCase());
-      });
+        if (area.adminOnly && !isAdmin) return false;
+        
+        // Check if the area belongs to the user's role
+        const isPorteiroArea = porteiroLinks.some(link => link.path === area.path);
+        const isMoradorArea = moradorLinks.some(link => link.path === area.path);
+
+        if (isAdmin) return true;
+        if (cargo === "porteiro" && isPorteiroArea) return true;
+        if (cargo === "morador" && isMoradorArea) return true;
+        
+        return false;
+      }).filter(area => area.label.toLowerCase().includes(value.toLowerCase()));
       setSuggestions(filtered);
     } else {
       setSuggestions([]);

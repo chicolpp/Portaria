@@ -11,41 +11,93 @@ export default function Dashboard() {
     </button>
   );
 
+  const userStr = localStorage.getItem("user");
+  const user = userStr ? JSON.parse(userStr) : null;
+  const cargo = user?.cargo?.toLowerCase() || "";
+  const isAdmin = user?.is_admin || false;
+
+  const porteiroActions = [
+    {
+      image: "/icons/delivery.png",
+      label: "Encomendas",
+      onClick: () => navigate("/encomendas")
+    },
+    {
+      image: "/icons/doorman.png",
+      label: "Portaria",
+      onClick: () => navigate("/portaria")
+    },
+    {
+      image: "/icons/loft-building.png",
+      label: "Livro de Ocorrências",
+      onClick: () => navigate("/livroocorrencias")
+    },
+    {
+      image: "/icons/amenities.png",
+      label: "Espaços e Serviços",
+      onClick: () => navigate("/espacosservicos")
+    }
+  ];
+
+  const moradorActions = [
+    {
+      image: "/icons/acao9.png",
+      label: "Liberação de Acessos",
+      onClick: () => {}
+    },
+    {
+      image: "/icons/delivery.png",
+      label: "Visualização de Encomendas",
+      onClick: () => {}
+    },
+    {
+      image: "/icons/loft-building.png",
+      label: "Visualização de Ocorrências",
+      onClick: () => {}
+    },
+    {
+      image: "/icons/acao9.png",
+      label: "Visualização de Chaves",
+      onClick: () => {}
+    }
+  ];
+
+  const showPortaria = cargo === "porteiro" || isAdmin;
+  const showMorador = cargo === "morador" || isAdmin;
+
   return (
     <div className="dashboard-container">
+      {showPortaria && (
+        <div className="dashboard-section">
+          <h2 className="section-title">Área da Portaria</h2>
+          <div className="dashboard-grid">
+            {porteiroActions.map((action, index) => (
+              <ActionCard
+                key={index}
+                image={action.image}
+                label={action.label}
+                onClick={action.onClick}
+              />
+            ))}
+          </div>
+        </div>
+      )}
 
-      <div className="dashboard-grid">
-        <ActionCard
-          image="/icons/delivery.png"
-          label="Encomendas"
-          onClick={() => navigate("/encomendas")}
-        />
-        <ActionCard
-          image="/icons/doorman.png"
-          label="Portaria"
-          onClick={() => navigate("/portaria")}
-        />
-        <ActionCard
-          image="/icons/loft-building.png"
-          label="Livro de Ocorrências"
-          onClick={() => navigate("/livroocorrencias")}
-        />
-        <ActionCard
-          image="/icons/amenities.png"
-          label="Espaços e Serviços"
-          onClick={() => navigate("/espacosservicos")}
-        />
-
-        <ActionCard image="/icons/acao9.png" label="Ação 5" />
-        <ActionCard image="/icons/acao9.png" label="Ação 6" />
-        <ActionCard image="/icons/acao9.png" label="Ação 7" />
-        <ActionCard image="/icons/acao9.png" label="Ação 8" />
-
-        <ActionCard image="/icons/acao9.png" label="Ação 9" />
-        <ActionCard image="/icons/acao9.png" label="Ação 10" />
-        <ActionCard image="/icons/acao9.png" label="Ação 11" />
-        <ActionCard image="/icons/acao9.png" label="Ação 12" />
-      </div>
+      {showMorador && (
+        <div className="dashboard-section">
+          <h2 className="section-title">Área dos Moradores</h2>
+          <div className="dashboard-grid">
+            {moradorActions.map((action, index) => (
+              <ActionCard
+                key={index}
+                image={action.image}
+                label={action.label}
+                onClick={action.onClick}
+              />
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
