@@ -82,9 +82,14 @@ app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
 
 db.init_app(app)
 
-# A inicialização do banco (db.create_all() e seeds) foi removida do escopo global
-# para evitar bloqueios de renderização (timeouts no Gunicorn) causados por Eventos 
-# de Lock de Banco de Dados. As migrações devem idealmente ser feitas numa rota separada ou CLI.
+# Executa migrações automaticamente ao iniciar
+with app.app_context():
+    try:
+        from migrate_final import run_migration
+        run_migration()
+        print("✅ Banco de dados sincronizado automaticamente.")
+    except Exception as e:
+        print(f"⚠️ Erro na migração automática: {e}")
 
 @app.route("/register", methods=["POST"])
 def register():
