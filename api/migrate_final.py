@@ -7,22 +7,25 @@ def run_migration():
     db_url = os.environ.get("DATABASE_URL")
     if not db_url:
         print("⚠️ DATABASE_URL não encontrada. Usando configuração padrão.")
-        # Fallback para o que estiver no app.py se estiver rodando localmente sem env
         return
 
     if db_url.startswith("postgres://"):
         db_url = db_url.replace("postgres://", "postgresql://", 1)
 
+    print(f"🔗 Conectando ao banco de dados...")
     engine = create_engine(db_url)
     
     with engine.connect() as conn:
         print("🔧 Iniciando Migração Final...")
         
         # 1. Garantir que as tabelas básicas existam
-        with app.app_context():
-            print("  - Executando db.create_all()...")
-            db.create_all()
-        
+        try:
+            with app.app_context():
+                print("  - Executando db.create_all()...")
+                db.create_all()
+        except Exception as e:
+            print(f"  ❌ Erro no db.create_all(): {e}")
+
         # 2. Adicionar colunas faltantes em 'users'
         print("  - Verificando colunas em 'users'...")
         columns_to_add_users = [
@@ -72,6 +75,11 @@ def run_migration():
         
         for table, column in text_targets:
             try:
+                # Verifica se a tabela existe antes de verificar a coluna
+                check_table = conn.execute(text(f"SELECT EXISTS (SELECT FROM information_schema.tables WHERE table_name = '{table}')")).scalar()
+                if not check_table:
+                    continue
+                    
                 # Verifica se a coluna existe antes de converter
                 check_col = conn.execute(text(f"SELECT column_name FROM information_schema.columns WHERE table_name='{table}' AND column_name='{column}';")).fetchone()
                 if check_col:

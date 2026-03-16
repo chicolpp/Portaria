@@ -88,73 +88,81 @@ db.init_app(app)
 
 @app.route("/register", methods=["POST"])
 def register():
-    nome = request.form.get("nome", "")
-    sobrenome = request.form.get("sobrenome", "")
-    email = request.form.get("email")
-    password = request.form.get("password")
-    cargo = request.form.get("cargo", "porteiro")
-    is_admin = request.form.get("is_admin", "false").lower() == "true"
-    unidade = request.form.get("unidade", "")
-    documento = request.form.get("documento", "")
+    try:
+        nome = request.form.get("nome", "")
+        sobrenome = request.form.get("sobrenome", "")
+        email = request.form.get("email")
+        password = request.form.get("password")
+        cargo = request.form.get("cargo", "porteiro")
+        is_admin = request.form.get("is_admin", "false").lower() == "true"
+        unidade = request.form.get("unidade", "")
+        documento = request.form.get("documento", "")
 
-    # 🔒 BLOQUEIO DO ERRO (ESSENCIAL)
-    if not email or not password:
-        return {"error": "Email e senha são obrigatórios"}, 400
+        # 🔒 BLOQUEIO DO ERRO (ESSENCIAL)
+        if not email or not password:
+            return {"error": "Email e senha são obrigatórios"}, 400
 
-    if User.query.filter_by(email=email).first():
-        return {"error": "Email já cadastrado"}, 400
+        if User.query.filter_by(email=email).first():
+            return {"error": "Email já cadastrado"}, 400
 
-    foto_base64 = ""
-    if 'foto' in request.files:
-        file = request.files['foto']
-        if file and file.filename and allowed_file(file.filename):
-            foto_base64 = file_to_base64(file)
+        foto_base64 = ""
+        if 'foto' in request.files:
+            file = request.files['foto']
+            if file and file.filename and allowed_file(file.filename):
+                foto_base64 = file_to_base64(file)
 
-    user = User(
-        nome=nome,
-        sobrenome=sobrenome,
-        email=email,
-        cargo=cargo,
-        foto=foto_base64,
-        is_admin=is_admin,
-        unidade=unidade,
-        documento=documento,
-    )
+        user = User(
+            nome=nome,
+            sobrenome=sobrenome,
+            email=email,
+            cargo=cargo,
+            foto=foto_base64,
+            is_admin=is_admin,
+            unidade=unidade,
+            documento=documento,
+        )
 
-    user.set_password(password)
+        user.set_password(password)
 
-    db.session.add(user)
-    db.session.flush() # Para pegar o ID do usuário
+        db.session.add(user)
+        db.session.flush() # Para pegar o ID do usuário
 
-    # Processamento de veículos se for morador
-    if cargo == "morador":
-        veiculos_raw = request.form.get("veiculos")
-        if veiculos_raw:
-            import json
-            try:
-                veiculos_list = json.loads(veiculos_raw)
-                for v_data in veiculos_list:
-                    novo_veiculo = Veiculo(
-                        user_id=user.id,
-                        placa=v_data.get("placa"),
-                        marca=v_data.get("marca"),
-                        modelo=v_data.get("modelo"),
-                        cor=v_data.get("cor")
-                    )
-                    db.session.add(novo_veiculo)
-            except Exception as e:
-                print(f"Erro ao processar veículos: {e}")
+        # Processamento de veículos se for morador
+        if cargo == "morador":
+            veiculos_raw = request.form.get("veiculos")
+            if veiculos_raw:
+                import json
+                try:
+                    veiculos_list = json.loads(veiculos_raw)
+                    for v_data in veiculos_list:
+                        novo_veiculo = Veiculo(
+                            user_id=user.id,
+                            placa=v_data.get("placa"),
+                            marca=v_data.get("marca"),
+                            modelo=v_data.get("modelo"),
+                            cor=v_data.get("cor")
+                        )
+                        db.session.add(novo_veiculo)
+                except Exception as e:
+                    print(f"Erro ao processar veículos: {e}")
 
-    db.session.commit()
-
-    return {"message": "Usuário criado", "user": user.to_dict()}, 201
+        db.session.commit()
+        return {"message": "Usuário criado", "user": user.to_dict()}, 201
+    except Exception as e:
+        db.session.rollback()
+        print(f"❌ Erro no registro: {str(e)}")
+        return {"error": f"Erro interno: {str(e)}"}, 500
 
 
 
 @app.route("/usuarios", methods=["GET"])
 def listar_usuarios():
-    usuarios = User.query.order_by(User.data_criacao.desc()).all()
-    return {"usuarios": [u.to_dict() for u in usuarios]}
+    try:
+        usuarios = User.query.order_by(User.data_criacao.desc()).all()
+        return {"usuarios": [u.to_dict() for u in usuarios]}
+    except Exception as e:
+        print(f"❌ Erro ao listar usuários: {str(e)}")
+        return {"error": f"Erro ao listar usuários: {str(e)}"}, 500
 
 
 @app.route("/usuarios/<int:id>", methods=["PUT"])
