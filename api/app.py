@@ -101,14 +101,9 @@ app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
 
 db.init_app(app)
 
-# Executa migrações automaticamente ao iniciar
-with app.app_context():
-    try:
-        from migrate_final import run_migration
-        run_migration()
-        print("✅ Banco de dados sincronizado automaticamente.")
-    except Exception as e:
-        print(f"⚠️ Erro na migração automática: {e}")
+# As migrações automáticas foram removidas do startup para evitar 
+# o timeout do Gunicorn caso o banco de dados do Render demore a responder.
+# Para rodar migrações, basta acessar a rota /maintenance/db-init
 
 @app.route("/register", methods=["POST"])
 def register():
