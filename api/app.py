@@ -101,9 +101,15 @@ app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
 
 db.init_app(app)
 
-# As migrações automáticas foram removidas do startup para evitar 
-# o timeout do Gunicorn caso o banco de dados do Render demore a responder.
-# Para rodar migrações, basta acessar a rota /maintenance/db-init
+# Execução automática de migrações desativada temporariamente para evitar TIME OUT no deploy do Render.
+# Para rodar as migrações, basta acessar a rota /maintenance/db-init no navegador após o deploy.
+# with app.app_context():
+#     try:
+#         from migrate_final import run_migration
+#         run_migration()
+#         print("✅ Banco de dados sincronizado automaticamente.")
+#     except Exception as e:
+#         print(f"⚠️ Erro na migração automática: {e}")
 
 @app.route("/register", methods=["POST"])
 def register():
@@ -438,6 +444,7 @@ def criar_acesso():
         marca=data.get("marca", ""),
         modelo=data.get("modelo", ""),
         cor=data.get("cor", ""),
+        unidade=data.get("unidade", ""),
     )
 
     db.session.add(acesso)
@@ -476,6 +483,7 @@ def editar_acesso(id):
     acesso.marca = data.get("marca", acesso.marca)
     acesso.modelo = data.get("modelo", acesso.modelo)
     acesso.cor = data.get("cor", acesso.cor)
+    acesso.unidade = data.get("unidade", acesso.unidade)
     
     db.session.commit()
     return {"message": "Acesso atualizado", "acesso": acesso.to_dict()}, 200
