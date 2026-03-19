@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { logout, getUser } from "../services/auth";
 import { getUploadUrl } from "../services/api";
+import logoImg from '../assets/logo.png';
 import "./Header.css";
 
 export default function Header() {
@@ -109,7 +110,7 @@ export default function Header() {
         {/* Logo e nome do sistema */}
         <div className="header-brand">
           <Link to="/dashboard" className="header-logo">
-            <img src="/icons/logo.png" alt="Logo" />
+            <img src={logoImg} alt="Logo" />
           </Link>
 
           <span className="header-system-name">Prothax</span>
