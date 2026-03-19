@@ -11,17 +11,17 @@ from werkzeug.utils import secure_filename
 import base64
 
 UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads')
-# Busca o dist em dois lugares possíveis: relativo ao arquivo e relativo ao CWD
-_dist_rel = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'dist')
-_dist_cwd = os.path.join(os.getcwd(), 'dist')
-STATIC_FOLDER = _dist_rel if os.path.exists(os.path.join(_dist_rel, 'index.html')) else _dist_cwd
+# Busca o dist em um lugar absoluto relativo ao executável (root do projeto)
+# Como app.py está em '/api', '..' sobe para a raiz
+STATIC_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+STATIC_FOLDER = os.path.join(STATIC_ROOT, 'dist')
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 # UPLOAD_FOLDER não é mais necessário para persistência em Base64
 # if not os.path.exists(UPLOAD_FOLDER):
 #     os.makedirs(UPLOAD_FOLDER)
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder=STATIC_FOLDER, static_url_path='')
 CORS(app)
 
 @app.before_request
@@ -552,9 +552,11 @@ def deletar_ocorrencia(id):
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def serve(path):
-    if path and os.path.exists(os.path.join(STATIC_FOLDER, path)):
-        return send_from_directory(STATIC_FOLDER, path)
-    return send_from_directory(STATIC_FOLDER, 'index.html')
+    # Se o arquivo existir na pasta 'dist', serve ele original
+    if path and os.path.exists(os.path.join(app.static_folder, path)):
+        return send_from_directory(app.static_folder, path)
+    # Qualquer outra coisa, devolve o index do React (SPA behavior)
+    return send_from_directory(app.static_folder, 'index.html')
 
 
 

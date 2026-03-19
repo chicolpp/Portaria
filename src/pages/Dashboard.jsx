@@ -1,6 +1,14 @@
 import { useNavigate } from "react-router-dom";
 import "./Dashboard.css";
 
+// Importando os ícones para o Vite processar as URLs no build final (necessário para o Render)
+import deliveryIcon from "../assets/delivery.png";
+import doormanIcon from "../assets/doorman.png";
+import loftBuildingIcon from "../assets/loft-building.png";
+import amenitiesIcon from "../assets/amenities.png";
+// acao9.png não existe no repositório, usando amenities como fallback
+const acao9Icon = amenitiesIcon; 
+
 export default function Dashboard() {
   const navigate = useNavigate();
 
@@ -18,22 +26,22 @@ export default function Dashboard() {
 
   const porteiroActions = [
     {
-      image: "/icons/delivery.png",
+      image: deliveryIcon,
       label: "Encomendas",
       onClick: () => navigate("/encomendas")
     },
     {
-      image: "/icons/doorman.png",
+      image: doormanIcon,
       label: "Portaria",
       onClick: () => navigate("/portaria")
     },
     {
-      image: "/icons/loft-building.png",
+      image: loftBuildingIcon,
       label: "Livro de Ocorrências",
       onClick: () => navigate("/livroocorrencias")
     },
     {
-      image: "/icons/amenities.png",
+      image: amenitiesIcon,
       label: "Espaços e Serviços",
       onClick: () => navigate("/espacosservicos")
     }
@@ -41,22 +49,22 @@ export default function Dashboard() {
 
   const moradorActions = [
     {
-      image: "/icons/acao9.png",
+      image: acao9Icon,
       label: "Liberação de Acessos",
-      onClick: () => {}
+      onClick: () => navigate("/liberacao-acessos")
     },
     {
-      image: "/icons/delivery.png",
+      image: deliveryIcon,
       label: "Visualização de Encomendas",
-      onClick: () => {}
+      onClick: () => navigate("/visualizacao-encomendas")
     },
     {
-      image: "/icons/loft-building.png",
+      image: loftBuildingIcon,
       label: "Visualização de Ocorrências",
       onClick: () => {}
     },
     {
-      image: "/icons/acao9.png",
+      image: acao9Icon,
       label: "Visualização de Chaves",
       onClick: () => {}
     }
