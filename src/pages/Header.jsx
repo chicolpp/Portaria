@@ -110,7 +110,7 @@ export default function Header() {
         {/* Logo e nome do sistema */}
         <div className="header-brand">
           <Link to="/dashboard" className="header-logo">
-            <img src={logoImg} alt="Logo" />
+            <img src="/icons/logo.png" alt="Logo" />
           </Link>
 
           <span className="header-system-name">Prothax</span>

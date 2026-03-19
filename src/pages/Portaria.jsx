@@ -188,6 +188,7 @@ export default function Portaria() {
     marca: "",
     modelo: "",
     cor: "",
+    unidade: "",
   });
   const [formData, setFormData] = useState({
     nome: "",
@@ -197,6 +198,7 @@ export default function Portaria() {
     marca: "",
     modelo: "",
     cor: "",
+    unidade: "",
   });
 
   const [docType, setDocType] = useState("RG");
@@ -288,6 +290,7 @@ export default function Portaria() {
       marca: item.marca || "",
       modelo: item.modelo || "",
       cor: item.cor || "",
+      unidade: item.unidade || "",
     });
     setDocType("RG/CPF"); // Resetando the doc type visual for filling
     setQuickSearchPlaca("");
@@ -341,6 +344,7 @@ export default function Portaria() {
       marca: acesso.marca || "",
       modelo: acesso.modelo || "",
       cor: acesso.cor || "",
+      unidade: acesso.unidade || "",
     });
   };
 
@@ -470,6 +474,7 @@ export default function Portaria() {
         marca: "",
         modelo: "",
         cor: "",
+        unidade: "",
       });
       setDocType("RG");
       setQuickSearchDocType("RG");
@@ -619,6 +624,18 @@ export default function Portaria() {
               </div>
 
               <div className="form-group">
+                <label>Unidade de Destino:</label>
+                <input
+                  type="text"
+                  name="unidade"
+                  value={formData.unidade}
+                  onChange={handleChange}
+                  placeholder="Ex: 123"
+                  required
+                />
+              </div>
+
+              <div className="form-group">
                 <div className="label-with-action">
                   <label>Documento:</label>
                   <div className="doc-type-wrapper-inline premium-wrapper">
@@ -742,6 +759,9 @@ export default function Portaria() {
                       <th onClick={() => handleSort('cor')} className="sortable-th">
                         <div className="th-content">Cor {getSortIcon('cor')}</div>
                       </th>
+                      <th onClick={() => handleSort('unidade')} className="sortable-th">
+                        <div className="th-content">Unidade {getSortIcon('unidade')}</div>
+                      </th>
                       <th onClick={() => handleSort('data_entrada')} className="sortable-th">
                         <div className="th-content">Entrada {getSortIcon('data_entrada')}</div>
                       </th>
@@ -761,6 +781,7 @@ export default function Portaria() {
                         <td>{a.marca}</td>
                         <td>{a.modelo}</td>
                         <td>{a.cor}</td>
+                        <td>{a.unidade || "-"}</td>
                         <td>{formatDateTime(a.data_entrada)}</td>
                         <td>
                           {a.data_saida ? (
@@ -826,6 +847,10 @@ export default function Portaria() {
                         <div className="card-row">
                           <label>Documento:</label>
                           <span>{a.documento}</span>
+                        </div>
+                        <div className="card-row">
+                          <label>Unidade:</label>
+                          <span>{a.unidade || "-"}</span>
                         </div>
                         {a.placa && (
                           <>
@@ -972,8 +997,15 @@ export default function Portaria() {
                     onChange={(e) => setEditFormData({ ...editFormData, cor: e.target.value })}
                   />
                 </div>
-                <div className="modal-field" style={{ visibility: 'hidden' }}>
-                    {/* Placeholder for alignment */}
+                <div className="modal-field">
+                  <label className="modal-label">Unidade</label>
+                  <input
+                    type="text"
+                    className="modal-input"
+                    value={editFormData.unidade || ""}
+                    onChange={(e) => setEditFormData({ ...editFormData, unidade: e.target.value })}
+                    placeholder="Ex: 123"
+                  />
                 </div>
               </div>
 

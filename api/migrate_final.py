@@ -5,7 +5,7 @@ from app import app
 from database import db
 
 def run_migration():
-    db_url = os.environ.get("DATABASE_URL")
+    db_url = os.environ.get("DATABASE_URL", "postgresql+psycopg2://postgres:postgres@localhost:5432/app")
     if not db_url:
         print("⚠️ DATABASE_URL não encontrada.")
         return
@@ -52,10 +52,15 @@ def run_migration():
 
         # 3. Coluna em 'acessos'
         try:
-            exists = conn.execute(text("SELECT 1 FROM information_schema.columns WHERE table_name='acessos' AND column_name='sobrenome';")).fetchone()
-            if not exists:
+            exists_sobrenome = conn.execute(text("SELECT 1 FROM information_schema.columns WHERE table_name='acessos' AND column_name='sobrenome';")).fetchone()
+            if not exists_sobrenome:
                 print("    + Adicionando 'sobrenome' em 'acessos'...")
                 conn.execute(text("ALTER TABLE acessos ADD COLUMN sobrenome VARCHAR(100);"))
+            
+            exists_unidade = conn.execute(text("SELECT 1 FROM information_schema.columns WHERE table_name='acessos' AND column_name='unidade';")).fetchone()
+            if not exists_unidade:
+                print("    + Adicionando 'unidade' em 'acessos'...")
+                conn.execute(text("ALTER TABLE acessos ADD COLUMN unidade VARCHAR(100);"))
         except Exception as e:
             print(f"    ⚠️ Erro em 'acessos': {e}")
 

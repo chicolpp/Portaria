@@ -1,14 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import "./Dashboard.css";
 
-// Importando os ícones para o Vite processar as URLs no build final (necessário para o Render)
-import deliveryIcon from "../assets/delivery.png";
-import doormanIcon from "../assets/doorman.png";
-import loftBuildingIcon from "../assets/loft-building.png";
-import amenitiesIcon from "../assets/amenities.png";
-// acao9.png não existe no repositório, usando amenities como fallback
-const acao9Icon = amenitiesIcon; 
-
 export default function Dashboard() {
   const navigate = useNavigate();
 
@@ -26,22 +18,22 @@ export default function Dashboard() {
 
   const porteiroActions = [
     {
-      image: deliveryIcon,
+      image: "/icons/delivery.png",
       label: "Encomendas",
       onClick: () => navigate("/encomendas")
     },
     {
-      image: doormanIcon,
+      image: "/icons/doorman.png",
       label: "Portaria",
       onClick: () => navigate("/portaria")
     },
     {
-      image: loftBuildingIcon,
+      image: "/icons/loft-building.png",
       label: "Livro de Ocorrências",
       onClick: () => navigate("/livroocorrencias")
     },
     {
-      image: amenitiesIcon,
+      image: "/icons/amenities.png",
       label: "Espaços e Serviços",
       onClick: () => navigate("/espacosservicos")
     }
@@ -49,24 +41,24 @@ export default function Dashboard() {
 
   const moradorActions = [
     {
-      image: acao9Icon,
+      image: "/icons/amenities.png", // acao9.png não existe no repositório, usando amenities como fallback
       label: "Liberação de Acessos",
       onClick: () => navigate("/liberacao-acessos")
     },
     {
-      image: deliveryIcon,
+      image: "/icons/delivery.png",
       label: "Visualização de Encomendas",
       onClick: () => navigate("/visualizacao-encomendas")
     },
     {
-      image: loftBuildingIcon,
+      image: "/icons/loft-building.png",
       label: "Visualização de Ocorrências",
-      onClick: () => {}
+      onClick: () => { }
     },
     {
-      image: acao9Icon,
+      image: "/icons/amenities.png", // acao9.png não existe no repositório, usando amenities como fallback
       label: "Visualização de Chaves",
-      onClick: () => {}
+      onClick: () => { }
     }
   ];
 

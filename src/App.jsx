@@ -10,6 +10,8 @@ import CadastroUsuarios from "./pages/CadastroUsuarios";
 import Ocorrencias from "./pages/Ocorrencias";
 import LivroDeOcorrencia from "./pages/Livrodeocorrencia";
 import EspacosServicos from "./pages/EspacosServicos";
+import LiberacaoAcessos from "./pages/LiberacaoAcessos";
+import VisualizacaoEncomendas from "./pages/VisualizacaoEncomendas";
 import { Toaster } from 'sonner';
 import "./App.css";
 
@@ -89,6 +91,22 @@ function App() {
           element={
             <PrivateRoute>
               <Layout><EspacosServicos /></Layout>
+            </PrivateRoute>
+          }
+        />
+
+        <Route path="/liberacao-acessos"
+          element={
+            <PrivateRoute>
+              <Layout><LiberacaoAcessos /></Layout>
+            </PrivateRoute>
+          }
+        />
+
+        <Route path="/visualizacao-encomendas"
+          element={
+            <PrivateRoute>
+              <Layout><VisualizacaoEncomendas /></Layout>
             </PrivateRoute>
           }
         />

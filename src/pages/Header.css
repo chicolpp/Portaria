@@ -38,6 +38,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+  background-color: transparent;
+}
+
+.header-logo:active,
+.header-logo:focus {
+  background-color: transparent;
+  outline: none;
 }
 
 .header-logo img {

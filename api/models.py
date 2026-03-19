@@ -110,6 +110,7 @@ class Acesso(db.Model):
     marca = db.Column(db.String(50))
     modelo = db.Column(db.String(50))
     cor = db.Column(db.String(30))
+    unidade = db.Column(db.String(100), nullable=True)
     data_entrada = db.Column(db.DateTime, default=db.func.now())
     data_saida = db.Column(db.DateTime, nullable=True)
 
@@ -123,6 +124,7 @@ class Acesso(db.Model):
             "marca": self.marca or "",
             "modelo": self.modelo or "",
             "cor": self.cor or "",
+            "unidade": self.unidade or "",
             "data_entrada": self.data_entrada.isoformat() if self.data_entrada else "",
             "data_saida": self.data_saida.isoformat() if self.data_saida else "",
         }

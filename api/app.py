@@ -11,6 +11,7 @@ from werkzeug.utils import secure_filename
 import base64
 
 UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads')
+UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads')
 # Busca o dist em um lugar absoluto relativo ao executável (root do projeto)
 # Como app.py está em '/api', '..' sobe para a raiz
 STATIC_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
@@ -548,6 +549,7 @@ def deletar_ocorrencia(id):
     return {"message": "Ocorrência deletada"}, 200
 
 
+# Servir frontend React
 # Servir frontend React
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
